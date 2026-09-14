@@ -50,7 +50,7 @@ package.json
 README.md
 .gitignore
 /routes
-  /api                        → JSON puro (lo que se prueba en Thunder Client)
+  /api                        → JSON puro (lo que se prueba con Postman)
     clientesRoutes.js         → montado en /api/clientes
     pedidosRoutes.js          → montado en /api/pedidos (incluye GET /api/choferes de solo lectura)
   /web                        → renderiza Pug (GET lista/form + POST alta/editar/eliminar)
@@ -85,7 +85,7 @@ README.md
   RELEASE_PLAN.md             → este documento
   bibliografia.md
   roles.md
-  thunder-collection.json     → export de la colección Thunder Client
+  api-collection.postman.json → colección Postman (v2.1) con los requests de cada módulo
   /evidencia                  → capturas por módulo
   DOCUMENTACION_Parte1.md     → fuente del PDF de entrega
 ```
@@ -128,9 +128,9 @@ README.md
 - [x] `routes/api/clientesRoutes.js`: `GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id` → montado en `/api/clientes`
 - [x] Crear carpeta `routes/web/` vacía con un `.gitkeep` (las rutas web se hacen en Sprint 6)
 - [x] `data/clientes.json` con 2-3 registros de ejemplo → **este es el seed final, no se vuelve a commitear**
-- [ ] Probar los 5 endpoints con Thunder Client y guardar los requests en la colección (no exportar todavía)
+- [ ] Probar los 5 endpoints con Postman importando `docs/api-collection.postman.json` (Thunder Client free ya no soporta colecciones)
 
-**DoD del día:** servidor levanta, `GET/POST/PUT/DELETE /api/clientes` funcionando desde Thunder Client, `data/clientes.json` con seed commiteado.
+**DoD del día:** servidor levanta, `GET/POST/PUT/DELETE /api/clientes` funcionando desde Postman, `data/clientes.json` con seed commiteado.
 
 ---
 
@@ -142,7 +142,7 @@ README.md
 - [ ] `pedidosController.js` con las 5 operaciones + `cambiarEstado` + `listarChoferes` (solo lectura del seed)
 - [ ] `routes/api/pedidosRoutes.js`: `GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id`, `PATCH /:id/estado` → montado en `/api/pedidos`
 - [ ] `GET /api/choferes` de solo lectura (va en el router de pedidos, **no es un módulo**: sin POST/PUT/DELETE)
-- [ ] Probar todos los endpoints con Thunder Client y agregarlos a la colección
+- [ ] Probar todos los endpoints con Postman y agregarlos a `docs/api-collection.postman.json` (carpeta "Pedidos")
 
 **Sprint 4 (tarde):**
 - [ ] `PedidoService` en `/services`:
@@ -152,7 +152,7 @@ README.md
 - [ ] Merge de Clientes + Pedidos a `development`
 - [ ] **Congelar `/data`**: a partir de acá ningún commit incluye cambios en `clientes.json` ni `pedidos.json`
 
-**DoD del día:** los 2 CRUD completos con reglas de negocio, probados con Thunder Client, `/data` congelado.
+**DoD del día:** los 2 CRUD completos con reglas de negocio, probados con Postman, `/data` congelado.
 
 ---
 
@@ -166,7 +166,7 @@ README.md
   - handler de errores (4 parámetros) → status del error o 500, `{ mensaje }`
   - Los controllers **no** llevan `try/catch`: Express 5 pasa los errores de handlers `async` solos al `errorHandler`
 - [ ] Montar en `app.js` en este orden: `logger` → `express.json/urlencoded/static` → rutas → 404 → `errorHandler`
-- [ ] Verificar desde Thunder Client: body inválido → 400, id inexistente → 404, ruta inexistente → 404
+- [ ] Verificar desde Postman: body inválido → 400, id inexistente → 404, ruta inexistente → 404
 
 **Sprint 6 (tarde):**
 - [ ] `routes/web/clientesRoutes.js` montado en `/clientes`:
@@ -200,7 +200,7 @@ README.md
 ### Día 5 — Viernes 18/9 (deadline del video)
 
 **Sprint 9 (mañana):**
-- [ ] Exportar la colección Thunder Client a `docs/thunder-collection.json` (al menos un request por endpoint de cada módulo)
+- [ ] Exportar la colección Postman a `docs/api-collection.postman.json` (al menos un request por endpoint de cada módulo)
 - [ ] Capturas de cada request/response en `docs/evidencia/` con nombre `<modulo>_<operacion>.png` (ej. `clientes_post.png`)
 - [ ] `README.md`: instalación, estructura, **tabla de endpoints por módulo (método · ruta · body de ejemplo · respuesta)**, listado de archivos de `/data`
 - [ ] `docs/bibliografia.md` y `docs/roles.md` con nombres reales
@@ -234,7 +234,7 @@ README.md
 |---|---|
 | Construir un tercer módulo (Choferes) "porque ya que estamos" | El profesor lo dijo explícito: menos módulos ahora = menos migración a Mongo después |
 | Meter telemetría/ruteo porque "está en el caso de negocio" | Releer sección 1 antes de cualquier tarea que no esté en la lista |
-| Vistas Pug rompen la API porque comparten router | Rutas `api/` y `web/` separadas desde el Sprint 2; la API es la que se evalúa con Thunder Client |
+| Vistas Pug rompen la API porque comparten router | Rutas `api/` y `web/` separadas desde el Sprint 2; la API es la que se evalúa con Postman |
 | Conflictos de merge en `clientes.json` / `pedidos.json` | `/data` congelado después del Sprint 4; `git checkout data/` antes de cada commit |
 | El docente clona y no ve datos | Seeds commiteados en S2/S3 como estado final del repo |
 | Olvidar el post en "oficina del grupo" (es nuevo y no es código) | Asignado a Integrante 5, con deadline dentro del Sprint 9 del viernes, no del finde |
@@ -259,4 +259,4 @@ Portada: **"DOCUMENTACIÓN - Parte 1"** · Caso # · **Empresa de Desarrollo Los
    - Módulo de Clientes: listar, crear, editar y eliminar clientes
    - Módulo de Pedidos: listar, crear, editar y eliminar pedidos; ver y cambiar estado
    - **Próximos Módulos:** Choferes (CRUD completo), migración a Mongo (segunda entrega)
-7. **Persistencia de Datos:** datos en JSON dentro de `/data/` (listar los archivos) + capturas de Thunder Client
+7. **Persistencia de Datos:** datos en JSON dentro de `/data/` (listar los archivos) + capturas de Postman

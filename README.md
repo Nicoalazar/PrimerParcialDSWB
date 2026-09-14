@@ -25,7 +25,7 @@ Servidor en `http://localhost:3000`.
 ```
 app.js              → punto de entrada, configuración de Express y montaje de rutas
 routes/
-  api/              → rutas JSON (se prueban con Thunder Client)   → /api/clientes, /api/pedidos
+  api/              → rutas JSON (se prueban con Postman)         → /api/clientes, /api/pedidos
   web/              → rutas que renderizan vistas Pug             → /clientes, /pedidos
 controllers/        → lógica de cada endpoint (compartida por routes/api y routes/web)
 models/             → clases del dominio (POO)
@@ -49,7 +49,7 @@ Los formularios HTML solo pueden enviar `GET` y `POST`, por eso cada módulo tie
 | `routes/api` | `/api/<modulo>` | `GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id` (JSON) |
 | `routes/web` | `/<modulo>` | `GET /`, `GET /nuevo`, `POST /`, `GET /:id/editar`, `POST /:id/editar`, `POST /:id/eliminar` (Pug) |
 
-La API es la que se evalúa con Thunder Client. Las vistas son una capa adicional que no debe romperla.
+La API es la que se evalúa con Postman (colección en `docs/api-collection.postman.json`). Las vistas son una capa adicional que no debe romperla.
 
 ### Datos en `/data`
 
