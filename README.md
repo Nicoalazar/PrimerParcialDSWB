@@ -1,5 +1,7 @@
 # FreshRoute B2B — Primer Parcial DSWB
 
+**Empresa de Desarrollo:** LosBuleanos
+
 Backend en Node.js + Express con arquitectura MVC y persistencia en archivos JSON.
 Caso de negocio: logística de distribución refrigerada para restaurantes, comedores y cocinas industriales.
 

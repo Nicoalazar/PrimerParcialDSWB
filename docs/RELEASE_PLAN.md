@@ -4,7 +4,7 @@
 **Cierre real de la cátedra:** domingo 20/09/2026 23:59
 **Deadline interno del equipo (video grabado):** viernes 18/09/2026
 **Inicio:** lunes 14/09/2026 → **5 días de desarrollo (14 al 18) + finde como buffer de entrega, no de código**
-**Equipo:** 5 integrantes · cadencia: hasta 2 sprints por día (AM/PM)
+**Equipo:** LosBuleanos · 5 integrantes · cadencia: hasta 2 sprints por día (AM/PM)
 
 > ⚠️ **Riesgo de scope:** el documento de FreshRoute vende "telemetría en tiempo real" y "ruteo dinámico" como diferencial. **No se construye nada de eso** — es marketing de la empresa ficticia, no un requisito. El profesor además confirmó: **mínimo 2 módulos funcionales, no todo el proyecto**, y cualquier módulo de más hoy es trabajo de migración a Mongo de más en la segunda entrega. Se construyen exactamente 2.
 
@@ -114,7 +114,7 @@ README.md
 
 **Sprint 1 (mañana):**
 - [x] Revisar el código base de clase en el Drive del profesor antes de definir estructura
-- [ ] Definir nombre de la "Empresa de Desarrollo" (identidad del equipo, va en la portada del PDF)
+- [x] Definir nombre de la "Empresa de Desarrollo": **LosBuleanos** (va en la portada del PDF)
 - [ ] Confirmar con el equipo: 2 módulos (Clientes, Pedidos), Choferes como seed — no se negocia
 - [ ] Crear repo, ramas por integrante, GitHub Project con columnas y Milestones
 - [x] `npm init`, instalar `express`, `pug`, `nodemon`, estructura MVC de la sección 2
@@ -246,7 +246,7 @@ README.md
 
 ## 7. Estructura exacta del documento de entrega (PDF)
 
-Portada: **"DOCUMENTACIÓN - Parte 1"** · Caso # · **Empresa de Desarrollo [nombre del equipo]** · lista de integrantes · nombre de documento/carpeta Drive: `DSWB_2#_#################_2C26`
+Portada: **"DOCUMENTACIÓN - Parte 1"** · Caso # · **Empresa de Desarrollo LosBuleanos** · lista de integrantes · nombre de documento/carpeta Drive: `DSWB_2#_#################_2C26`
 
 1. **Links:** carpeta Drive, GitHub, link al video
 2. **Bibliografía:** videos (YouTube) y documentos usados como referencia
