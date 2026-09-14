@@ -4,7 +4,7 @@
 **Cierre real de la cátedra:** domingo 20/09/2026 23:59
 **Deadline interno del equipo (video grabado):** viernes 18/09/2026
 **Inicio:** lunes 14/09/2026 → **5 días de desarrollo (14 al 18) + finde como buffer de entrega, no de código**
-**Equipo:** 5 integrantes · cadencia: hasta 2 sprints por día (AM/PM)
+**Equipo:** LosBuleanos · 5 integrantes · cadencia: hasta 2 sprints por día (AM/PM)
 
 > ⚠️ **Riesgo de scope:** el documento de FreshRoute vende "telemetría en tiempo real" y "ruteo dinámico" como diferencial. **No se construye nada de eso** — es marketing de la empresa ficticia, no un requisito. El profesor además confirmó: **mínimo 2 módulos funcionales, no todo el proyecto**, y cualquier módulo de más hoy es trabajo de migración a Mongo de más en la segunda entrega. Se construyen exactamente 2.
 
@@ -114,7 +114,7 @@ README.md
 
 **Sprint 1 (mañana):**
 - [x] Revisar el código base de clase en el Drive del profesor antes de definir estructura
-- [ ] Definir nombre de la "Empresa de Desarrollo" (identidad del equipo, va en la portada del PDF)
+- [x] Definir nombre de la "Empresa de Desarrollo": **LosBuleanos** (va en la portada del PDF)
 - [ ] Confirmar con el equipo: 2 módulos (Clientes, Pedidos), Choferes como seed — no se negocia
 - [ ] Crear repo, ramas por integrante, GitHub Project con columnas y Milestones
 - [x] `npm init`, instalar `express`, `pug`, `nodemon`, estructura MVC de la sección 2
@@ -122,12 +122,12 @@ README.md
 - [x] Cargar `choferes.json` con 4 registros fijos (seed, no se toca más)
 
 **Sprint 2 (tarde):**
-- [ ] `JsonRepository` genérico en `/repositories`: `getAll()`, `getById(id)`, `create(obj)`, `update(id, obj)`, `delete(id)`. **Genera el `id` internamente** (`max(id) + 1`), nunca lo toma del body.
-- [ ] Clase `Cliente` en `/models` (nombre, dirección, zona, contacto, horario de entrega)
-- [ ] `clientesController.js` con las 5 operaciones, respondiendo con la forma `{ mensaje, cliente }` (misma convención que el código de clase)
-- [ ] `routes/api/clientesRoutes.js`: `GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id` → montado en `/api/clientes`
-- [ ] Crear carpeta `routes/web/` vacía con un `.gitkeep` (las rutas web se hacen en Sprint 6)
-- [ ] `data/clientes.json` con 2-3 registros de ejemplo → **este es el seed final, no se vuelve a commitear**
+- [x] `JsonRepository` genérico en `/repositories`: `getAll()`, `getById(id)`, `create(obj)`, `update(id, obj)`, `delete(id)`. **Genera el `id` internamente** (`max(id) + 1`), nunca lo toma del body.
+- [x] Clase `Cliente` en `/models` (nombre, dirección, zona, contacto, horario de entrega)
+- [x] `clientesController.js` con las 5 operaciones, respondiendo con la forma `{ mensaje, cliente }` (misma convención que el código de clase)
+- [x] `routes/api/clientesRoutes.js`: `GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id` → montado en `/api/clientes`
+- [x] Crear carpeta `routes/web/` vacía con un `.gitkeep` (las rutas web se hacen en Sprint 6)
+- [x] `data/clientes.json` con 2-3 registros de ejemplo → **este es el seed final, no se vuelve a commitear**
 - [ ] Probar los 5 endpoints con Thunder Client y guardar los requests en la colección (no exportar todavía)
 
 **DoD del día:** servidor levanta, `GET/POST/PUT/DELETE /api/clientes` funcionando desde Thunder Client, `data/clientes.json` con seed commiteado.
@@ -246,7 +246,7 @@ README.md
 
 ## 7. Estructura exacta del documento de entrega (PDF)
 
-Portada: **"DOCUMENTACIÓN - Parte 1"** · Caso # · **Empresa de Desarrollo [nombre del equipo]** · lista de integrantes · nombre de documento/carpeta Drive: `DSWB_2#_#################_2C26`
+Portada: **"DOCUMENTACIÓN - Parte 1"** · Caso # · **Empresa de Desarrollo LosBuleanos** · lista de integrantes · nombre de documento/carpeta Drive: `DSWB_2#_#################_2C26`
 
 1. **Links:** carpeta Drive, GitHub, link al video
 2. **Bibliografía:** videos (YouTube) y documentos usados como referencia

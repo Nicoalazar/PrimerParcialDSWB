@@ -1,4 +1,4 @@
-# Roles del equipo
+# Roles del equipo — LosBuleanos
 
 | Integrante | Responsabilidad | Sprint asignado |
 |---|---|---|

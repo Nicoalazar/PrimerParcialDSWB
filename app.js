@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 // rutas API (JSON, se prueban con Thunder Client) — se montan en Sprint 2 y 3
-// app.use("/api/clientes", require("./routes/api/clientesRoutes"));
+app.use("/api/clientes", require("./routes/api/clientesRoutes"));
 // app.use("/api/pedidos", require("./routes/api/pedidosRoutes"));
 
 // rutas web (vistas Pug) — se montan en Sprint 6 y 7
