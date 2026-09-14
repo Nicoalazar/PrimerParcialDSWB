@@ -122,12 +122,12 @@ README.md
 - [x] Cargar `choferes.json` con 4 registros fijos (seed, no se toca más)
 
 **Sprint 2 (tarde):**
-- [ ] `JsonRepository` genérico en `/repositories`: `getAll()`, `getById(id)`, `create(obj)`, `update(id, obj)`, `delete(id)`. **Genera el `id` internamente** (`max(id) + 1`), nunca lo toma del body.
-- [ ] Clase `Cliente` en `/models` (nombre, dirección, zona, contacto, horario de entrega)
-- [ ] `clientesController.js` con las 5 operaciones, respondiendo con la forma `{ mensaje, cliente }` (misma convención que el código de clase)
-- [ ] `routes/api/clientesRoutes.js`: `GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id` → montado en `/api/clientes`
-- [ ] Crear carpeta `routes/web/` vacía con un `.gitkeep` (las rutas web se hacen en Sprint 6)
-- [ ] `data/clientes.json` con 2-3 registros de ejemplo → **este es el seed final, no se vuelve a commitear**
+- [x] `JsonRepository` genérico en `/repositories`: `getAll()`, `getById(id)`, `create(obj)`, `update(id, obj)`, `delete(id)`. **Genera el `id` internamente** (`max(id) + 1`), nunca lo toma del body.
+- [x] Clase `Cliente` en `/models` (nombre, dirección, zona, contacto, horario de entrega)
+- [x] `clientesController.js` con las 5 operaciones, respondiendo con la forma `{ mensaje, cliente }` (misma convención que el código de clase)
+- [x] `routes/api/clientesRoutes.js`: `GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id` → montado en `/api/clientes`
+- [x] Crear carpeta `routes/web/` vacía con un `.gitkeep` (las rutas web se hacen en Sprint 6)
+- [x] `data/clientes.json` con 2-3 registros de ejemplo → **este es el seed final, no se vuelve a commitear**
 - [ ] Probar los 5 endpoints con Thunder Client y guardar los requests en la colección (no exportar todavía)
 
 **DoD del día:** servidor levanta, `GET/POST/PUT/DELETE /api/clientes` funcionando desde Thunder Client, `data/clientes.json` con seed commiteado.
