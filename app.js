@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
     res.render("index", { titulo: "FreshRoute B2B" });
 });
 
-// rutas API (JSON, se prueban con Thunder Client) — se montan en Sprint 2 y 3
+// rutas API (JSON, se prueban con Postman) — se montan en Sprint 2 y 3
 app.use("/api/clientes", require("./routes/api/clientesRoutes"));
 
 const pedidosRoutes = require("./routes/api/pedidosRoutes");

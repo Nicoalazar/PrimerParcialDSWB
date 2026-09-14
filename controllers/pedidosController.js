@@ -41,9 +41,9 @@ const obtenerPedidoPorId = (req, res) => {
 // CREATE
 const crearPedido = (req, res) => {
 
-    const { clienteId, choferId, items, estado, fechaHoraProgramada } = req.body;
+    const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
 
-    const nuevoPedido = new Pedido(clienteId, choferId, items, estado || ESTADOS[0], fechaHoraProgramada);
+    const nuevoPedido = new Pedido(clienteId, choferId, items, ESTADOS[0], fechaHoraProgramada);
 
     const pedidoCreado = pedidosRepo.create(nuevoPedido);
 
@@ -60,14 +60,13 @@ const actualizarPedido = (req, res) => {
 
     const id = parseInt(req.params.id);
 
-    const { clienteId, choferId, items, estado, fechaHoraProgramada } = req.body;
+    const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
 
     // solo se pisan los campos que vienen en el body
     const datos = {};
     if (clienteId !== undefined) datos.clienteId = clienteId;
     if (choferId !== undefined) datos.choferId = choferId;
     if (items !== undefined) datos.items = items;
-    if (estado !== undefined) datos.estado = estado;
     if (fechaHoraProgramada !== undefined) datos.fechaHoraProgramada = fechaHoraProgramada;
 
     const pedido = pedidosRepo.update(id, datos);
