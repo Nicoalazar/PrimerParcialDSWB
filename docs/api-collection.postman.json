@@ -1,0 +1,92 @@
+{
+  "info": {
+    "name": "FreshRoute B2B",
+    "description": "Colección de pruebas de la API. Primer Parcial DSWB - LosBuleanos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "GET todos los clientes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/clientes"
+          }
+        },
+        {
+          "name": "GET cliente por id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/clientes/1"
+          }
+        },
+        {
+          "name": "POST crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clientes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Bar Nuevo\",\n  \"direccion\": \"Calle 1 N° 100, Morón\",\n  \"zona\": \"Oeste\",\n  \"contacto\": \"Pedro Díaz - 11 0000 0000\",\n  \"horarioEntrega\": \"09:00 a 11:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT actualizar cliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clientes/4",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zona\": \"Centro\",\n  \"horarioEntrega\": \"10:00 a 12:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE eliminar cliente",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/clientes/4"
+          }
+        },
+        {
+          "name": "GET cliente inexistente (404)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/clientes/99"
+          }
+        }
+      ]
+    }
+  ]
+}
