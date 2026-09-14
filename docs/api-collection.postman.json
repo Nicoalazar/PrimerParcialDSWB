@@ -87,6 +87,139 @@
           }
         }
       ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "GET todos los pedidos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pedidos"
+          }
+        },
+        {
+          "name": "GET pedido por id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pedidos/1"
+          }
+        },
+        {
+          "name": "POST crear pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 4,\n  \"choferId\": 4,\n  \"items\": [\n    { \"descripcion\": \"Cajón de frutas\", \"cantidad\": 8 }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT actualizar pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos/2",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHoraProgramada\": \"2026-09-16T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PATCH cambiar estado",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos/1/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"asignado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PATCH cambiar estado inválido (400)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos/2/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"entregado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE eliminar pedido",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/pedidos/3"
+          }
+        },
+        {
+          "name": "GET pedido inexistente (404)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pedidos/99"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Choferes",
+      "item": [
+        {
+          "name": "GET todos los choferes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/choferes"
+          }
+        }
+      ]
     }
   ]
 }
