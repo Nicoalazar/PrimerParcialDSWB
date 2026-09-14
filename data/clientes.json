@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "id": 1,
+    "nombre": "Restaurante La Esquina",
+    "direccion": "Av. Corrientes 1234, CABA",
+    "zona": "Centro",
+    "contacto": "Marcela Ruiz - 11 5555 1234",
+    "horarioEntrega": "08:00 a 10:00"
+  },
+  {
+    "id": 2,
+    "nombre": "Comedor Escolar San Martín",
+    "direccion": "Calle 12 N° 456, Quilmes",
+    "zona": "Sur",
+    "contacto": "Jorge Peralta - 11 5555 5678",
+    "horarioEntrega": "06:00 a 08:00"
+  },
+  {
+    "id": 3,
+    "nombre": "Cocina Industrial NorteAlimentos",
+    "direccion": "Ruta 9 Km 42, Escobar",
+    "zona": "Norte",
+    "contacto": "Ana Bianchi - 11 5555 9012",
+    "horarioEntrega": "05:00 a 07:00"
+  },
+  {
+    "id": 4,
+    "nombre": "Parrilla Don Oeste",
+    "direccion": "Av. Rivadavia 18500, Morón",
+    "zona": "Oeste",
+    "contacto": "Luis Ferreyra - 11 5555 3456",
+    "horarioEntrega": "07:00 a 09:00"
+  },
+  {
+    "id": 5,
+    "nombre": "Catering Eventos del Plata",
+    "direccion": "Av. Libertador 5600, Vicente López",
+    "zona": "Norte",
+    "contacto": "Carolina Méndez - 11 5555 7890",
+    "horarioEntrega": "09:00 a 11:00"
+  }
+]
