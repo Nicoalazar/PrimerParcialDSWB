@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "nombre": "Carlos",
+    "apellido": "Gómez",
+    "vehiculo": "Camioneta refrigerada - AB 123 CD",
+    "zona": "Norte"
+  },
+  {
+    "id": 2,
+    "nombre": "Lucía",
+    "apellido": "Fernández",
+    "vehiculo": "Camión refrigerado - AC 456 EF",
+    "zona": "Sur"
+  },
+  {
+    "id": 3,
+    "nombre": "Martín",
+    "apellido": "Rodríguez",
+    "vehiculo": "Camioneta refrigerada - AD 789 GH",
+    "zona": "Oeste"
+  },
+  {
+    "id": 4,
+    "nombre": "Sofía",
+    "apellido": "López",
+    "vehiculo": "Camión refrigerado - AE 012 IJ",
+    "zona": "Centro"
+  }
+]
