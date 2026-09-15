@@ -1,68 +1,49 @@
-const Pedido = require("../models/Pedido");
+const PedidoService = require("../services/PedidoService");
 const JsonRepository = require("../repositories/JsonRepository");
 
 const pedidosRepo = new JsonRepository("pedidos.json");
 const choferesRepo = new JsonRepository("choferes.json");
 
-// orden de transición de estado: sin saltos ni retrocesos
-const ESTADOS = ["pendiente", "asignado", "en tránsito", "entregado"];
-
-
 // GET ALL
 const obtenerPedidos = (req, res) => {
-
     const pedidos = pedidosRepo.getAll();
-
     res.json(pedidos);
-
 };
-
 
 // GET BY ID
 const obtenerPedidoPorId = (req, res) => {
-
     const id = parseInt(req.params.id);
-
     const pedido = pedidosRepo.getById(id);
 
     if (!pedido) {
-
         return res.status(404).json({
             mensaje: "Pedido no encontrado"
         });
-
     }
 
     res.json(pedido);
-
 };
 
-
-// CREATE
+// CREATE (Usa PedidoService)
 const crearPedido = (req, res) => {
-
-    const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
-
-    const nuevoPedido = new Pedido(clienteId, choferId, items, ESTADOS[0], fechaHoraProgramada);
-
-    const pedidoCreado = pedidosRepo.create(nuevoPedido);
-
-    res.status(201).json({
-        mensaje: "Pedido creado",
-        pedido: pedidoCreado
-    });
-
+    try {
+        const pedidoCreado = PedidoService.crearPedido(req.body);
+        res.status(201).json({
+            mensaje: "Pedido creado",
+            pedido: pedidoCreado
+        });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({
+            mensaje: error.message
+        });
+    }
 };
-
 
 // UPDATE
 const actualizarPedido = (req, res) => {
-
     const id = parseInt(req.params.id);
-
     const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
 
-    // solo se pisan los campos que vienen en el body
     const datos = {};
     if (clienteId !== undefined) datos.clienteId = clienteId;
     if (choferId !== undefined) datos.choferId = choferId;
@@ -72,103 +53,59 @@ const actualizarPedido = (req, res) => {
     const pedido = pedidosRepo.update(id, datos);
 
     if (!pedido) {
-
         return res.status(404).json({
             mensaje: "Pedido no encontrado"
         });
-
     }
 
     res.json({
         mensaje: "Pedido actualizado",
         pedido
     });
-
 };
-
 
 // DELETE
 const eliminarPedido = (req, res) => {
-
     const id = parseInt(req.params.id);
-
     const eliminado = pedidosRepo.delete(id);
 
     if (!eliminado) {
-
         return res.status(404).json({
             mensaje: "Pedido no encontrado"
         });
-
     }
 
     res.json({
         mensaje: "Pedido eliminado"
     });
-
 };
 
-
-// PATCH estado
+// PATCH estado (Usa PedidoService)
 const cambiarEstado = (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { estado } = req.body;
 
-    const id = parseInt(req.params.id);
+        const pedidoActualizado = PedidoService.cambiarEstado(id, estado);
 
-    const { estado } = req.body;
-
-    if (!ESTADOS.includes(estado)) {
-
-        return res.status(400).json({
-            mensaje: "Estado inválido",
-            estadosValidos: ESTADOS
+        res.json({
+            mensaje: "Estado actualizado",
+            pedido: pedidoActualizado
         });
-
-    }
-
-    const pedido = pedidosRepo.getById(id);
-
-    if (!pedido) {
-
-        return res.status(404).json({
-            mensaje: "Pedido no encontrado"
+    } catch (error) {
+        res.status(error.statusCode || 500).json({
+            mensaje: error.message
         });
-
     }
-
-    const indiceActual = ESTADOS.indexOf(pedido.estado);
-    const indiceNuevo = ESTADOS.indexOf(estado);
-
-    // solo se permite avanzar al estado siguiente, sin saltos ni retrocesos
-    if (indiceNuevo !== indiceActual + 1) {
-
-        return res.status(400).json({
-            mensaje: `No se puede pasar de "${pedido.estado}" a "${estado}"`
-        });
-
-    }
-
-    const pedidoActualizado = pedidosRepo.update(id, { estado });
-
-    res.json({
-        mensaje: "Estado actualizado",
-        pedido: pedidoActualizado
-    });
-
 };
-
 
 // GET choferes (solo lectura del seed)
 const listarChoferes = (req, res) => {
-
     const choferes = choferesRepo.getAll();
-
     res.json(choferes);
-
 };
 
-
 module.exports = {
-
     obtenerPedidos,
     obtenerPedidoPorId,
     crearPedido,
@@ -176,5 +113,4 @@ module.exports = {
     eliminarPedido,
     cambiarEstado,
     listarChoferes
-
 };
