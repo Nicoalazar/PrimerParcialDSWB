@@ -39,29 +39,29 @@ const crearPedido = (req, res) => {
     }
 };
 
-// UPDATE
+// UPDATE (Usa PedidoService)
 const actualizarPedido = (req, res) => {
-    const id = parseInt(req.params.id);
-    const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
+    try {
+        const id = parseInt(req.params.id);
+        const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
 
-    const datos = {};
-    if (clienteId !== undefined) datos.clienteId = clienteId;
-    if (choferId !== undefined) datos.choferId = choferId;
-    if (items !== undefined) datos.items = items;
-    if (fechaHoraProgramada !== undefined) datos.fechaHoraProgramada = fechaHoraProgramada;
+        const datos = {};
+        if (clienteId !== undefined) datos.clienteId = clienteId;
+        if (choferId !== undefined) datos.choferId = choferId;
+        if (items !== undefined) datos.items = items;
+        if (fechaHoraProgramada !== undefined) datos.fechaHoraProgramada = fechaHoraProgramada;
 
-    const pedido = pedidosRepo.update(id, datos);
+        const pedido = PedidoService.actualizarPedido(id, datos);
 
-    if (!pedido) {
-        return res.status(404).json({
-            mensaje: "Pedido no encontrado"
+        res.json({
+            mensaje: "Pedido actualizado",
+            pedido
+        });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({
+            mensaje: error.message
         });
     }
-
-    res.json({
-        mensaje: "Pedido actualizado",
-        pedido
-    });
 };
 
 // DELETE
