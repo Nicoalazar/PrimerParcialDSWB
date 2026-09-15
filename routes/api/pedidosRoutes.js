@@ -17,7 +17,7 @@ const {
 
 } = require("../../controllers/pedidosController");
 
-const { validarPedido } = require("../../middlewares/validate");
+const { validarPedido, validarPedidoUpdate } = require("../../middlewares/validate");
 
 
 // rutas CRUD
@@ -28,7 +28,7 @@ router.get("/:id", obtenerPedidoPorId);
 
 router.post("/", validarPedido, crearPedido);
 
-router.put("/:id", validarPedido, actualizarPedido);
+router.put("/:id", validarPedidoUpdate, actualizarPedido);
 
 router.delete("/:id", eliminarPedido);
 

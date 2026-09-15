@@ -12,7 +12,7 @@ const {
 
 } = require("../../controllers/clientesController");
 
-const { validarCliente } = require("../../middlewares/validate");
+const { validarCliente, validarClienteUpdate } = require("../../middlewares/validate");
 
 
 // rutas CRUD
@@ -23,7 +23,7 @@ router.get("/:id", obtenerClientePorId);
 
 router.post("/", validarCliente, crearCliente);
 
-router.put("/:id", validarCliente, actualizarCliente);
+router.put("/:id", validarClienteUpdate, actualizarCliente);
 
 router.delete("/:id", eliminarCliente);
 
