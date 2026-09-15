@@ -39,6 +39,35 @@ class PedidoService {
         return pedidosRepo.create(nuevoPedido);
     }
 
+    actualizarPedido(id, datos) {
+        const pedido = pedidosRepo.getById(Number(id));
+        if (!pedido) {
+            const error = new Error("Pedido no encontrado");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (datos.clienteId !== undefined) {
+            const cliente = clientesRepo.getById(Number(datos.clienteId));
+            if (!cliente) {
+                const error = new Error(`El cliente con id ${datos.clienteId} no existe`);
+                error.statusCode = 400;
+                throw error;
+            }
+        }
+
+        if (datos.choferId !== undefined) {
+            const chofer = choferesRepo.getById(Number(datos.choferId));
+            if (!chofer) {
+                const error = new Error(`El chofer con id ${datos.choferId} no existe`);
+                error.statusCode = 400;
+                throw error;
+            }
+        }
+
+        return pedidosRepo.update(Number(id), datos);
+    }
+
     cambiarEstado(id, nuevoEstado) {
         const pedido = pedidosRepo.getById(Number(id));
         if (!pedido) {
