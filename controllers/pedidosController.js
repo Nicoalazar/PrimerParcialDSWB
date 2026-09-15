@@ -24,19 +24,14 @@ const obtenerPedidoPorId = (req, res) => {
     res.json(pedido);
 };
 
-// CREATE (Usa PedidoService)
+// CREATE (Usa PedidoService) — sin try/catch: si PedidoService tira un error,
+// Express lo agarra solo y lo manda al errorHandler.
 const crearPedido = (req, res) => {
-    try {
-        const pedidoCreado = PedidoService.crearPedido(req.body);
-        res.status(201).json({
-            mensaje: "Pedido creado",
-            pedido: pedidoCreado
-        });
-    } catch (error) {
-        res.status(error.statusCode || 500).json({
-            mensaje: error.message
-        });
-    }
+    const pedidoCreado = PedidoService.crearPedido(req.body);
+    res.status(201).json({
+        mensaje: "Pedido creado",
+        pedido: pedidoCreado
+    });
 };
 
 // UPDATE (Usa PedidoService)
@@ -80,23 +75,17 @@ const eliminarPedido = (req, res) => {
     });
 };
 
-// PATCH estado (Usa PedidoService)
+// PATCH estado (Usa PedidoService) — sin try/catch, mismo motivo que crearPedido.
 const cambiarEstado = (req, res) => {
-    try {
-        const id = parseInt(req.params.id);
-        const { estado } = req.body;
+    const id = parseInt(req.params.id);
+    const { estado } = req.body;
 
-        const pedidoActualizado = PedidoService.cambiarEstado(id, estado);
+    const pedidoActualizado = PedidoService.cambiarEstado(id, estado);
 
-        res.json({
-            mensaje: "Estado actualizado",
-            pedido: pedidoActualizado
-        });
-    } catch (error) {
-        res.status(error.statusCode || 500).json({
-            mensaje: error.message
-        });
-    }
+    res.json({
+        mensaje: "Estado actualizado",
+        pedido: pedidoActualizado
+    });
 };
 
 // GET choferes (solo lectura del seed)

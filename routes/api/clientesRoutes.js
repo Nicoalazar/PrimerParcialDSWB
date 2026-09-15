@@ -12,6 +12,8 @@ const {
 
 } = require("../../controllers/clientesController");
 
+const { validarCliente, validarClienteUpdate } = require("../../middlewares/validate");
+
 
 // rutas CRUD
 
@@ -19,9 +21,9 @@ router.get("/", obtenerClientes);
 
 router.get("/:id", obtenerClientePorId);
 
-router.post("/", crearCliente);
+router.post("/", validarCliente, crearCliente);
 
-router.put("/:id", actualizarCliente);
+router.put("/:id", validarClienteUpdate, actualizarCliente);
 
 router.delete("/:id", eliminarCliente);
 
