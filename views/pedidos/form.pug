@@ -1,0 +1,39 @@
+extends ../layout
+
+block content
+    h2 Nuevo pedido
+
+    form(action="/pedidos" method="POST")
+        div
+            label(for="clienteId") Cliente:
+            br
+            select(name="clienteId" id="clienteId" required)
+                option(value="") -- Seleccione un cliente --
+                each cliente in clientes
+                    option(value=cliente.id)= cliente.nombre
+
+        br
+        div
+            label(for="choferId") Chofer:
+            br
+            select(name="choferId" id="choferId" required)
+                option(value="") -- Seleccione un chofer --
+                each chofer in choferes
+                    option(value=chofer.id)= chofer.nombre
+
+        br
+        div
+            label(for="fechaHoraProgramada") Fecha y hora programada:
+            br
+            input(type="text" name="fechaHoraProgramada" id="fechaHoraProgramada" placeholder="YYYY-MM-DD HH:mm" required)
+
+        br
+        div
+            label(for="items") Items (separados por coma):
+            br
+            input(type="text" name="items" id="items" placeholder="Manzanas 10kg, Bananas 5kg" required)
+
+        br
+        button(type="submit") Guardar pedido
+        |  
+        a(href="/pedidos") Cancelar
