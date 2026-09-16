@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+  h2= cliente ? "Editar cliente" : "Nuevo cliente"
+  form(action=cliente ? `/clientes/${cliente.id}/editar` : "/clientes" method="POST")
+    label(for="nombre") Nombre
+    input(type="text" id="nombre" name="nombre" value=cliente ? cliente.nombre : "" required)
+
+    label(for="direccion") Dirección
+    input(type="text" id="direccion" name="direccion" value=cliente ? cliente.direccion : "" required)
+
+    label(for="zona") Zona
+    input(type="text" id="zona" name="zona" value=cliente ? cliente.zona : "" required)
+
+    label(for="contacto") Contacto
+    input(type="text" id="contacto" name="contacto" value=cliente ? cliente.contacto : "" required)
+
+    label(for="horarioEntrega") Horario de entrega
+    input(type="text" id="horarioEntrega" name="horarioEntrega" value=cliente ? cliente.horarioEntrega : "" required)
+
+    button(type="submit")= cliente ? "Guardar cambios" : "Crear cliente"
+  p
+    a(href="/clientes") Volver al listado

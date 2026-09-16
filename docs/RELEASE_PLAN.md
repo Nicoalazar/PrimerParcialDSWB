@@ -169,11 +169,11 @@ README.md
 - [ ] Verificar desde Postman: body inválido → 400, id inexistente → 404, ruta inexistente → 404
 
 **Sprint 6 (tarde):**
-- [ ] `routes/web/clientesRoutes.js` montado en `/clientes`:
+- [x] `routes/web/clientesRoutes.js` montado en `/clientes`:
   - `GET /` lista · `GET /nuevo` form alta · `POST /` alta
   - `GET /:id/editar` form edición · `POST /:id/editar` guardar · `POST /:id/eliminar` borrar
-- [ ] Vistas `views/clientes/lista.pug` y `views/clientes/form.pug` (form reutilizado para alta y edición)
-- [ ] Las rutas web usan el mismo `clientesController` que la API (o llaman al repository directo); **no duplicar lógica**
+- [x] Vistas `views/clientes/lista.pug` y `views/clientes/form.pug` (form reutilizado para alta y edición)
+- [x] Las rutas web usan el mismo `clientesController` que la API (o llaman al repository directo); **no duplicar lógica**
 
 **DoD del día:** middlewares activos en los 2 módulos, Clientes navegable completo desde el browser, la API sigue intacta.
 

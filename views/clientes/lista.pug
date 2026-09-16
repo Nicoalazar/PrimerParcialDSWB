@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  h2 Clientes
+  p
+    a(href="/clientes/nuevo") + Nuevo cliente
+  table
+    thead
+      tr
+        th Nombre
+        th Dirección
+        th Zona
+        th Contacto
+        th Horario de entrega
+        th Acciones
+    tbody
+      if clientes.length === 0
+        tr
+          td(colspan="6") No hay clientes cargados.
+      else
+        each cliente in clientes
+          tr
+            td= cliente.nombre
+            td= cliente.direccion
+            td= cliente.zona
+            td= cliente.contacto
+            td= cliente.horarioEntrega
+            td
+              a(href=`/clientes/${cliente.id}/editar`) Editar
+              |
+              |
+              form(action=`/clientes/${cliente.id}/eliminar` method="POST" style="display:inline")
+                button(type="submit") Eliminar
