@@ -27,3 +27,8 @@ block content
                         td= pedido.estado
                         td
                             a(href=`/pedidos/${pedido.id}`) Ver detalle
+                            |  | 
+                            a(href=`/pedidos/${pedido.id}/editar`) Editar
+                            |  | 
+                            form(action=`/pedidos/${pedido.id}/eliminar` method="POST" style="display:inline;")
+                                button(type="submit") Eliminar

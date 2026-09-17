@@ -86,8 +86,12 @@ router.post("/", normalizarBodyWeb, validarPedido, (req, res, next) => {
     }
 });
 
-// GET /:id - Detalle
-router.get("/:id", (req, res) => {
+// =========================================================
+// RUTAS NUEVAS: EDICIÓN Y ELIMINACIÓN
+// =========================================================
+
+// GET /:id/editar - Formulario de edición de pedido
+router.get("/:id/editar", (req, res) => {
     const id = Number(req.params.id);
     const pedido = pedidosRepo.getById(id);
 
@@ -95,19 +99,33 @@ router.get("/:id", (req, res) => {
         return res.redirect("/pedidos");
     }
 
-    const cliente = clientesRepo.getById(pedido.clienteId);
-    const chofer = choferesRepo.getById(pedido.choferId);
+    const clientes = clientesRepo.getAll();
+    const choferes = choferesRepo.getAll();
 
-    const indiceActual = ESTADOS.indexOf(pedido.estado);
-    const proximoEstado = indiceActual < ESTADOS.length - 1 ? ESTADOS[indiceActual + 1] : null;
-
-    res.render("pedidos/detalle", {
-        titulo: `Pedido #${pedido.id}`,
-        pedido,
-        cliente,
-        chofer,
-        proximoEstado
+    res.render("pedidos/form", { 
+        titulo: "Editar pedido", 
+        pedido, 
+        clientes, 
+        choferes 
     });
+});
+
+// POST /:id/editar - Guardar edición
+router.post("/:id/editar", normalizarBodyWeb, validarPedido, (req, res, next) => {
+    try {
+        const id = Number(req.params.id);
+        pedidosRepo.update(id, req.body);
+        res.redirect("/pedidos");
+    } catch (error) {
+        next(error);
+    }
+});
+
+// POST /:id/eliminar - Borrar pedido
+router.post("/:id/eliminar", (req, res) => {
+    const id = Number(req.params.id);
+    pedidosRepo.delete(id);
+    res.redirect("/pedidos");
 });
 
 // POST /:id/estado - Avanzar estado
@@ -130,6 +148,30 @@ router.post("/:id/estado", (req, res, next) => {
     } catch (error) {
         next(error);
     }
+});
+
+// GET /:id - Detalle (al final de las rutas GET para no solaparse)
+router.get("/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const pedido = pedidosRepo.getById(id);
+
+    if (!pedido) {
+        return res.redirect("/pedidos");
+    }
+
+    const cliente = clientesRepo.getById(pedido.clienteId);
+    const chofer = choferesRepo.getById(pedido.choferId);
+
+    const indiceActual = ESTADOS.indexOf(pedido.estado);
+    const proximoEstado = indiceActual < ESTADOS.length - 1 ? ESTADOS[indiceActual + 1] : null;
+
+    res.render("pedidos/detalle", {
+        titulo: `Pedido #${pedido.id}`,
+        pedido,
+        cliente,
+        chofer,
+        proximoEstado
+    });
 });
 
 module.exports = router;
