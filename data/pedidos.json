@@ -1,1 +1,53 @@
-[]
+[
+  {
+    "id": 1,
+    "clienteId": 1,
+    "choferId": 1,
+    "items": [
+      {
+        "descripcion": "Cajón de verduras frescas",
+        "cantidad": 10
+      },
+      {
+        "descripcion": "Bandeja de carnes refrigeradas",
+        "cantidad": 5
+      }
+    ],
+    "estado": "pendiente",
+    "fechaHoraProgramada": "2026-09-16T08:00:00"
+  },
+  {
+    "id": 2,
+    "clienteId": 2,
+    "choferId": 2,
+    "items": [
+      {
+        "descripcion": "Leche entera 1L",
+        "cantidad": 40
+      },
+      {
+        "descripcion": "Pan lactal",
+        "cantidad": 20
+      }
+    ],
+    "estado": "asignado",
+    "fechaHoraProgramada": "2026-09-16T06:30:00"
+  },
+  {
+    "id": 3,
+    "clienteId": 3,
+    "choferId": 3,
+    "items": [
+      {
+        "descripcion": "Pollo congelado",
+        "cantidad": 15
+      },
+      {
+        "descripcion": "Papas prefritas",
+        "cantidad": 25
+      }
+    ],
+    "estado": "en tránsito",
+    "fechaHoraProgramada": "2026-09-16T05:15:00"
+  }
+]
