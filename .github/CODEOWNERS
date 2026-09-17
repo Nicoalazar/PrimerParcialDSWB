@@ -1,13 +1,3 @@
 # CODEOWNERS file
-# This file designates code owners for specific files and directories
-# Code owners are automatically requested for review when pull requests
-# affect their respective files/directories
-
 # Default owner for everything in the repo
 * @nicoalazar
-
-# Protect main branch
-main @nicoalazar
-
-# Protect development branch
-development @nicoalazar
