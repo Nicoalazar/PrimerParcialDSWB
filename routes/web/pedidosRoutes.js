@@ -3,6 +3,7 @@ const router = express.Router();
 
 const JsonRepository = require("../../repositories/JsonRepository");
 const pedidoService = require("../../services/PedidoService");
+const { validarPedido } = require("../../middlewares/validate");
 
 const pedidosRepo = new JsonRepository("pedidos.json");
 const clientesRepo = new JsonRepository("clientes.json");
@@ -10,13 +11,51 @@ const choferesRepo = new JsonRepository("choferes.json");
 
 const ESTADOS = ["pendiente", "asignado", "en tránsito", "entregado"];
 
-// GET / - Listado de pedidos
+// Middleware para transformar el formulario al formato que espera validarPedido
+function normalizarBodyWeb(req, res, next) {
+    const { clienteId, choferId, fechaHoraProgramada, item_descripcion, item_cantidad } = req.body;
+
+    // Convertimos a array por si vino un solo elemento
+    const descripciones = Array.isArray(item_descripcion)
+        ? item_descripcion
+        : item_descripcion ? [item_descripcion] : [];
+
+    const cantidades = Array.isArray(item_cantidad)
+        ? item_cantidad
+        : item_cantidad ? [item_cantidad] : [];
+
+    const items = [];
+
+    // Recorremos las filas: solo guardamos las que tienen descripción escrita
+    for (let i = 0; i < descripciones.length; i++) {
+        const desc = descripciones[i] ? descripciones[i].trim() : "";
+        const cant = cantidades[i] ? Number(cantidades[i]) : NaN;
+
+        if (desc !== "") {
+            items.push({
+                descripcion: desc,
+                cantidad: isNaN(cant) ? undefined : cant
+            });
+        }
+    }
+
+    // Reemplazamos req.body con los tipos exactos
+    req.body = {
+        clienteId: clienteId !== undefined ? Number(clienteId) : undefined,
+        choferId: choferId !== undefined ? Number(choferId) : undefined,
+        fechaHoraProgramada,
+        items
+    };
+
+    next();
+}
+
+// GET / - Listado
 router.get("/", (req, res) => {
     const pedidos = pedidosRepo.getAll();
     const clientes = clientesRepo.getAll();
     const choferes = choferesRepo.getAll();
 
-    // Mapeamos nombres para facilitar la lectura en la tabla
     const pedidosConDatos = pedidos.map((p) => {
         const cliente = clientes.find((c) => c.id === p.clienteId);
         const chofer = choferes.find((ch) => ch.id === p.choferId);
@@ -30,37 +69,24 @@ router.get("/", (req, res) => {
     res.render("pedidos/lista", { titulo: "Pedidos", pedidos: pedidosConDatos });
 });
 
-// GET /nuevo - Formulario de creación
+// GET /nuevo - Formulario
 router.get("/nuevo", (req, res) => {
     const clientes = clientesRepo.getAll();
     const choferes = choferesRepo.getAll();
     res.render("pedidos/form", { titulo: "Nuevo pedido", clientes, choferes });
 });
 
-// POST / - Crear pedido
-router.post("/", (req, res, next) => {
+// POST / - Guardar validando contra el mismo middleware de la API
+router.post("/", normalizarBodyWeb, validarPedido, (req, res, next) => {
     try {
-        const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
-
-        // Si items viene en formato texto separado por comas o saltos, normalizamos a array
-        const itemsArray = typeof items === "string"
-            ? items.split(",").map((i) => i.trim()).filter(Boolean)
-            : items;
-
-        pedidoService.crearPedido({
-            clienteId,
-            choferId,
-            items: itemsArray,
-            fechaHoraProgramada
-        });
-
+        pedidoService.crearPedido(req.body);
         res.redirect("/pedidos");
     } catch (error) {
         next(error);
     }
 });
 
-// GET /:id - Detalle del pedido
+// GET /:id - Detalle
 router.get("/:id", (req, res) => {
     const id = Number(req.params.id);
     const pedido = pedidosRepo.getById(id);
@@ -84,7 +110,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
-// POST /:id/estado - Avanzar estado vía PedidoService
+// POST /:id/estado - Avanzar estado
 router.post("/:id/estado", (req, res, next) => {
     try {
         const id = Number(req.params.id);
@@ -107,7 +133,3 @@ router.post("/:id/estado", (req, res, next) => {
 });
 
 module.exports = router;
-
-
-
-

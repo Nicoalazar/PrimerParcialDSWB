@@ -20,7 +20,7 @@ block content
     if pedido.items && pedido.items.length > 0
         ul
             each item in pedido.items
-                li= item
+                li #{item.descripcion} - Cantidad: #{item.cantidad}
     else
         p Sin items especificados.
 
