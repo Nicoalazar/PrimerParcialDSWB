@@ -111,10 +111,13 @@ router.get("/:id/editar", (req, res) => {
 });
 
 // POST /:id/editar - Guardar edición
+// Antes llamaba a pedidosRepo.update() directo, y eso salteaba la validación
+// de que el cliente y el chofer existan. Ahora pasa por PedidoService, igual
+// que la ruta PUT /api/pedidos/:id.
 router.post("/:id/editar", normalizarBodyWeb, validarPedido, (req, res, next) => {
     try {
         const id = Number(req.params.id);
-        pedidosRepo.update(id, req.body);
+        pedidoService.actualizarPedido(id, req.body);
         res.redirect("/pedidos");
     } catch (error) {
         next(error);

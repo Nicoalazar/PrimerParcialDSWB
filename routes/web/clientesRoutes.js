@@ -4,6 +4,7 @@ const router = express.Router();
 
 const Cliente = require("../../models/Cliente");
 const JsonRepository = require("../../repositories/JsonRepository");
+const { validarCliente, validarClienteUpdate } = require("../../middlewares/validate");
 
 const clientesRepo = new JsonRepository("clientes.json");
 
@@ -27,7 +28,9 @@ router.get("/nuevo", (req, res) => {
 
 
 // POST / - alta
-router.post("/", (req, res) => {
+// Antes no pasaba por ningún validador: un POST vacío guardaba un cliente
+// con solo el id. Ahora usa el mismo validarCliente que la API. (BUG-01)
+router.post("/", validarCliente, (req, res) => {
 
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
 
@@ -57,7 +60,9 @@ router.get("/:id/editar", (req, res) => {
 
 
 // POST /:id/editar - guardar edición
-router.post("/:id/editar", (req, res) => {
+// Mismo problema que el alta: no validaba nada, se podía dejar un cliente
+// con campos vacíos. Ahora usa validarClienteUpdate, igual que la API. (BUG-11)
+router.post("/:id/editar", validarClienteUpdate, (req, res) => {
 
     const id = parseInt(req.params.id);
 
