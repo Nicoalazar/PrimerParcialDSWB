@@ -1,0 +1,76 @@
+extends ../layout
+
+block content
+    h2 Nuevo pedido
+
+    form(action="/pedidos" method="POST")
+        div
+            label(for="clienteId") Cliente:
+            br
+            select(name="clienteId" id="clienteId" required)
+                option(value="") -- Seleccione un cliente --
+                each cliente in clientes
+                    option(value=cliente.id)= cliente.nombre
+
+        br
+        div
+            label(for="choferId") Chofer:
+            br
+            select(name="choferId" id="choferId" required)
+                option(value="") -- Seleccione un chofer --
+                each chofer in choferes
+                    option(value=chofer.id)= chofer.nombre
+
+        br
+        div
+            label(for="fechaHoraProgramada") Fecha y hora programada:
+            br
+            input(type="text" name="fechaHoraProgramada" id="fechaHoraProgramada" placeholder="2026-09-16T08:00:00" required)
+
+        br
+        h3 Ítems del pedido
+        p(style="color: #666; font-size: 0.9em;") Ingrese la descripción indicando la presentación (ej: cajón, kg, atado, litros, etc) o unidad y en cantidad únicamente el número.
+        table
+            thead
+                tr
+                    th Descripción (con unidad/presentación)
+                    th Cantidad
+            tbody#items-tbody
+                tr
+                    td
+                        input(type="text" name="item_descripcion[]" class="input-desc" placeholder="Ej: Lechuga (cajón)" required)
+                    td
+                        input(type="number" name="item_cantidad[]" min="1" placeholder="10" required)
+
+        p
+            button(type="button" id="btn-agregar") + Agregar otro ítem
+
+        br
+        button(type="submit") Guardar pedido
+        |  
+        a(href="/pedidos") Cancelar
+
+    script.
+        const tbody = document.getElementById("items-tbody");
+        const btnAgregar = document.getElementById("btn-agregar");
+
+        function agregarFila() {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><input type="text" name="item_descripcion[]" class="input-desc" placeholder="Ej: Tomate perita (kg)"></td>
+                <td><input type="number" name="item_cantidad[]" min="1" placeholder="5"></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        btnAgregar.addEventListener("click", agregarFila);
+
+        tbody.addEventListener("input", (e) => {
+            if (e.target.classList.contains("input-desc")) {
+                const inputs = tbody.querySelectorAll(".input-desc");
+                const ultimoInput = inputs[inputs.length - 1];
+                if (e.target === ultimoInput && e.target.value.trim() !== "") {
+                    agregarFila();
+                }
+            }
+        });

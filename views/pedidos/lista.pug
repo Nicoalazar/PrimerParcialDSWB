@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+    h2 Pedidos
+    p
+        a(href="/pedidos/nuevo") + Nuevo pedido
+    table
+        thead
+            tr
+                th ID
+                th Cliente
+                th Chofer
+                th Fecha programada
+                th Estado
+                th Acciones
+        tbody
+            if pedidos.length === 0
+                tr
+                    td(colspan="6") No hay pedidos registrados.
+            else
+                each pedido in pedidos
+                    tr
+                        td= pedido.id
+                        td= pedido.clienteNombre
+                        td= pedido.choferNombre
+                        td= pedido.fechaHoraProgramada
+                        td= pedido.estado
+                        td
+                            a(href=`/pedidos/${pedido.id}`) Ver detalle

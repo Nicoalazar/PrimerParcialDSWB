@@ -30,7 +30,7 @@ app.use("/api/choferes", pedidosRoutes.choferesRouter);
 
 // rutas web (vistas Pug)  se montan en Sprint 6 y 7
 app.use("/clientes", require("./routes/web/clientesRoutes"));
-// app.use("/pedidos", require("./routes/web/pedidosRoutes"));
+app.use("/pedidos", require("./routes/web/pedidosRoutes"));
 
 // 404 para rutas inexistentes y manejo centralizado de errores (siempre al final)
 app.use(notFound);

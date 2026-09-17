@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+    h2 Detalle del Pedido ##{pedido.id}
+
+    p
+        strong Estado actual: 
+        span= pedido.estado
+    p
+        strong Cliente: 
+        span= cliente ? cliente.nombre : `ID ${pedido.clienteId}`
+    p
+        strong Chofer asignado: 
+        span= chofer ? chofer.nombre : `ID ${pedido.choferId}`
+    p
+        strong Fecha programada: 
+        span= pedido.fechaHoraProgramada
+
+    h3 Items del pedido
+    if pedido.items && pedido.items.length > 0
+        ul
+            each item in pedido.items
+                li #{item.descripcion} - Cantidad: #{item.cantidad}
+    else
+        p Sin items especificados.
+
+    hr
+
+    if proximoEstado
+        form(action=`/pedidos/${pedido.id}/estado` method="POST")
+            button(type="submit") Avanzar estado a "#{proximoEstado}"
+    else
+        p Este pedido ya se encuentra en su estado final (entregado).
+
+    p
+        a(href="/pedidos") ← Volver al listado
