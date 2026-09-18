@@ -179,6 +179,8 @@ Colección: `docs/api-collection.postman.json`. Capturas en `docs/evidencia/`.
 
 ![GET /api/clientes/:id inexistente → 404](evidencia/clientes_get_404.png)
 
+![POST /api/clientes con body vacío → 400](evidencia/clientes_post_400.png)
+
 **Módulo Pedidos**
 
 ![GET /api/pedidos](evidencia/pedidos_get.png)
@@ -197,6 +199,12 @@ Colección: `docs/api-collection.postman.json`. Capturas en `docs/evidencia/`.
 
 ![GET /api/pedidos/:id inexistente → 404](evidencia/pedidos_get_404.png)
 
+![POST /api/pedidos sin items → 400](evidencia/pedidos_post_400.png)
+
 **Choferes (solo lectura)**
 
 ![GET /api/choferes](evidencia/choferes_get.png)
+
+**Manejo de errores**
+
+![GET ruta inexistente → 404](evidencia/ruta_404.png)
