@@ -25,15 +25,8 @@ Capturas de request/response de cada endpoint de la API, tomadas desde Postman c
 | `pedidos_patch_estado.png` | `PATCH /api/pedidos/:id/estado` (transición válida) | 200 |
 | `pedidos_patch_estado_400.png` | `PATCH /api/pedidos/:id/estado` (transición inválida) | 400 |
 | `choferes_get.png` | `GET /api/choferes` | 200 |
-
-## Capturas pendientes
-
-Requests que están en la colección Postman pero todavía no tienen captura:
-
-| Archivo | Request | Status esperado |
-|---|---|---|
 | `clientes_post_400.png` | `POST /api/clientes` con body vacío → `{ mensaje, errores }` | 400 |
-| `pedidos_post_400.png` | `POST /api/pedidos` con `clienteId` inexistente | 400 |
+| `pedidos_post_400.png` | `POST /api/pedidos` sin items → `{ mensaje, errores }` | 400 |
 | `ruta_404.png` | `GET /api/loquesea` → `{ mensaje: "Ruta no encontrada" }` | 404 |
 
 Después de probar, recordar `git checkout data/` para dejar el seed como estaba.
