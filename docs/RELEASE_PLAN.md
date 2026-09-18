@@ -86,7 +86,9 @@ README.md
   bibliografia.md
   roles.md
   api-collection.postman.json → colección Postman (v2.1) con los requests de cada módulo
-  /evidencia                  → capturas por módulo
+  /evidencia                  → capturas por módulo (<modulo>_<operacion>.png)
+  post-oficina-grupo.md       → texto listo para el post en la oficina del grupo
+  smoke-test.js               → prueba automática end-to-end (node docs/smoke-test.js)
   DOCUMENTACION_Parte1.md     → fuente del PDF de entrega
 ```
 
@@ -200,11 +202,11 @@ README.md
 ### Día 5 — Viernes 18/9 (deadline del video)
 
 **Sprint 9 (mañana):**
-- [ ] Exportar la colección Postman a `docs/api-collection.postman.json` (al menos un request por endpoint de cada módulo)
-- [ ] Capturas de cada request/response en `docs/evidencia/` con nombre `<modulo>_<operacion>.png` (ej. `clientes_post.png`)
-- [ ] `README.md`: instalación, estructura, **tabla de endpoints por módulo (método · ruta · body de ejemplo · respuesta)**, listado de archivos de `/data`
-- [ ] `docs/bibliografia.md` y `docs/roles.md` con nombres reales
-- [ ] `docs/DOCUMENTACION_Parte1.md` con la estructura exacta de la sección 7 (portada con `DSWB_2#_#################_2C26`, empresa de desarrollo, integrantes). Este archivo es la fuente del PDF.
+- [x] Exportar la colección Postman a `docs/api-collection.postman.json` (al menos un request por endpoint de cada módulo)
+- [x] Capturas de cada request/response en `docs/evidencia/` con nombre `<modulo>_<operacion>.png` (ej. `clientes_post.png`)
+- [x] `README.md`: instalación, estructura, **tabla de endpoints por módulo (método · ruta · body de ejemplo · respuesta)**, listado de archivos de `/data`
+- [x] `docs/bibliografia.md` y `docs/roles.md` con nombres reales
+- [x] `docs/DOCUMENTACION_Parte1.md` con la estructura exacta de la sección 7 (portada con `DSWB_2#_#################_2C26`, empresa de desarrollo, integrantes). Este archivo es la fuente del PDF.
 - [ ] Un integrante postea en la "oficina del grupo": empresa de desarrollo, caso, comentario 1-2 párrafos, link Drive, integrantes
 - [ ] `git checkout data/` antes del último commit para asegurar que `/data` sigue con el seed original
 
