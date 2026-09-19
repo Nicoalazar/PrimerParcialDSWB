@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FreshRoute B2B",
-    "description": "Colección de pruebas de la API. Primer Parcial DSWB - LosBuleanos.",
+    "description": "Colección de pruebas de la API. Primer Parcial DSWB - LosBuleanos.\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000.\nCada request indica en su descripción el status esperado. Después de probar, correr `git checkout data/` para restaurar el seed.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -18,6 +18,7 @@
           "name": "GET todos los clientes",
           "request": {
             "method": "GET",
+            "description": "200 → array de clientes",
             "url": "{{baseUrl}}/api/clientes"
           }
         },
@@ -25,6 +26,7 @@
           "name": "GET cliente por id",
           "request": {
             "method": "GET",
+            "description": "200 → objeto cliente",
             "url": "{{baseUrl}}/api/clientes/1"
           }
         },
@@ -32,6 +34,7 @@
           "name": "POST crear cliente",
           "request": {
             "method": "POST",
+            "description": "201 → { mensaje: \"Cliente creado\", cliente }",
             "header": [
               {
                 "key": "Content-Type",
@@ -54,6 +57,7 @@
           "name": "PUT actualizar cliente",
           "request": {
             "method": "PUT",
+            "description": "200 → { mensaje: \"Cliente actualizado\", cliente }. Edición parcial: solo se pisan los campos enviados.",
             "header": [
               {
                 "key": "Content-Type",
@@ -76,6 +80,7 @@
           "name": "DELETE eliminar cliente",
           "request": {
             "method": "DELETE",
+            "description": "200 → { mensaje: \"Cliente eliminado\" }",
             "url": "{{baseUrl}}/api/clientes/4"
           }
         },
@@ -83,7 +88,54 @@
           "name": "GET cliente inexistente (404)",
           "request": {
             "method": "GET",
+            "description": "404 → { mensaje: \"Cliente no encontrado\" }",
             "url": "{{baseUrl}}/api/clientes/99"
+          }
+        },
+        {
+          "name": "POST crear cliente body vacío (400)",
+          "request": {
+            "method": "POST",
+            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [...] } (middleware validarCliente)",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clientes",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT actualizar cliente sin campos (400)",
+          "request": {
+            "method": "PUT",
+            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [\"hay que mandar al menos un campo para actualizar\"] } (middleware validarClienteUpdate)",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clientes/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         }
       ]
@@ -95,6 +147,7 @@
           "name": "GET todos los pedidos",
           "request": {
             "method": "GET",
+            "description": "200 → array de pedidos",
             "url": "{{baseUrl}}/api/pedidos"
           }
         },
@@ -102,6 +155,7 @@
           "name": "GET pedido por id",
           "request": {
             "method": "GET",
+            "description": "200 → objeto pedido",
             "url": "{{baseUrl}}/api/pedidos/1"
           }
         },
@@ -109,6 +163,7 @@
           "name": "POST crear pedido",
           "request": {
             "method": "POST",
+            "description": "201 → { mensaje: \"Pedido creado\", pedido }. El pedido nace en estado \"pendiente\". clienteId y choferId deben existir en el seed.",
             "header": [
               {
                 "key": "Content-Type",
@@ -131,6 +186,7 @@
           "name": "PUT actualizar pedido",
           "request": {
             "method": "PUT",
+            "description": "200 → { mensaje: \"Pedido actualizado\", pedido }. Edición parcial. El estado NO se cambia por PUT, solo por PATCH /:id/estado.",
             "header": [
               {
                 "key": "Content-Type",
@@ -153,6 +209,7 @@
           "name": "PATCH cambiar estado",
           "request": {
             "method": "PATCH",
+            "description": "200 → { mensaje: \"Estado actualizado\", pedido }. Solo se permite pasar al estado siguiente: pendiente → asignado → en tránsito → entregado.",
             "header": [
               {
                 "key": "Content-Type",
@@ -175,6 +232,7 @@
           "name": "PATCH cambiar estado inválido (400)",
           "request": {
             "method": "PATCH",
+            "description": "400 → { mensaje: \"Transición inválida: no se puede pasar de \\\"asignado\\\" a \\\"entregado\\\"\" } (PedidoService)",
             "header": [
               {
                 "key": "Content-Type",
@@ -194,9 +252,33 @@
           }
         },
         {
+          "name": "PATCH cambiar estado sin estado en el body (400)",
+          "request": {
+            "method": "PATCH",
+            "description": "400 → { mensaje: \"Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado\" }",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos/1/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
           "name": "DELETE eliminar pedido",
           "request": {
             "method": "DELETE",
+            "description": "200 → { mensaje: \"Pedido eliminado\" }",
             "url": "{{baseUrl}}/api/pedidos/3"
           }
         },
@@ -204,7 +286,54 @@
           "name": "GET pedido inexistente (404)",
           "request": {
             "method": "GET",
+            "description": "404 → { mensaje: \"Pedido no encontrado\" }",
             "url": "{{baseUrl}}/api/pedidos/99"
+          }
+        },
+        {
+          "name": "POST crear pedido con cliente inexistente (400)",
+          "request": {
+            "method": "POST",
+            "description": "400 → { mensaje: \"El cliente con id 99 no existe\" } (PedidoService)",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 99,\n  \"choferId\": 1,\n  \"items\": [\n    { \"descripcion\": \"Cajón de frutas\", \"cantidad\": 8 }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST crear pedido sin items (400)",
+          "request": {
+            "method": "POST",
+            "description": "400 → { mensaje: \"Datos de pedido inválidos\", errores: [\"items es obligatorio y debe ser un arreglo con al menos un ítem\"] } (middleware validarPedido)",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"choferId\": 1,\n  \"items\": [],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         }
       ]
@@ -216,7 +345,21 @@
           "name": "GET todos los choferes",
           "request": {
             "method": "GET",
+            "description": "200 → array de choferes (seed de solo lectura, sin POST/PUT/DELETE)",
             "url": "{{baseUrl}}/api/choferes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Errores",
+      "item": [
+        {
+          "name": "GET ruta inexistente (404)",
+          "request": {
+            "method": "GET",
+            "description": "404 → { mensaje: \"Ruta no encontrada\" } (middleware notFound)",
+            "url": "{{baseUrl}}/api/loquesea"
           }
         }
       ]
