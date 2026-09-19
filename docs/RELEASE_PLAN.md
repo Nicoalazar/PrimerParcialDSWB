@@ -102,11 +102,11 @@ README.md
 
 ## 3. Roles (5 integrantes, 2 módulos → más profundidad, no más módulos)
 
-- **Integrante 1 — Backend Clientes:** model, repository, controller, router (CRUD completo)
-- **Integrante 2 — Backend Pedidos:** model, repository, controller, router (CRUD completo) + carga del seed `choferes.json`
-- **Integrante 3 — Vistas Pug:** layout base + vistas de Clientes y Pedidos (lista, detalle, form) + `routes/web`
-- **Integrante 4 — Middleware + Service:** logger, validación, manejo de errores, `PedidoService` (asignación de chofer, cambio de estado)
-- **Integrante 5 — QA + Documentación:** colección Postman/Thunder, evidencia, arma el documento con el template exacto (sección 7), coordina el video, hace el post en la "oficina del grupo"
+- **Integrante 1 — Estructura base:** `app.js`, configuración de Express y Pug, estructura MVC de carpetas, layout base y carga del seed `choferes.json` (Sprint 1)
+- **Integrante 2 — Clientes de punta a punta:** `JsonRepository` genérico, model, controller y router de Clientes + `routes/web/clientesRoutes.js` y sus vistas Pug (Sprints 2 y 6)
+- **Integrante 3 — Pedidos de punta a punta:** model, controller y router de Pedidos + `GET /api/choferes` + `routes/web/pedidosRoutes.js` y sus vistas Pug (Sprints 3 y 7)
+- **Integrante 4 — Service + Middleware:** `PedidoService` (existencia de cliente/chofer, cambio de estado), logger, validación y manejo de errores (Sprints 4 y 5)
+- **Integrante 5 — QA + Documentación:** code review cruzado, bug bash, smoke test, colección Postman, evidencia, arma el documento con el template exacto (sección 7), coordina el video, hace el post en la "oficina del grupo" (Sprints 8 y 9)
 
 ---
 
