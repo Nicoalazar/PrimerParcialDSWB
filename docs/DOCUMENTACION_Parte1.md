@@ -70,11 +70,11 @@ Se implementaron **dos módulos funcionales con CRUD completo — Clientes y Ped
 
 | Integrante | Responsabilidad | Sprints |
 |---|---|---|
-| Nicolás Zalazar | Estructura base del proyecto, Backend Clientes (model, controller, router) + `JsonRepository` genérico, vistas web de Clientes, documentación y evidencia | 1, 2, 6, 9 |
-| Laura Olivera | Backend Pedidos (model, controller, router) + seed de choferes expuesto en `GET /api/choferes` | 3 |
-| Christian Albornoz | `PedidoService` (validación de cliente/chofer, transiciones de estado) y vistas web de Pedidos | 4, 7 |
-| Belén Lau | Middlewares: logger, validación de body y manejo centralizado de errores / 404 | 5 |
-| Fernando Guevara | QA: code review cruzado, bug bash end-to-end, smoke test automatizado y corrección de bugs | 8 |
+| Nicolás Zalazar | Estructura base del proyecto: `app.js`, configuración de Express y Pug, estructura MVC de carpetas y seed de choferes | 1 |
+| Laura Olivera | `JsonRepository` genérico, Backend Clientes (model, controller, router) y vistas web de Clientes | 2, 6 |
+| Christian Albornoz | Backend Pedidos (model, controller, router) + seed de choferes expuesto en `GET /api/choferes`, y vistas web de Pedidos | 3, 7 |
+| Belén Lau | `PedidoService` (validación de cliente/chofer, transiciones de estado) y middlewares: logger, validación de body y manejo centralizado de errores / 404 | 4, 5 |
+| Fernando Guevara | QA: code review cruzado, bug bash end-to-end, smoke test automatizado y corrección de bugs · documentación y evidencia | 8, 9 |
 
 El trabajo se organizó en 10 sprints cortos (2 por día) con un GitHub Project, una rama por sprint y pull requests con revisión cruzada antes de integrar a `development` y luego a `main`.
 
