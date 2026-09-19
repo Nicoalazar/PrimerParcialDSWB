@@ -163,11 +163,11 @@ Capturas de cada request/response en [`docs/evidencia/`](docs/evidencia/), con n
 
 | Integrante | Responsabilidad |
 |---|---|
-| Nicolás Zalazar | Estructura base, Backend Clientes + `JsonRepository`, vistas web de Clientes, documentación |
-| Laura Olivera | Backend Pedidos + `GET /api/choferes` |
-| Christian Albornoz | `PedidoService` y vistas web de Pedidos |
-| Belén Lau | Middlewares: logger, validación, manejo de errores |
-| Fernando Guevara | QA: code review cruzado, bug bash, smoke test |
+| Nicolás Zalazar | Estructura base del proyecto y seed de choferes |
+| Laura Olivera | `JsonRepository`, Backend Clientes y vistas web de Clientes |
+| Christian Albornoz | Backend Pedidos + `GET /api/choferes` y vistas web de Pedidos |
+| Belén Lau | `PedidoService` y middlewares: logger, validación, manejo de errores |
+| Fernando Guevara | QA: code review cruzado, bug bash, smoke test y documentación |
 
 - Roles por sprint: [`docs/roles.md`](docs/roles.md)
 - Release plan con sprints, DoD y riesgos: [`docs/RELEASE_PLAN.md`](docs/RELEASE_PLAN.md)

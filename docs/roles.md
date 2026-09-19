@@ -2,11 +2,11 @@
 
 | Integrante | GitHub | Responsabilidad | Sprints liderados |
 |---|---|---|---|
-| Nicolás Zalazar | @Nicoalazar | Estructura base del proyecto, Backend Clientes (model, controller, router) + `JsonRepository` genérico, vistas web de Clientes, documentación y evidencia | Sprint 1 (estructura base) · Sprint 2 (CRUD Clientes + JsonRepository) · Sprint 6 (vistas Clientes) · Sprint 9 (documentación + evidencia) |
-| Laura Olivera | @laura108814 | Backend Pedidos (model, controller, router) + seed `choferes.json` expuesto en `GET /api/choferes` | Sprint 3 (CRUD Pedidos) |
-| Christian Albornoz | @albor77 | `PedidoService` (existencia de cliente/chofer, transiciones de estado) y vistas web de Pedidos + `routes/web/pedidosRoutes.js` | Sprint 4 (PedidoService + merge) · Sprint 7 (vistas Pedidos) |
-| Belén Lau | @LauBelen | Middlewares: `logger`, `validate` (body de POST/PUT) y `errorHandler` (404 + errores centralizados) | Sprint 5 (middlewares) |
-| Fernando Guevara | @Fer-505 | QA: code review cruzado, bug bash end-to-end, `docs/smoke-test.js` y fixes de las rutas web | Sprint 8 (code review + bug bash) |
+| Nicolás Zalazar | @Nicoalazar | Estructura base del proyecto: `app.js`, configuración de Express y Pug, estructura MVC de carpetas y seed `choferes.json` | Sprint 1 (estructura base) |
+| Laura Olivera | @laura108814 | `JsonRepository` genérico, Backend Clientes (model, controller, router) y vistas web de Clientes | Sprint 2 (CRUD Clientes + JsonRepository) · Sprint 6 (vistas Clientes) |
+| Christian Albornoz | @albor77 | Backend Pedidos (model, controller, router) + `GET /api/choferes` de solo lectura, y vistas web de Pedidos con `routes/web/pedidosRoutes.js` | Sprint 3 (CRUD Pedidos) · Sprint 7 (vistas Pedidos) |
+| Belén Lau | @LauBelen | `PedidoService` (existencia de cliente/chofer, transiciones de estado) y middlewares: `logger`, `validate` (body de POST/PUT) y `errorHandler` (404 + errores centralizados) | Sprint 4 (PedidoService + merge) · Sprint 5 (middlewares) |
+| Fernando Guevara | @Fer-505 | QA: code review cruzado, bug bash end-to-end, `docs/smoke-test.js` y fixes de las rutas web · documentación y evidencia | Sprint 8 (code review + bug bash) · Sprint 9 (documentación + evidencia) |
 
 El sprint asignado indica quién lidera y es responsable del DoD de ese sprint. El resto del equipo participa en los sprints que dependen de su módulo (ver `RELEASE_PLAN.md`).
 
