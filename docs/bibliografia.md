@@ -30,8 +30,3 @@
 - GitHub — CODEOWNERS — https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 - MDN — Métodos HTTP y códigos de estado — https://developer.mozilla.org/es/docs/Web/HTTP/Status
 
-## Videos
-
-<<COMPLETAR: agregar los videos de YouTube que usó el equipo, con título y link. Ejemplo de formato:>>
-
-- <<Título del video>> — <<canal>> — <<https://www.youtube.com/watch?v=...>>

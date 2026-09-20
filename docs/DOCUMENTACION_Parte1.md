@@ -1,14 +1,16 @@
 <!--
-Fuente del PDF de entrega. Generar el PDF desde este archivo (VS Code "Markdown PDF" o pandoc)
-y nombrarlo igual que la carpeta de Drive: DSWB_2<<COMISIÓN>>_<<NOMBRE>>_2C26
+Fuente del PDF de entrega. El PDF se genera desde este archivo (portada con logos, índice con páginas y capturas embebidas)
+y nombrarlo igual que la carpeta de Drive: DSWB_2A_grupo17-losbuleanos_2C26.pdf
 Antes de exportar: reemplazar todos los <<COMPLETAR>>.
 -->
+
+![IFTS N° 29](img/logo-ifts29.png) ![Buenos Aires Aprende — Agencia de Habilidades para el Futuro](img/logo-ba-aprende.png)
 
 # DOCUMENTACIÓN - Parte 1
 
 **Desarrollo de Sistemas Web (Back End) — 2° cuatrimestre 2026**
 
-**Caso #<<COMPLETAR>>: FreshRoute B2B — Logística de distribución refrigerada**
+**Caso 2: Distribución de Pedidos — “FreshRoute”** (FreshRoute B2B — logística de distribución refrigerada)
 
 **Empresa de Desarrollo: LosBuleanos**
 
@@ -17,10 +19,10 @@ Antes de exportar: reemplazar todos los <<COMPLETAR>>.
 - Nicolás Zalazar
 - Laura Olivera
 - Christian Albornoz
-- Belén Lau
+- Laura Belén Blanco
 - Fernando Guevara
 
-**Nombre del documento / carpeta Drive:** `DSWB_2<<COMPLETAR>>_<<COMPLETAR>>_2C26`
+**Nombre del documento / carpeta Drive:** `DSWB_2A_grupo17-losbuleanos_2C26`
 
 ---
 
@@ -28,9 +30,9 @@ Antes de exportar: reemplazar todos los <<COMPLETAR>>.
 
 | Recurso | Link |
 |---|---|
-| Carpeta Drive (`Primera Entrega`) | <<COMPLETAR>> |
+| Carpeta Drive (`Primera Entrega`) | https://drive.google.com/drive/folders/1ibVRI3154gZ3MLaRu_l_h6XabXx1RM2T?usp=drive_link |
 | Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB |
-| Video de presentación | <<COMPLETAR>> |
+| Video de presentación | https://drive.google.com/file/d/1phkYsp872mwYkyRmzw7msNFFvt_oeUnf/view?usp=drive_link |
 
 ---
 
@@ -47,10 +49,6 @@ Antes de exportar: reemplazar todos los <<COMPLETAR>>.
 - Pug: referencia del lenguaje e integración con Express — https://pugjs.org/
 - Postman: importar/exportar colecciones — https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-and-exporting-overview/
 - MDN: métodos HTTP y códigos de estado — https://developer.mozilla.org/es/docs/Web/HTTP/Status
-
-**Videos**
-
-- <<COMPLETAR: título — canal — link de YouTube>>
 
 El detalle completo está en `docs/bibliografia.md` del repositorio.
 
@@ -73,7 +71,7 @@ Se implementaron **dos módulos funcionales con CRUD completo — Clientes y Ped
 | Nicolás Zalazar | Estructura base del proyecto: `app.js`, configuración de Express y Pug, estructura MVC de carpetas y seed de choferes | 1 |
 | Laura Olivera | `JsonRepository` genérico, Backend Clientes (model, controller, router) y vistas web de Clientes | 2, 6 |
 | Christian Albornoz | Backend Pedidos (model, controller, router) + seed de choferes expuesto en `GET /api/choferes`, y vistas web de Pedidos | 3, 7 |
-| Belén Lau | `PedidoService` (validación de cliente/chofer, transiciones de estado) y middlewares: logger, validación de body y manejo centralizado de errores / 404 | 4, 5 |
+| Laura Belén Blanco | `PedidoService` (validación de cliente/chofer, transiciones de estado) y middlewares: logger, validación de body y manejo centralizado de errores / 404 | 4, 5 |
 | Fernando Guevara | QA: code review cruzado, bug bash end-to-end, smoke test automatizado y corrección de bugs · documentación y evidencia | 8, 9 |
 
 El trabajo se organizó en 10 sprints cortos (2 por día) con un GitHub Project, una rama por sprint y pull requests con revisión cruzada antes de integrar a `development` y luego a `main`.
