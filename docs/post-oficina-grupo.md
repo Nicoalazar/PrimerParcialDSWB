@@ -6,7 +6,7 @@ Lo publica **un solo integrante**. Copiar el texto de abajo, reemplazar los `<<C
 
 **Empresa de Desarrollo:** LosBuleanos
 
-**Caso asignado:** #<<COMPLETAR>> — FreshRoute B2B (logística de distribución refrigerada)
+**Caso asignado:** Caso 2: Distribución de Pedidos — “FreshRoute” (FreshRoute B2B, logística de distribución refrigerada)
 
 **Comentario:**
 
@@ -14,7 +14,7 @@ Para esta primera entrega desarrollamos el backend de FreshRoute B2B en Node.js 
 
 Agregamos middlewares de logging, validación de datos y manejo centralizado de errores (400 / 404 / 500), un repositorio genérico para leer y escribir los JSON, y una colección Postman con evidencia de cada endpoint. Trabajamos en sprints cortos con ramas por sprint, pull requests y revisión cruzada. Para la segunda entrega queda el módulo de Choferes con CRUD completo y la migración de la persistencia a MongoDB.
 
-**Link a la carpeta Drive:** <<COMPLETAR>>
+**Link a la carpeta Drive:** https://drive.google.com/drive/folders/1ibVRI3154gZ3MLaRu_l_h6XabXx1RM2T?usp=drive_link
 
 **Repositorio:** https://github.com/Nicoalazar/PrimerParcialDSWB
 
@@ -23,5 +23,5 @@ Agregamos middlewares de logging, validación de datos y manejo centralizado de 
 - Nicolás Zalazar
 - Laura Olivera
 - Christian Albornoz
-- Belén Lau
+- Laura Belén Blanco
 - Fernando Guevara
