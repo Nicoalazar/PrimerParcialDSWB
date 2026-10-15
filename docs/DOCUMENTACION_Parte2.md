@@ -31,7 +31,7 @@ En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video,
 | Recurso | Link |
 |---|---|
 | Carpeta Drive (`Segunda Entrega`) | <<COMPLETAR>> |
-| Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB (versión del segundo parcial en `main`; la del primero en el tag `v1.0-primer-parcial`) |
+| Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB (versión del segundo parcial en `main` y en el tag `v2.0-segundo-parcial`; la del primero en el tag `v1.0-primer-parcial`) |
 | Video: explicación del código con MongoDB | <<COMPLETAR: link de Drive/YouTube con permiso de visualización>> |
 
 ---
