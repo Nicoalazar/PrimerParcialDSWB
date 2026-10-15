@@ -1,5 +1,8 @@
+require("dotenv").config();
+
 const express = require("express");
 const path = require("path");
+const conectarDB = require("./config/db");
 const logger = require("./middlewares/logger");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 
@@ -21,14 +24,14 @@ app.get("/", (req, res) => {
     res.render("index", { titulo: "FreshRoute B2B" });
 });
 
-// rutas API (JSON, se prueban con Postman)  se montan en Sprint 2 y 3
+// rutas API (JSON, se prueban con Postman)
 app.use("/api/clientes", require("./routes/api/clientesRoutes"));
 
 const pedidosRoutes = require("./routes/api/pedidosRoutes");
 app.use("/api/pedidos", pedidosRoutes);
 app.use("/api/choferes", pedidosRoutes.choferesRouter);
 
-// rutas web (vistas Pug)  se montan en Sprint 6 y 7
+// rutas web (vistas Pug)
 app.use("/clientes", require("./routes/web/clientesRoutes"));
 app.use("/pedidos", require("./routes/web/pedidosRoutes"));
 
@@ -36,6 +39,17 @@ app.use("/pedidos", require("./routes/web/pedidosRoutes"));
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log("Servidor corriendo en puerto " + PORT);
-});
+// el servidor recién escucha cuando la base está conectada
+const iniciar = async () => {
+    try {
+        await conectarDB();
+        app.listen(PORT, () => {
+            console.log("Servidor corriendo en puerto " + PORT);
+        });
+    } catch (error) {
+        console.error("No se pudo conectar a MongoDB:", error.message);
+        process.exit(1);
+    }
+};
+
+iniciar();

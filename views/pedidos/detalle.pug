@@ -8,10 +8,10 @@ block content
         span= pedido.estado
     p
         strong Cliente: 
-        span= cliente ? cliente.nombre : `ID ${pedido.clienteId}`
+        span= cliente ? cliente.nombre : "(cliente eliminado)"
     p
         strong Chofer asignado: 
-        span= chofer ? chofer.nombre : `ID ${pedido.choferId}`
+        span= chofer ? `${chofer.nombre} ${chofer.apellido}` : "(chofer eliminado)"
     p
         strong Fecha programada: 
         span= pedido.fechaHoraProgramada

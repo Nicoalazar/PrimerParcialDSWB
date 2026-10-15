@@ -1,13 +1,13 @@
 const Cliente = require("../models/Cliente");
-const JsonRepository = require("../repositories/JsonRepository");
 
-const clientesRepo = new JsonRepository("clientes.json");
+// Los controllers no llevan try/catch: si una promesa falla (por ejemplo un
+// id con formato inválido), Express 5 la manda sola al errorHandler.
 
 
 // GET ALL
-const obtenerClientes = (req, res) => {
+const obtenerClientes = async (req, res) => {
 
-    const clientes = clientesRepo.getAll();
+    const clientes = await Cliente.find();
 
     res.json(clientes);
 
@@ -15,11 +15,9 @@ const obtenerClientes = (req, res) => {
 
 
 // GET BY ID
-const obtenerClientePorId = (req, res) => {
+const obtenerClientePorId = async (req, res) => {
 
-    const id = parseInt(req.params.id);
-
-    const cliente = clientesRepo.getById(id);
+    const cliente = await Cliente.findById(req.params.id);
 
     if (!cliente) {
 
@@ -35,13 +33,11 @@ const obtenerClientePorId = (req, res) => {
 
 
 // CREATE
-const crearCliente = (req, res) => {
+const crearCliente = async (req, res) => {
 
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
 
-    const nuevoCliente = new Cliente(nombre, direccion, zona, contacto, horarioEntrega);
-
-    const clienteCreado = clientesRepo.create(nuevoCliente);
+    const clienteCreado = await Cliente.create({ nombre, direccion, zona, contacto, horarioEntrega });
 
     res.status(201).json({
         mensaje: "Cliente creado",
@@ -52,9 +48,7 @@ const crearCliente = (req, res) => {
 
 
 // UPDATE
-const actualizarCliente = (req, res) => {
-
-    const id = parseInt(req.params.id);
+const actualizarCliente = async (req, res) => {
 
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
 
@@ -66,7 +60,8 @@ const actualizarCliente = (req, res) => {
     if (contacto !== undefined) datos.contacto = contacto;
     if (horarioEntrega !== undefined) datos.horarioEntrega = horarioEntrega;
 
-    const cliente = clientesRepo.update(id, datos);
+    // returnDocument: "after" devuelve el documento ya actualizado (no el de antes)
+    const cliente = await Cliente.findByIdAndUpdate(req.params.id, datos, { returnDocument: "after", runValidators: true });
 
     if (!cliente) {
 
@@ -85,11 +80,9 @@ const actualizarCliente = (req, res) => {
 
 
 // DELETE
-const eliminarCliente = (req, res) => {
+const eliminarCliente = async (req, res) => {
 
-    const id = parseInt(req.params.id);
-
-    const eliminado = clientesRepo.delete(id);
+    const eliminado = await Cliente.findByIdAndDelete(req.params.id);
 
     if (!eliminado) {
 

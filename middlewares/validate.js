@@ -5,6 +5,11 @@
 // POST (validarCliente / validarPedido): exige TODOS los campos, porque es un alta.
 // PUT (validarClienteUpdate / validarPedidoUpdate): valida solo los campos que
 // vinieron en el body (edición parcial); si no vino ninguno, responde 400.
+//
+// clienteId y choferId tienen que tener formato de id de MongoDB (ObjectId);
+// que además existan en la base lo verifica PedidoService.
+
+const { isValidObjectId } = require("mongoose");
 
 const validarCliente = (req, res, next) => {
 
@@ -96,12 +101,12 @@ const validarPedido = (req, res, next) => {
     const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
     const errores = [];
 
-    if (clienteId === undefined || isNaN(Number(clienteId))) {
-        errores.push("clienteId es obligatorio y debe ser numérico");
+    if (!isValidObjectId(clienteId)) {
+        errores.push("clienteId es obligatorio y debe ser un id de MongoDB válido");
     }
 
-    if (choferId === undefined || isNaN(Number(choferId))) {
-        errores.push("choferId es obligatorio y debe ser numérico");
+    if (!isValidObjectId(choferId)) {
+        errores.push("choferId es obligatorio y debe ser un id de MongoDB válido");
     }
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -147,12 +152,12 @@ const validarPedidoUpdate = (req, res, next) => {
         errores.push("hay que mandar al menos un campo para actualizar");
     }
 
-    if (clienteId !== undefined && isNaN(Number(clienteId))) {
-        errores.push("clienteId debe ser numérico");
+    if (clienteId !== undefined && !isValidObjectId(clienteId)) {
+        errores.push("clienteId debe ser un id de MongoDB válido");
     }
 
-    if (choferId !== undefined && isNaN(Number(choferId))) {
-        errores.push("choferId debe ser numérico");
+    if (choferId !== undefined && !isValidObjectId(choferId)) {
+        errores.push("choferId debe ser un id de MongoDB válido");
     }
 
     if (items !== undefined) {

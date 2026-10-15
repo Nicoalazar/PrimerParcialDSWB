@@ -1,0 +1,117 @@
+(node:17292) [DEP0176] DeprecationWarning: fs.F_OK is deprecated, use fs.constants.F_OK instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+newman
+
+FreshRoute B2B
+
+□ Clientes
+└ GET todos los clientes
+  GET http://localhost:3000/api/clientes [200 OK, 1.26kB, 34ms]
+  √  status 200
+
+└ GET cliente por id
+  GET http://localhost:3000/api/clientes/6ad02a706315d454dedfba8d [200 OK, 434B, 5ms]
+  √  status 200
+
+└ POST crear cliente
+  POST http://localhost:3000/api/clientes [201 Created, 461B, 7ms]
+  √  status 201
+
+└ PUT actualizar cliente
+  PUT http://localhost:3000/api/clientes/6ad02a75acd448833116db44 [200 OK, 462B, 6ms]
+  √  status 200
+
+└ DELETE eliminar cliente
+  DELETE http://localhost:3000/api/clientes/6ad02a75acd448833116db44 [200 OK, 266B, 3ms]
+  √  status 200
+
+└ GET cliente inexistente (404)
+  GET http://localhost:3000/api/clientes/000000000000000000000000 [404 Not Found, 277B, 3ms]
+  √  status 404
+
+└ GET cliente con id inválido (400)
+  GET http://localhost:3000/api/clientes/abc [400 Bad Request, 275B, 3ms]
+  √  status 400
+
+└ POST crear cliente body vacío (400)
+  POST http://localhost:3000/api/clientes [400 Bad Request, 515B, 3ms]
+  √  status 400
+
+└ PUT actualizar cliente sin campos (400)
+  PUT http://localhost:3000/api/clientes/6ad02a706315d454dedfba8d [400 Bad Request, 349B, 4ms]
+  √  status 400
+
+□ Choferes
+└ GET todos los choferes
+  GET http://localhost:3000/api/choferes [200 OK, 782B, 4ms]
+  √  status 200
+
+□ Pedidos
+└ GET todos los pedidos
+  GET http://localhost:3000/api/pedidos [200 OK, 1.11kB, 4ms]
+  √  status 200
+
+└ GET pedido por id
+  GET http://localhost:3000/api/pedidos/6ad02a706315d454dedfba96 [200 OK, 544B, 3ms]
+  √  status 200
+
+└ POST crear pedido
+  POST http://localhost:3000/api/pedidos [201 Created, 513B, 7ms]
+  √  status 201
+
+└ PUT actualizar pedido
+  PUT http://localhost:3000/api/pedidos/6ad02a76acd448833116db45 [200 OK, 513B, 6ms]
+  √  status 200
+
+└ PATCH cambiar estado
+  PATCH http://localhost:3000/api/pedidos/6ad02a76acd448833116db45/estado [200 OK, 512B, 6ms]
+  √  status 200
+
+└ PATCH cambiar estado inválido (400)
+  PATCH http://localhost:3000/api/pedidos/6ad02a76acd448833116db45/estado [400 Bad Request, 330B, 4ms]
+  √  status 400
+
+└ PATCH cambiar estado sin estado en el body (400)
+  PATCH http://localhost:3000/api/pedidos/6ad02a76acd448833116db45/estado [400 Bad Request, 340B, 4ms]
+  √  status 400
+
+└ GET pedido inexistente (404)
+  GET http://localhost:3000/api/pedidos/000000000000000000000000 [404 Not Found, 276B, 5ms]
+  √  status 404
+
+└ POST crear pedido con cliente inexistente (400)
+  POST http://localhost:3000/api/pedidos [400 Bad Request, 310B, 4ms]
+  √  status 400
+
+└ POST crear pedido sin items (400)
+  POST http://localhost:3000/api/pedidos [400 Bad Request, 364B, 2ms]
+  √  status 400
+
+└ DELETE eliminar pedido
+  DELETE http://localhost:3000/api/pedidos/6ad02a76acd448833116db45 [200 OK, 265B, 3ms]
+  √  status 200
+
+□ Errores
+└ GET ruta inexistente (404)
+  GET http://localhost:3000/api/loquesea [404 Not Found, 274B, 2ms]
+  √  status 404
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              22 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              22 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               0 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              22 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 2s                                      │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 5.14kB (approx)                        │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 2ms, max: 34ms, s.d.: 6ms] │
+└─────────────────────────────────────────────────────────────┘

@@ -3,16 +3,16 @@ const express = require("express");
 const router = express.Router();
 
 const Cliente = require("../../models/Cliente");
-const JsonRepository = require("../../repositories/JsonRepository");
 const { validarCliente, validarClienteUpdate } = require("../../middlewares/validate");
 
-const clientesRepo = new JsonRepository("clientes.json");
+// Las rutas son async: si una consulta a Mongo falla, Express 5 manda el
+// error al errorHandler sin necesidad de try/catch.
 
 
 // GET / - listado
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
 
-    const clientes = clientesRepo.getAll();
+    const clientes = await Cliente.find();
 
     res.render("clientes/lista", { titulo: "Clientes", clientes });
 
@@ -27,16 +27,12 @@ router.get("/nuevo", (req, res) => {
 });
 
 
-// POST / - alta
-// Antes no pasaba por ningún validador: un POST vacío guardaba un cliente
-// con solo el id. Ahora usa el mismo validarCliente que la API. (BUG-01)
-router.post("/", validarCliente, (req, res) => {
+// POST / - alta (mismo validarCliente que la API)
+router.post("/", validarCliente, async (req, res) => {
 
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
 
-    const nuevoCliente = new Cliente(nombre, direccion, zona, contacto, horarioEntrega);
-
-    clientesRepo.create(nuevoCliente);
+    await Cliente.create({ nombre, direccion, zona, contacto, horarioEntrega });
 
     res.redirect("/clientes");
 
@@ -44,11 +40,9 @@ router.post("/", validarCliente, (req, res) => {
 
 
 // GET /:id/editar - form de edición
-router.get("/:id/editar", (req, res) => {
+router.get("/:id/editar", async (req, res) => {
 
-    const id = parseInt(req.params.id);
-
-    const cliente = clientesRepo.getById(id);
+    const cliente = await Cliente.findById(req.params.id);
 
     if (!cliente) {
         return res.redirect("/clientes");
@@ -59,16 +53,16 @@ router.get("/:id/editar", (req, res) => {
 });
 
 
-// POST /:id/editar - guardar edición
-// Mismo problema que el alta: no validaba nada, se podía dejar un cliente
-// con campos vacíos. Ahora usa validarClienteUpdate, igual que la API. (BUG-11)
-router.post("/:id/editar", validarClienteUpdate, (req, res) => {
-
-    const id = parseInt(req.params.id);
+// POST /:id/editar - guardar edición (mismo validarClienteUpdate que la API)
+router.post("/:id/editar", validarClienteUpdate, async (req, res) => {
 
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
 
-    clientesRepo.update(id, { nombre, direccion, zona, contacto, horarioEntrega });
+    await Cliente.findByIdAndUpdate(
+        req.params.id,
+        { nombre, direccion, zona, contacto, horarioEntrega },
+        { runValidators: true }
+    );
 
     res.redirect("/clientes");
 
@@ -76,11 +70,9 @@ router.post("/:id/editar", validarClienteUpdate, (req, res) => {
 
 
 // POST /:id/eliminar - borrar
-router.post("/:id/eliminar", (req, res) => {
+router.post("/:id/eliminar", async (req, res) => {
 
-    const id = parseInt(req.params.id);
-
-    clientesRepo.delete(id);
+    await Cliente.findByIdAndDelete(req.params.id);
 
     res.redirect("/clientes");
 

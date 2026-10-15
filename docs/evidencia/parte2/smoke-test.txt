@@ -1,0 +1,67 @@
+
+Smoke test contra http://localhost:3000
+============================================================
+
+--- Módulo Clientes (API) ---
+OK   [200/200] GET /api/clientes · listar
+OK   [200/200] GET /api/clientes/6ad02a706315d454dedfba8d · obtener por id
+OK   [404/404] GET /api/clientes/000000000000000000000000 · id inexistente — Cliente no encontrado
+OK   [400/400] GET /api/clientes/abc · id con formato inválido — Id inválido: abc
+OK   [201/201] POST /api/clientes · alta válida — Cliente creado
+OK   [400/400] POST /api/clientes · alta sin campos — Datos de cliente inválidos
+OK   [400/400] POST /api/clientes · alta con campo de tipo incorrecto — Datos de cliente inválidos
+OK   [200/200] PUT /api/clientes/6ad02a77acd448833116db46 · edición parcial — Cliente actualizado
+OK   [400/400] PUT /api/clientes/6ad02a77acd448833116db46 · edición sin campos — Datos de cliente inválidos
+OK   [404/404] PUT /api/clientes/000000000000000000000000 · edición de inexistente — Cliente no encontrado
+OK   [404/404] DELETE /api/clientes/000000000000000000000000 · baja de inexistente — Cliente no encontrado
+
+--- Choferes (solo lectura) ---
+OK   [200/200] GET /api/choferes · listar choferes
+OK   [404/404] POST /api/choferes · alta de chofer no existe — Ruta no encontrada
+OK   [404/404] DELETE /api/choferes/6ad02a706315d454dedfba92 · baja de chofer no existe — Ruta no encontrada
+
+--- Módulo Pedidos (API) ---
+OK   [200/200] GET /api/pedidos · listar
+OK   [200/200] GET /api/pedidos/6ad02a706315d454dedfba96 · obtener por id
+OK   [404/404] GET /api/pedidos/000000000000000000000000 · id inexistente — Pedido no encontrado
+OK   [201/201] POST /api/pedidos · alta válida — Pedido creado
+OK   [400/400] POST /api/pedidos · alta con cliente inexistente — El cliente con id 000000000000000000000000 no existe
+OK   [400/400] POST /api/pedidos · alta con chofer inexistente — El chofer con id 000000000000000000000000 no existe
+OK   [400/400] POST /api/pedidos · alta con clienteId mal formado — Datos de pedido inválidos
+OK   [400/400] POST /api/pedidos · alta sin items — Datos de pedido inválidos
+OK   [400/400] POST /api/pedidos · alta con cantidad 0 (la rechaza el schema) — Datos inválidos: Path `cantidad` (0) is less than minimum allowed value (1).
+OK   [200/200] PUT /api/pedidos/6ad02a77acd448833116db47 · edición parcial — Pedido actualizado
+OK   [404/404] PUT /api/pedidos/000000000000000000000000 · edición de inexistente — Pedido no encontrado
+
+--- Transiciones de estado ---
+OK   [200/200] PATCH /api/pedidos/6ad02a77acd448833116db47/estado · pendiente → asignado — Estado actualizado
+OK   [400/400] PATCH /api/pedidos/6ad02a77acd448833116db47/estado · salto asignado → entregado — Transición inválida: no se puede pasar de "asignado" a "entregado"
+OK   [400/400] PATCH /api/pedidos/6ad02a77acd448833116db47/estado · retroceso asignado → pendiente — Transición inválida: no se puede pasar de "asignado" a "pendiente"
+OK   [400/400] PATCH /api/pedidos/6ad02a77acd448833116db47/estado · estado inexistente — Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado
+OK   [400/400] PATCH /api/pedidos/6ad02a77acd448833116db47/estado · sin estado en el body — Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado
+OK   [200/200] PATCH /api/pedidos/6ad02a77acd448833116db47/estado · asignado → en tránsito — Estado actualizado
+OK   [200/200] PATCH /api/pedidos/6ad02a77acd448833116db47/estado · en tránsito → entregado — Estado actualizado
+OK   [404/404] PATCH /api/pedidos/000000000000000000000000/estado · pedido inexistente — Pedido no encontrado
+
+--- 404 ---
+OK   [404/404] GET /api/loquesea · ruta inexistente — Ruta no encontrada
+
+--- Vistas web ---
+OK   [200/200] GET / · home
+OK   [200/200] GET /clientes · listado de clientes
+OK   [200/200] GET /clientes/nuevo · form de alta de cliente
+OK   [200/200] GET /clientes/6ad02a77acd448833116db46/editar · form de edición de cliente
+OK   [200/200] GET /pedidos · listado de pedidos
+OK   [200/200] GET /pedidos/nuevo · form de alta de pedido
+OK   [200/200] GET /pedidos/6ad02a77acd448833116db47/editar · form de edición de pedido
+OK   [200/200] GET /pedidos/6ad02a77acd448833116db47 · detalle de pedido
+OK   [302/302] GET /pedidos/000000000000000000000000 · detalle inexistente redirige
+
+--- Limpieza ---
+OK   [200/200] DELETE /api/pedidos/6ad02a77acd448833116db47 · borrar pedido de prueba — Pedido eliminado
+OK   [200/200] DELETE /api/clientes/6ad02a77acd448833116db46 · borrar cliente de prueba — Cliente eliminado
+
+============================================================
+45 OK · 0 FALLA(S)
+Si algo quedó a medias, npm run seed deja la base como al principio
+
