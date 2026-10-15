@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const JsonRepository = require("../../repositories/JsonRepository");
+const Pedido = require("../../models/Pedido");
+const Cliente = require("../../models/Cliente");
+const Chofer = require("../../models/Chofer");
 const pedidoService = require("../../services/PedidoService");
 const { validarPedido } = require("../../middlewares/validate");
 
-const pedidosRepo = new JsonRepository("pedidos.json");
-const clientesRepo = new JsonRepository("clientes.json");
-const choferesRepo = new JsonRepository("choferes.json");
+const { ESTADOS } = Pedido;
 
-const ESTADOS = ["pendiente", "asignado", "en tránsito", "entregado"];
+// Las rutas son async: si PedidoService tira un error o falla una consulta,
+// Express 5 lo manda al errorHandler sin necesidad de try/catch.
 
 // Middleware para transformar el formulario al formato que espera validarPedido
 function normalizarBodyWeb(req, res, next) {
@@ -39,10 +40,11 @@ function normalizarBodyWeb(req, res, next) {
         }
     }
 
-    // Reemplazamos req.body con los tipos exactos
+    // Reemplazamos req.body con los campos que espera la API
+    // (clienteId y choferId llegan del select como texto con el _id de Mongo)
     req.body = {
-        clienteId: clienteId !== undefined ? Number(clienteId) : undefined,
-        choferId: choferId !== undefined ? Number(choferId) : undefined,
+        clienteId,
+        choferId,
         fechaHoraProgramada,
         items
     };
@@ -50,129 +52,99 @@ function normalizarBodyWeb(req, res, next) {
     next();
 }
 
-// GET / - Listado
-router.get("/", (req, res) => {
-    const pedidos = pedidosRepo.getAll();
-    const clientes = clientesRepo.getAll();
-    const choferes = choferesRepo.getAll();
+// GET / - Listado. populate reemplaza clienteId/choferId por el documento referenciado
+router.get("/", async (req, res) => {
+    const pedidos = await Pedido.find().populate("clienteId").populate("choferId");
 
-    const pedidosConDatos = pedidos.map((p) => {
-        const cliente = clientes.find((c) => c.id === p.clienteId);
-        const chofer = choferes.find((ch) => ch.id === p.choferId);
-        return {
-            ...p,
-            clienteNombre: cliente ? cliente.nombre : `ID ${p.clienteId}`,
-            choferNombre: chofer ? chofer.nombre : `ID ${p.choferId}`
-        };
-    });
+    const pedidosConDatos = pedidos.map((p) => ({
+        id: p.id,
+        fechaHoraProgramada: p.fechaHoraProgramada,
+        estado: p.estado,
+        // si el cliente/chofer fue borrado, populate deja null
+        clienteNombre: p.clienteId ? p.clienteId.nombre : "(cliente eliminado)",
+        choferNombre: p.choferId ? p.choferId.nombre : "(chofer eliminado)"
+    }));
 
     res.render("pedidos/lista", { titulo: "Pedidos", pedidos: pedidosConDatos });
 });
 
 // GET /nuevo - Formulario
-router.get("/nuevo", (req, res) => {
-    const clientes = clientesRepo.getAll();
-    const choferes = choferesRepo.getAll();
+router.get("/nuevo", async (req, res) => {
+    const clientes = await Cliente.find();
+    const choferes = await Chofer.find();
     res.render("pedidos/form", { titulo: "Nuevo pedido", clientes, choferes });
 });
 
 // POST / - Guardar validando contra el mismo middleware de la API
-router.post("/", normalizarBodyWeb, validarPedido, (req, res, next) => {
-    try {
-        pedidoService.crearPedido(req.body);
-        res.redirect("/pedidos");
-    } catch (error) {
-        next(error);
-    }
+router.post("/", normalizarBodyWeb, validarPedido, async (req, res) => {
+    await pedidoService.crearPedido(req.body);
+    res.redirect("/pedidos");
 });
 
-// =========================================================
-// RUTAS NUEVAS: EDICIÓN Y ELIMINACIÓN
-// =========================================================
-
 // GET /:id/editar - Formulario de edición de pedido
-router.get("/:id/editar", (req, res) => {
-    const id = Number(req.params.id);
-    const pedido = pedidosRepo.getById(id);
+router.get("/:id/editar", async (req, res) => {
+    const pedido = await Pedido.findById(req.params.id);
 
     if (!pedido) {
         return res.redirect("/pedidos");
     }
 
-    const clientes = clientesRepo.getAll();
-    const choferes = choferesRepo.getAll();
+    const clientes = await Cliente.find();
+    const choferes = await Chofer.find();
 
-    res.render("pedidos/form", { 
-        titulo: "Editar pedido", 
-        pedido, 
-        clientes, 
-        choferes 
+    res.render("pedidos/form", {
+        titulo: "Editar pedido",
+        pedido,
+        clientes,
+        choferes
     });
 });
 
-// POST /:id/editar - Guardar edición
-// Antes llamaba a pedidosRepo.update() directo, y eso salteaba la validación
-// de que el cliente y el chofer existan. Ahora pasa por PedidoService, igual
-// que la ruta PUT /api/pedidos/:id.
-router.post("/:id/editar", normalizarBodyWeb, validarPedido, (req, res, next) => {
-    try {
-        const id = Number(req.params.id);
-        pedidoService.actualizarPedido(id, req.body);
-        res.redirect("/pedidos");
-    } catch (error) {
-        next(error);
-    }
+// POST /:id/editar - Guardar edición (pasa por PedidoService, igual que PUT /api/pedidos/:id)
+router.post("/:id/editar", normalizarBodyWeb, validarPedido, async (req, res) => {
+    await pedidoService.actualizarPedido(req.params.id, req.body);
+    res.redirect("/pedidos");
 });
 
 // POST /:id/eliminar - Borrar pedido
-router.post("/:id/eliminar", (req, res) => {
-    const id = Number(req.params.id);
-    pedidosRepo.delete(id);
+router.post("/:id/eliminar", async (req, res) => {
+    await Pedido.findByIdAndDelete(req.params.id);
     res.redirect("/pedidos");
 });
 
 // POST /:id/estado - Avanzar estado
-router.post("/:id/estado", (req, res, next) => {
-    try {
-        const id = Number(req.params.id);
-        const pedido = pedidosRepo.getById(id);
-
-        if (!pedido) {
-            return res.redirect("/pedidos");
-        }
-
-        const indiceActual = ESTADOS.indexOf(pedido.estado);
-        if (indiceActual < ESTADOS.length - 1) {
-            const siguienteEstado = ESTADOS[indiceActual + 1];
-            pedidoService.cambiarEstado(id, siguienteEstado);
-        }
-
-        res.redirect(`/pedidos/${id}`);
-    } catch (error) {
-        next(error);
-    }
-});
-
-// GET /:id - Detalle (al final de las rutas GET para no solaparse)
-router.get("/:id", (req, res) => {
-    const id = Number(req.params.id);
-    const pedido = pedidosRepo.getById(id);
+router.post("/:id/estado", async (req, res) => {
+    const pedido = await Pedido.findById(req.params.id);
 
     if (!pedido) {
         return res.redirect("/pedidos");
     }
 
-    const cliente = clientesRepo.getById(pedido.clienteId);
-    const chofer = choferesRepo.getById(pedido.choferId);
+    const indiceActual = ESTADOS.indexOf(pedido.estado);
+    if (indiceActual < ESTADOS.length - 1) {
+        const siguienteEstado = ESTADOS[indiceActual + 1];
+        await pedidoService.cambiarEstado(pedido.id, siguienteEstado);
+    }
+
+    res.redirect(`/pedidos/${pedido.id}`);
+});
+
+// GET /:id - Detalle (al final de las rutas GET para no solaparse)
+router.get("/:id", async (req, res) => {
+    const pedido = await Pedido.findById(req.params.id).populate("clienteId").populate("choferId");
+
+    if (!pedido) {
+        return res.redirect("/pedidos");
+    }
 
     const indiceActual = ESTADOS.indexOf(pedido.estado);
     const proximoEstado = indiceActual < ESTADOS.length - 1 ? ESTADOS[indiceActual + 1] : null;
 
     res.render("pedidos/detalle", {
-        titulo: `Pedido #${pedido.id}`,
+        titulo: "Detalle del pedido",
         pedido,
-        cliente,
-        chofer,
+        cliente: pedido.clienteId,
+        chofer: pedido.choferId,
         proximoEstado
     });
 });

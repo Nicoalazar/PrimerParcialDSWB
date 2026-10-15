@@ -29,4 +29,13 @@ Capturas de request/response de cada endpoint de la API, tomadas desde Postman c
 | `pedidos_post_400.png` | `POST /api/pedidos` sin items → `{ mensaje, errores }` | 400 |
 | `ruta_404.png` | `GET /api/loquesea` → `{ mensaje: "Ruta no encontrada" }` | 404 |
 
-Después de probar, recordar `git checkout data/` para dejar el seed como estaba.
+Estas capturas son del **primer parcial** (persistencia JSON, ids numéricos).
+
+## Segundo parcial (MongoDB)
+
+Las capturas contra MongoDB van en `parte2/` con la **misma nomenclatura** (en los 404 se usa el id `000000000000000000000000`, y se agrega `clientes_get_400.png` para `GET /api/clientes/abc` → "Id inválido"). Antes de capturar: `npm run seed` y correr la colección en orden.
+
+Salidas de las pruebas automáticas contra MongoDB:
+
+- [`parte2/newman-run.txt`](parte2/newman-run.txt) — la colección Postman completa corrida con newman (22 requests, 22 asserts).
+- [`parte2/smoke-test.txt`](parte2/smoke-test.txt) — `node docs/smoke-test.js` (API + vistas web).

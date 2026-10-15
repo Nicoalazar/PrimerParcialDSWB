@@ -1,13 +1,33 @@
 {
   "info": {
     "name": "FreshRoute B2B",
-    "description": "Colección de pruebas de la API. Primer Parcial DSWB - LosBuleanos.\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000.\nCada request indica en su descripción el status esperado. Después de probar, correr `git checkout data/` para restaurar el seed.",
+    "description": "Colección de pruebas de la API. Segundo Parcial DSWB - LosBuleanos (persistencia en MongoDB).\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000.\nLos ids son ObjectId de MongoDB: no hace falta copiarlos a mano, los scripts de test de los GET/POST los guardan en variables de la colección (clienteId, choferId, pedidoId, clienteNuevoId, pedidoNuevoId). Correrla en orden (Run collection) con la base recién cargada (npm run seed). Cada request verifica el status esperado.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
       "value": "http://localhost:3000"
+    },
+    {
+      "key": "clienteId",
+      "value": ""
+    },
+    {
+      "key": "choferId",
+      "value": ""
+    },
+    {
+      "key": "pedidoId",
+      "value": ""
+    },
+    {
+      "key": "clienteNuevoId",
+      "value": ""
+    },
+    {
+      "key": "pedidoNuevoId",
+      "value": ""
     }
   ],
   "item": [
@@ -16,32 +36,98 @@
       "item": [
         {
           "name": "GET todos los clientes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const lista = pm.response.json();",
+                  "if (lista.length) pm.collectionVariables.set(\"clienteId\", lista[0]._id);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "description": "200 → array de clientes",
-            "url": "{{baseUrl}}/api/clientes"
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes"
+              ]
+            },
+            "description": "200 → array de clientes. Guarda el _id del primero en {{clienteId}}."
           }
         },
         {
           "name": "GET cliente por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "description": "200 → objeto cliente",
-            "url": "{{baseUrl}}/api/clientes/1"
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "{{clienteId}}"
+              ]
+            },
+            "description": "200 → objeto cliente"
           }
         },
         {
           "name": "POST crear cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"clienteNuevoId\", pm.response.json().cliente._id);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "description": "201 → { mensaje: \"Cliente creado\", cliente }",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/clientes",
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes"
+              ]
+            },
+            "description": "201 → { mensaje: \"Cliente creado\", cliente }. Guarda el _id en {{clienteNuevoId}}.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nombre\": \"Bar Nuevo\",\n  \"direccion\": \"Calle 1 N° 100, Morón\",\n  \"zona\": \"Oeste\",\n  \"contacto\": \"Pedro Díaz - 11 0000 0000\",\n  \"horarioEntrega\": \"09:00 a 11:00\"\n}",
@@ -55,16 +141,37 @@
         },
         {
           "name": "PUT actualizar cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "description": "200 → { mensaje: \"Cliente actualizado\", cliente }. Edición parcial: solo se pisan los campos enviados.",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/clientes/4",
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/{{clienteNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "{{clienteNuevoId}}"
+              ]
+            },
+            "description": "200 → { mensaje: \"Cliente actualizado\", cliente }. Edición parcial: solo se pisan los campos enviados.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"zona\": \"Centro\",\n  \"horarioEntrega\": \"10:00 a 12:00\"\n}",
@@ -78,32 +185,126 @@
         },
         {
           "name": "DELETE eliminar cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
-            "description": "200 → { mensaje: \"Cliente eliminado\" }",
-            "url": "{{baseUrl}}/api/clientes/4"
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/{{clienteNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "{{clienteNuevoId}}"
+              ]
+            },
+            "description": "200 → { mensaje: \"Cliente eliminado\" }"
           }
         },
         {
           "name": "GET cliente inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "description": "404 → { mensaje: \"Cliente no encontrado\" }",
-            "url": "{{baseUrl}}/api/clientes/99"
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "000000000000000000000000"
+              ]
+            },
+            "description": "404 → { mensaje: \"Cliente no encontrado\" } (id con formato válido que no está en la base)"
+          }
+        },
+        {
+          "name": "GET cliente con id inválido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "abc"
+              ]
+            },
+            "description": "400 → { mensaje: \"Id inválido: abc\" } (CastError de Mongoose, lo traduce el errorHandler)"
           }
         },
         {
           "name": "POST crear cliente body vacío (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [...] } (middleware validarCliente)",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/clientes",
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes"
+              ]
+            },
+            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [...] }",
             "body": {
               "mode": "raw",
               "raw": "{}",
@@ -117,217 +318,40 @@
         },
         {
           "name": "PUT actualizar cliente sin campos (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [\"hay que mandar al menos un campo para actualizar\"] } (middleware validarClienteUpdate)",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/clientes/1",
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "{{clienteId}}"
+              ]
+            },
+            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [\"hay que mandar al menos un campo para actualizar\"] }",
             "body": {
               "mode": "raw",
               "raw": "{}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Pedidos",
-      "item": [
-        {
-          "name": "GET todos los pedidos",
-          "request": {
-            "method": "GET",
-            "description": "200 → array de pedidos",
-            "url": "{{baseUrl}}/api/pedidos"
-          }
-        },
-        {
-          "name": "GET pedido por id",
-          "request": {
-            "method": "GET",
-            "description": "200 → objeto pedido",
-            "url": "{{baseUrl}}/api/pedidos/1"
-          }
-        },
-        {
-          "name": "POST crear pedido",
-          "request": {
-            "method": "POST",
-            "description": "201 → { mensaje: \"Pedido creado\", pedido }. El pedido nace en estado \"pendiente\". clienteId y choferId deben existir en el seed.",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/pedidos",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clienteId\": 4,\n  \"choferId\": 4,\n  \"items\": [\n    { \"descripcion\": \"Cajón de frutas\", \"cantidad\": 8 }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "PUT actualizar pedido",
-          "request": {
-            "method": "PUT",
-            "description": "200 → { mensaje: \"Pedido actualizado\", pedido }. Edición parcial. El estado NO se cambia por PUT, solo por PATCH /:id/estado.",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/pedidos/2",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"fechaHoraProgramada\": \"2026-09-16T07:00:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "PATCH cambiar estado",
-          "request": {
-            "method": "PATCH",
-            "description": "200 → { mensaje: \"Estado actualizado\", pedido }. Solo se permite pasar al estado siguiente: pendiente → asignado → en tránsito → entregado.",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/pedidos/1/estado",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"estado\": \"asignado\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "PATCH cambiar estado inválido (400)",
-          "request": {
-            "method": "PATCH",
-            "description": "400 → { mensaje: \"Transición inválida: no se puede pasar de \\\"asignado\\\" a \\\"entregado\\\"\" } (PedidoService)",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/pedidos/2/estado",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"estado\": \"entregado\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "PATCH cambiar estado sin estado en el body (400)",
-          "request": {
-            "method": "PATCH",
-            "description": "400 → { mensaje: \"Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado\" }",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/pedidos/1/estado",
-            "body": {
-              "mode": "raw",
-              "raw": "{}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "DELETE eliminar pedido",
-          "request": {
-            "method": "DELETE",
-            "description": "200 → { mensaje: \"Pedido eliminado\" }",
-            "url": "{{baseUrl}}/api/pedidos/3"
-          }
-        },
-        {
-          "name": "GET pedido inexistente (404)",
-          "request": {
-            "method": "GET",
-            "description": "404 → { mensaje: \"Pedido no encontrado\" }",
-            "url": "{{baseUrl}}/api/pedidos/99"
-          }
-        },
-        {
-          "name": "POST crear pedido con cliente inexistente (400)",
-          "request": {
-            "method": "POST",
-            "description": "400 → { mensaje: \"El cliente con id 99 no existe\" } (PedidoService)",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/pedidos",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clienteId\": 99,\n  \"choferId\": 1,\n  \"items\": [\n    { \"descripcion\": \"Cajón de frutas\", \"cantidad\": 8 }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "POST crear pedido sin items (400)",
-          "request": {
-            "method": "POST",
-            "description": "400 → { mensaje: \"Datos de pedido inválidos\", errores: [\"items es obligatorio y debe ser un arreglo con al menos un ítem\"] } (middleware validarPedido)",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/pedidos",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clienteId\": 1,\n  \"choferId\": 1,\n  \"items\": [],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -343,10 +367,468 @@
       "item": [
         {
           "name": "GET todos los choferes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const lista = pm.response.json();",
+                  "if (lista.length) pm.collectionVariables.set(\"choferId\", lista[0]._id);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "description": "200 → array de choferes (seed de solo lectura, sin POST/PUT/DELETE)",
-            "url": "{{baseUrl}}/api/choferes"
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/choferes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "choferes"
+              ]
+            },
+            "description": "200 → array de choferes (seed de solo lectura, sin POST/PUT/DELETE). Guarda el _id del primero en {{choferId}}."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "GET todos los pedidos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const lista = pm.response.json();",
+                  "if (lista.length) pm.collectionVariables.set(\"pedidoId\", lista[0]._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos"
+              ]
+            },
+            "description": "200 → array de pedidos. Guarda el _id del primero en {{pedidoId}}."
+          }
+        },
+        {
+          "name": "GET pedido por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos",
+                "{{pedidoId}}"
+              ]
+            },
+            "description": "200 → objeto pedido"
+          }
+        },
+        {
+          "name": "POST crear pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"pedidoNuevoId\", pm.response.json().pedido._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos"
+              ]
+            },
+            "description": "201 → { mensaje: \"Pedido creado\", pedido }. El pedido nace en \"pendiente\". Guarda el _id en {{pedidoNuevoId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"{{clienteId}}\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [\n    {\n      \"descripcion\": \"Cajón de frutas\",\n      \"cantidad\": 8\n    }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT actualizar pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos",
+                "{{pedidoNuevoId}}"
+              ]
+            },
+            "description": "200 → { mensaje: \"Pedido actualizado\", pedido }. Edición parcial; el estado no se cambia por acá.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHoraProgramada\": \"2026-09-16T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PATCH cambiar estado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos",
+                "{{pedidoNuevoId}}",
+                "estado"
+              ]
+            },
+            "description": "200 → { mensaje: \"Estado actualizado\", pedido }. Solo se permite pasar al estado siguiente.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"asignado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PATCH cambiar estado inválido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos",
+                "{{pedidoNuevoId}}",
+                "estado"
+              ]
+            },
+            "description": "400 → { mensaje: 'Transición inválida: no se puede pasar de \"asignado\" a \"entregado\"' }",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"entregado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PATCH cambiar estado sin estado en el body (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos",
+                "{{pedidoNuevoId}}",
+                "estado"
+              ]
+            },
+            "description": "400 → { mensaje: \"Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado\" }",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET pedido inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos",
+                "000000000000000000000000"
+              ]
+            },
+            "description": "404 → { mensaje: \"Pedido no encontrado\" }"
+          }
+        },
+        {
+          "name": "POST crear pedido con cliente inexistente (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos"
+              ]
+            },
+            "description": "400 → { mensaje: \"El cliente con id 000000000000000000000000 no existe\" } (PedidoService)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"000000000000000000000000\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [\n    {\n      \"descripcion\": \"Cajón de frutas\",\n      \"cantidad\": 8\n    }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST crear pedido sin items (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos"
+              ]
+            },
+            "description": "400 → { mensaje: \"Datos de pedido inválidos\", errores: [\"items es obligatorio y debe ser un arreglo con al menos un ítem\"] }",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"{{clienteId}}\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE eliminar pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos",
+                "{{pedidoNuevoId}}"
+              ]
+            },
+            "description": "200 → { mensaje: \"Pedido eliminado\" }"
           }
         }
       ]
@@ -356,10 +838,31 @@
       "item": [
         {
           "name": "GET ruta inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "description": "404 → { mensaje: \"Ruta no encontrada\" } (middleware notFound)",
-            "url": "{{baseUrl}}/api/loquesea"
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/loquesea",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "loquesea"
+              ]
+            },
+            "description": "404 → { mensaje: \"Ruta no encontrada\" } (middleware notFound)"
           }
         }
       ]

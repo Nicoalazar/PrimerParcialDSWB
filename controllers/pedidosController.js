@@ -1,19 +1,19 @@
 const PedidoService = require("../services/PedidoService");
-const JsonRepository = require("../repositories/JsonRepository");
+const Pedido = require("../models/Pedido");
+const Chofer = require("../models/Chofer");
 
-const pedidosRepo = new JsonRepository("pedidos.json");
-const choferesRepo = new JsonRepository("choferes.json");
+// Ningún controller lleva try/catch: si PedidoService tira un error (o falla
+// una consulta a Mongo), Express 5 lo agarra solo y lo manda al errorHandler.
 
 // GET ALL
-const obtenerPedidos = (req, res) => {
-    const pedidos = pedidosRepo.getAll();
+const obtenerPedidos = async (req, res) => {
+    const pedidos = await Pedido.find();
     res.json(pedidos);
 };
 
 // GET BY ID
-const obtenerPedidoPorId = (req, res) => {
-    const id = parseInt(req.params.id);
-    const pedido = pedidosRepo.getById(id);
+const obtenerPedidoPorId = async (req, res) => {
+    const pedido = await Pedido.findById(req.params.id);
 
     if (!pedido) {
         return res.status(404).json({
@@ -24,10 +24,9 @@ const obtenerPedidoPorId = (req, res) => {
     res.json(pedido);
 };
 
-// CREATE (Usa PedidoService) — sin try/catch: si PedidoService tira un error,
-// Express lo agarra solo y lo manda al errorHandler.
-const crearPedido = (req, res) => {
-    const pedidoCreado = PedidoService.crearPedido(req.body);
+// CREATE (Usa PedidoService)
+const crearPedido = async (req, res) => {
+    const pedidoCreado = await PedidoService.crearPedido(req.body);
     res.status(201).json({
         mensaje: "Pedido creado",
         pedido: pedidoCreado
@@ -35,8 +34,7 @@ const crearPedido = (req, res) => {
 };
 
 // UPDATE (Usa PedidoService)
-const actualizarPedido = (req, res) => {
-    const id = parseInt(req.params.id);
+const actualizarPedido = async (req, res) => {
     const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
 
     const datos = {};
@@ -45,7 +43,7 @@ const actualizarPedido = (req, res) => {
     if (items !== undefined) datos.items = items;
     if (fechaHoraProgramada !== undefined) datos.fechaHoraProgramada = fechaHoraProgramada;
 
-    const pedido = PedidoService.actualizarPedido(id, datos);
+    const pedido = await PedidoService.actualizarPedido(req.params.id, datos);
 
     res.json({
         mensaje: "Pedido actualizado",
@@ -54,9 +52,8 @@ const actualizarPedido = (req, res) => {
 };
 
 // DELETE
-const eliminarPedido = (req, res) => {
-    const id = parseInt(req.params.id);
-    const eliminado = pedidosRepo.delete(id);
+const eliminarPedido = async (req, res) => {
+    const eliminado = await Pedido.findByIdAndDelete(req.params.id);
 
     if (!eliminado) {
         return res.status(404).json({
@@ -69,12 +66,11 @@ const eliminarPedido = (req, res) => {
     });
 };
 
-// PATCH estado (Usa PedidoService) — sin try/catch, mismo motivo que crearPedido.
-const cambiarEstado = (req, res) => {
-    const id = parseInt(req.params.id);
+// PATCH estado (Usa PedidoService)
+const cambiarEstado = async (req, res) => {
     const { estado } = req.body;
 
-    const pedidoActualizado = PedidoService.cambiarEstado(id, estado);
+    const pedidoActualizado = await PedidoService.cambiarEstado(req.params.id, estado);
 
     res.json({
         mensaje: "Estado actualizado",
@@ -83,8 +79,8 @@ const cambiarEstado = (req, res) => {
 };
 
 // GET choferes (solo lectura del seed)
-const listarChoferes = (req, res) => {
-    const choferes = choferesRepo.getAll();
+const listarChoferes = async (req, res) => {
+    const choferes = await Chofer.find();
     res.json(choferes);
 };
 
