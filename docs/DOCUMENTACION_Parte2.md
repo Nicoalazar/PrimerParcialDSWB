@@ -1,6 +1,6 @@
 <!--
 Fuente del PDF de entrega del segundo parcial. Mismo formato que DOCUMENTACION_Parte1.md (portada con logos, índice y capturas embebidas).
-Antes de exportar: reemplazar todos los <<COMPLETAR>> y confirmar el reparto de la sección 4.
+Antes de exportar: reemplazar todos los <<COMPLETAR>>.
 En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video, diagramas si hay).
 -->
 
@@ -57,10 +57,6 @@ En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video,
 - Postman: colecciones, variables y scripts de test — https://learning.postman.com/docs/
 - MDN: métodos HTTP y códigos de estado — https://developer.mozilla.org/es/docs/Web/HTTP/Status
 
-**Videos / tutoriales**
-
-- <<COMPLETAR: título — link>>
-
 El detalle completo está en `docs/bibliografia.md` del repositorio.
 
 ---
@@ -83,7 +79,7 @@ Siguiendo el criterio de la cátedra, no agregamos módulos ni tecnologías fuer
 
 ## 4. Integrantes y responsabilidades
 
-<!-- Confirmar este reparto antes de exportar (propuesta: cada uno migra lo que ya era suyo en el primer parcial). -->
+Se mantienen los roles del primer parcial: cada integrante es responsable de la parte del proyecto que ya era suya, ahora migrada a MongoDB.
 
 | Integrante | Rol | Responsabilidad en el segundo parcial |
 |---|---|---|

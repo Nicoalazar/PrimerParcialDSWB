@@ -178,6 +178,13 @@ node docs/smoke-test.js
 
 Recorre los dos módulos (altas, ediciones, bajas, validaciones, ids inexistentes e inválidos, transiciones de estado, 404) y las vistas web, y termina con `N OK · 0 FALLA(S)`. Toma los ids de la base con los `GET` de listado, crea y borra sus propios registros.
 
+### Consultas a la base (playground de MongoDB)
+
+[`docs/consultas.mongodb.js`](docs/consultas.mongodb.js) es un playground de la extensión **MongoDB for VS Code** con consultas de solo lectura sobre la base `freshroute`: conteo de documentos, filtros, pedidos por estado y la relación entre pedidos, clientes y choferes con `$lookup` (lo mismo que hace `populate` en la app).
+
+1. Instalar la extensión *MongoDB for VS Code* y crear una conexión con la misma `MONGO_URI` del `.env`.
+2. Abrir `docs/consultas.mongodb.js`, seleccionar un bloque y ejecutarlo con *Run Selected Lines From Playground*.
+
 ### Evidencia
 
 Capturas de cada request/response en [`docs/evidencia/`](docs/evidencia/), con nomenclatura `<modulo>_<operacion>.png` (ver el README de esa carpeta).

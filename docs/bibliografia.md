@@ -31,8 +31,6 @@
 - dotenv — variables de entorno desde `.env` — https://github.com/motdotla/dotenv#readme
 - MDN — async/await — https://developer.mozilla.org/es/docs/Learn/JavaScript/Asynchronous/Promises
 
-<<COMPLETAR: videos o tutoriales que haya usado el equipo para Mongo (título — link)>>
-
 ### Vistas
 
 - Pug — Referencia del lenguaje (`extends`, `block`, `each`, atributos) — https://pugjs.org/language/attributes.html

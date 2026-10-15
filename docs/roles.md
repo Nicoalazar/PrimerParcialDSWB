@@ -12,18 +12,20 @@ El sprint asignado indica quién lidera y es responsable del DoD de ese sprint. 
 
 ## Tareas de cierre (Sprint 9 y 10)
 
-| Tarea | Responsable |
-|---|---|
-| Post en la "oficina del grupo" del campus (texto en `docs/post-oficina-grupo.md`) | <<COMPLETAR: un integrante>> |
-| Generar el PDF desde `docs/DOCUMENTACION_Parte1.md` y subir la carpeta a Drive | <<COMPLETAR>> |
-| Video de presentación (5 partes, una por integrante) | Todos |
-| Subida individual del PDF en el campus | Cada integrante con su usuario |
+Realizadas en la entrega del primer parcial.
+
+| Tarea | Responsable | Estado |
+|---|---|---|
+| Post en la "oficina del grupo" del campus (texto en `docs/post-oficina-grupo.md`) | Un integrante | Hecho |
+| Generar el PDF desde `docs/DOCUMENTACION_Parte1.md` y subir la carpeta a Drive | Equipo | Hecho |
+| Video de presentación (5 partes, una por integrante) | Todos | Hecho |
+| Subida individual del PDF en el campus | Cada integrante con su usuario | Hecho |
 
 ---
 
 # Segundo parcial — Migración a MongoDB
 
-> Propuesta de reparto: cada integrante migra la parte que ya era suya en el primer parcial, así cada uno explica en el video el código que conoce. **Confirmar o corregir antes de exportar el PDF.**
+Se mantienen los roles del primer parcial: cada integrante es responsable de la migración de la parte que ya era suya, la revisa y la explica en el video.
 
 | Integrante | Responsabilidad en la migración | Archivos |
 |---|---|---|
