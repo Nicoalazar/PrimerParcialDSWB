@@ -31,7 +31,7 @@ En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video,
 | Recurso | Link |
 |---|---|
 | Carpeta Drive (`Segunda Entrega`) | <<COMPLETAR>> |
-| Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB (versión del segundo parcial en `main`; la del primero en el tag `v1.0-primer-parcial`) |
+| Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB (versión del segundo parcial en `main` y en el tag `v2.0-segundo-parcial`; la del primero en el tag `v1.0-primer-parcial`) |
 | Video: explicación del código con MongoDB | <<COMPLETAR: link de Drive/YouTube con permiso de visualización>> |
 
 ---
@@ -197,22 +197,62 @@ const pedidoSchema = new mongoose.Schema({
 
 Las pruebas se hicieron contra MongoDB, con la base recién cargada (`npm run seed`):
 
-- **Colección Postman** (`docs/api-collection.postman.json`): 22 requests en 4 carpetas (Clientes, Choferes, Pedidos, Errores). Los scripts de test guardan los `_id` en variables de la colección, así que se corre completa en orden con *Run collection*; cada request verifica su status esperado. Resultado: **22/22 asserts OK** (`docs/evidencia/parte2/newman-run.txt`).
-- **Smoke test** (`node docs/smoke-test.js`): recorre la API y las vistas web — altas, ediciones, bajas, validaciones, ids inexistentes e inválidos, transiciones de estado y 404. Resultado: **45 OK · 0 fallas** (`docs/evidencia/parte2/smoke-test.txt`).
+- **Colección Postman** (`docs/api-collection.postman.json`): 22 requests en 4 carpetas (Clientes, Choferes, Pedidos, Errores). Los scripts de test guardan los `_id` en variables de la colección, así que se corre completa en orden con *Run collection*; cada request verifica su status esperado. Resultado: **22/22 asserts OK** (`docs/evidencia/parcial2/newman-run.txt`).
+- **Smoke test** (`node docs/smoke-test.js`): recorre la API y las vistas web — altas, ediciones, bajas, validaciones, ids inexistentes e inválidos, transiciones de estado y 404. Resultado: **45 OK · 0 fallas** (`docs/evidencia/parcial2/smoke-test.txt`).
 
 ### Capturas de Postman
 
-<<COMPLETAR: capturas en docs/evidencia/parte2/ con la misma nomenclatura del primer parcial, y embeberlas acá. Ejemplo:>>
+Colección: `docs/api-collection.postman.json`. Capturas en `docs/evidencia/parcial2/`, tomadas contra MongoDB con la base recién cargada. Los ids son ObjectId que la colección guarda en variables (`{{clienteId}}`, `{{pedidoNuevoId}}`, etc.); para los 404 se usa el id `000000000000000000000000`.
 
-<!--
-![GET /api/clientes](evidencia/parte2/clientes_get.png)
-![POST /api/clientes](evidencia/parte2/clientes_post.png)
-![GET /api/clientes/abc → 400](evidencia/parte2/clientes_get_400.png)
-![POST /api/pedidos](evidencia/parte2/pedidos_post.png)
-![PATCH /api/pedidos/:id/estado](evidencia/parte2/pedidos_patch_estado.png)
-![PATCH transición inválida → 400](evidencia/parte2/pedidos_patch_estado_400.png)
-![Runner de Postman con todos los tests OK](evidencia/parte2/postman_runner.png)
--->
+**Módulo Clientes**
+
+![GET /api/clientes](evidencia/parcial2/clientes_get.png)
+
+![GET /api/clientes/:id](evidencia/parcial2/clientes_get_id.png)
+
+![POST /api/clientes](evidencia/parcial2/clientes_post.png)
+
+![PUT /api/clientes/:id](evidencia/parcial2/clientes_put.png)
+
+![DELETE /api/clientes/:id](evidencia/parcial2/clientes_delete.png)
+
+![GET /api/clientes/:id inexistente → 404](evidencia/parcial2/clientes_get_404.png)
+
+![GET /api/clientes/abc (id con formato inválido) → 400](evidencia/parcial2/clientes_get_400.png)
+
+![POST /api/clientes con body vacío → 400](evidencia/parcial2/clientes_post_400.png)
+
+![PUT /api/clientes/:id sin campos → 400](evidencia/parcial2/clientes_put_400.png)
+
+**Módulo Pedidos**
+
+![GET /api/pedidos](evidencia/parcial2/pedidos_get.png)
+
+![GET /api/pedidos/:id](evidencia/parcial2/pedidos_get_id.png)
+
+![POST /api/pedidos](evidencia/parcial2/pedidos_post.png)
+
+![PUT /api/pedidos/:id](evidencia/parcial2/pedidos_put.png)
+
+![PATCH /api/pedidos/:id/estado](evidencia/parcial2/pedidos_patch_estado.png)
+
+![PATCH /api/pedidos/:id/estado transición inválida → 400](evidencia/parcial2/pedidos_patch_estado_400.png)
+
+![PATCH /api/pedidos/:id/estado sin estado en el body → 400](evidencia/parcial2/pedidos_patch_estado_sinbody_400.png)
+
+![DELETE /api/pedidos/:id](evidencia/parcial2/pedidos_delete.png)
+
+![GET /api/pedidos/:id inexistente → 404](evidencia/parcial2/pedidos_get_404.png)
+
+![POST /api/pedidos sin items → 400](evidencia/parcial2/pedidos_post_400.png)
+
+**Choferes (solo lectura)**
+
+![GET /api/choferes](evidencia/parcial2/choferes_get.png)
+
+**Manejo de errores**
+
+![GET ruta inexistente → 404](evidencia/parcial2/ruta_404.png)
 
 ---
 

@@ -5,7 +5,7 @@
 Backend en Node.js + Express con arquitectura MVC y persistencia en **MongoDB** usando **Mongoose**.
 Caso de negocio: logística de distribución refrigerada para restaurantes, comedores y cocinas industriales.
 
-> La versión del primer parcial (persistencia en archivos JSON) quedó en el tag/rama `v1.0-primer-parcial`.
+> La versión del primer parcial (persistencia en archivos JSON) quedó en el tag `v1.0-primer-parcial`, y la entregada en este parcial en el tag `v2.0-segundo-parcial`.
 
 ## Requisitos
 

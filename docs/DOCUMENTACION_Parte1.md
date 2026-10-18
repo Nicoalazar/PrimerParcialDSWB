@@ -161,48 +161,48 @@ El repositorio se entrega con el seed cargado, de modo que al clonar y ejecutar 
 
 ### Capturas de Postman
 
-Colección: `docs/api-collection.postman.json`. Capturas en `docs/evidencia/`.
+Colección: `docs/api-collection.postman.json`. Capturas en `docs/evidencia/parcial1/`.
 
 **Módulo Clientes**
 
-![GET /api/clientes](evidencia/clientes_get.png)
+![GET /api/clientes](evidencia/parcial1/clientes_get.png)
 
-![GET /api/clientes/:id](evidencia/clientes_get_id.png)
+![GET /api/clientes/:id](evidencia/parcial1/clientes_get_id.png)
 
-![POST /api/clientes](evidencia/clientes_post.png)
+![POST /api/clientes](evidencia/parcial1/clientes_post.png)
 
-![PUT /api/clientes/:id](evidencia/clientes_put.png)
+![PUT /api/clientes/:id](evidencia/parcial1/clientes_put.png)
 
-![DELETE /api/clientes/:id](evidencia/clientes_delete.png)
+![DELETE /api/clientes/:id](evidencia/parcial1/clientes_delete.png)
 
-![GET /api/clientes/:id inexistente → 404](evidencia/clientes_get_404.png)
+![GET /api/clientes/:id inexistente → 404](evidencia/parcial1/clientes_get_404.png)
 
-![POST /api/clientes con body vacío → 400](evidencia/clientes_post_400.png)
+![POST /api/clientes con body vacío → 400](evidencia/parcial1/clientes_post_400.png)
 
 **Módulo Pedidos**
 
-![GET /api/pedidos](evidencia/pedidos_get.png)
+![GET /api/pedidos](evidencia/parcial1/pedidos_get.png)
 
-![GET /api/pedidos/:id](evidencia/pedidos_get_id.png)
+![GET /api/pedidos/:id](evidencia/parcial1/pedidos_get_id.png)
 
-![POST /api/pedidos](evidencia/pedidos_post.png)
+![POST /api/pedidos](evidencia/parcial1/pedidos_post.png)
 
-![PUT /api/pedidos/:id](evidencia/pedidos_put.png)
+![PUT /api/pedidos/:id](evidencia/parcial1/pedidos_put.png)
 
-![PATCH /api/pedidos/:id/estado](evidencia/pedidos_patch_estado.png)
+![PATCH /api/pedidos/:id/estado](evidencia/parcial1/pedidos_patch_estado.png)
 
-![PATCH /api/pedidos/:id/estado transición inválida → 400](evidencia/pedidos_patch_estado_400.png)
+![PATCH /api/pedidos/:id/estado transición inválida → 400](evidencia/parcial1/pedidos_patch_estado_400.png)
 
-![DELETE /api/pedidos/:id](evidencia/pedidos_delete.png)
+![DELETE /api/pedidos/:id](evidencia/parcial1/pedidos_delete.png)
 
-![GET /api/pedidos/:id inexistente → 404](evidencia/pedidos_get_404.png)
+![GET /api/pedidos/:id inexistente → 404](evidencia/parcial1/pedidos_get_404.png)
 
-![POST /api/pedidos sin items → 400](evidencia/pedidos_post_400.png)
+![POST /api/pedidos sin items → 400](evidencia/parcial1/pedidos_post_400.png)
 
 **Choferes (solo lectura)**
 
-![GET /api/choferes](evidencia/choferes_get.png)
+![GET /api/choferes](evidencia/parcial1/choferes_get.png)
 
 **Manejo de errores**
 
-![GET ruta inexistente → 404](evidencia/ruta_404.png)
+![GET ruta inexistente → 404](evidencia/parcial1/ruta_404.png)
