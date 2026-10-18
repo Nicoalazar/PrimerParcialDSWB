@@ -22,7 +22,7 @@ En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video,
 - Laura Belén Blanco
 - Fernando Guevara
 
-**Nombre del documento / carpeta Drive:** `<<COMPLETAR: DSWB_2A_grupo17-losbuleanos_2C26 o el nombre que pida la cátedra para la 2° entrega>>`
+**Nombre del documento / carpeta Drive:** `DSWB_2A_grupo17-parcial2_2C26`
 
 ---
 
@@ -30,7 +30,7 @@ En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video,
 
 | Recurso | Link |
 |---|---|
-| Carpeta Drive (`Segunda Entrega`) | <<COMPLETAR>> |
+| Carpeta Drive (`DSWB_2A_grupo17-parcial2_2C26`) | <<COMPLETAR>> |
 | Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB (versión del segundo parcial en `main` y en el tag `v2.0-segundo-parcial`; la del primero en el tag `v1.0-primer-parcial`) |
 | Video: explicación del código con MongoDB | <<COMPLETAR: link de Drive/YouTube con permiso de visualización>> |
 
