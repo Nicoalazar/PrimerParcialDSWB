@@ -39,7 +39,7 @@ Se mantienen los roles del primer parcial: cada integrante es responsable de la 
 
 | Tarea | Responsable |
 |---|---|
-| Capturas de Postman contra MongoDB en `docs/evidencia/parcial2/` | <<COMPLETAR>> |
+| Capturas de Postman contra MongoDB en `docs/evidencia/parcial2/` | Todos (cada integrante, las de su parte del código) |
 | Video explicando el código con Mongo (una parte por integrante) | Todos |
-| Generar el PDF desde `docs/DOCUMENTACION_Parte2.md` y subirlo a la carpeta de Drive | <<COMPLETAR>> |
+| Generar el PDF desde `docs/DOCUMENTACION_Parte2.md` y subirlo a la carpeta de Drive | Nicolás Zalazar |
 | Subida individual del link al Drive en el campus | Cada integrante con su usuario |

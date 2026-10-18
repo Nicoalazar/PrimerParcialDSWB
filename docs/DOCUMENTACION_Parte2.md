@@ -1,6 +1,6 @@
 <!--
 Fuente del PDF de entrega del segundo parcial. Mismo formato que DOCUMENTACION_Parte1.md (portada con logos, índice y capturas embebidas).
-Antes de exportar: reemplazar todos los <<COMPLETAR>>.
+Exportar el PDF como DSWB_2A_grupo17-parcial2_2C26.pdf (mismo nombre que la carpeta de Drive).
 En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video, diagramas si hay).
 -->
 
@@ -30,9 +30,9 @@ En el Drive tiene que haber un ÚNICO documento con todos los links (Git, video,
 
 | Recurso | Link |
 |---|---|
-| Carpeta Drive (`DSWB_2A_grupo17-parcial2_2C26`) | <<COMPLETAR>> |
+| Carpeta Drive (`DSWB_2A_grupo17-parcial2_2C26`) | https://drive.google.com/drive/folders/1liSsWgmEh2hdMLCJ7dF8GmEHAAiLa_-v?usp=drive_link |
 | Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB (versión del segundo parcial en `main` y en el tag `v2.0-segundo-parcial`; la del primero en el tag `v1.0-primer-parcial`) |
-| Video: explicación del código con MongoDB | <<COMPLETAR: link de Drive/YouTube con permiso de visualización>> |
+| Video: explicación del código con MongoDB | https://drive.google.com/file/d/1LGITn3PUcVIubvnb4ezzkbutYb1MZmFv/view?usp=drive_link |
 
 ---
 
@@ -258,7 +258,7 @@ Colección: `docs/api-collection.postman.json`. Capturas en `docs/evidencia/parc
 
 ## 9. Video
 
-Video explicando el código con MongoDB (grabado por Meet/Zoom, sin edición): <<COMPLETAR: link>>
+Video explicando el código con MongoDB (grabado por Meet/Zoom, sin edición): https://drive.google.com/file/d/1LGITn3PUcVIubvnb4ezzkbutYb1MZmFv/view?usp=drive_link
 
 Orden sugerido (una parte por integrante, según la sección 4):
 
