@@ -258,12 +258,4 @@ Colección: `docs/api-collection.postman.json`. Capturas en `docs/evidencia/parc
 
 ## 9. Video
 
-Video explicando el código con MongoDB (grabado por Meet/Zoom, sin edición): https://drive.google.com/file/d/1LGITn3PUcVIubvnb4ezzkbutYb1MZmFv/view?usp=drive_link
-
-Orden sugerido (una parte por integrante, según la sección 4):
-
-1. **Nicolás Zalazar** — `.env` y `config/db.js`, arranque en `app.js`, `npm run seed` y cómo se ven las colecciones en MongoDB Compass / Atlas.
-2. **Laura Olivera** — schema `Cliente` y el CRUD de clientes con `async/await`.
-3. **Christian Albornoz** — schema `Pedido` con referencias, `populate` en las vistas y el formulario de edición.
-4. **Laura Belén Blanco** — `PedidoService` (existencia y transiciones) y cómo el `errorHandler` responde a los errores de Mongoose.
-5. **Fernando Guevara** — demo en Postman (Run collection) y smoke test.
+Video explicando el código con MongoDB (grabado por Meet): https://drive.google.com/file/d/1LGITn3PUcVIubvnb4ezzkbutYb1MZmFv/view?usp=drive_link
