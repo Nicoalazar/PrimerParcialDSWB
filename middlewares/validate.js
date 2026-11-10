@@ -1,4 +1,5 @@
-// Middlewares de validación de body para POST/PUT de Clientes y Pedidos.
+// Middlewares de validación de body para POST/PUT de Clientes y Pedidos,
+// y para el login y el alta de usuarios.
 // Si falta algo o el tipo no es el esperado, responde 400 con { mensaje, errores }
 // y no deja pasar el request al controller.
 //
@@ -10,6 +11,7 @@
 // que además existan en la base lo verifica PedidoService.
 
 const { isValidObjectId } = require("mongoose");
+const { ROLES } = require("../models/Usuario");
 
 const validarCliente = (req, res, next) => {
 
@@ -193,7 +195,71 @@ const validarPedidoUpdate = (req, res, next) => {
 };
 
 
+const validarLogin = (req, res, next) => {
+
+    const { email, password } = req.body;
+    const errores = [];
+
+    if (!email || typeof email !== "string") {
+        errores.push("email es obligatorio y debe ser texto");
+    }
+
+    if (!password || typeof password !== "string") {
+        errores.push("password es obligatorio y debe ser texto");
+    }
+
+    if (errores.length > 0) {
+
+        return res.status(400).json({
+            mensaje: "Datos de login inválidos",
+            errores
+        });
+
+    }
+
+    next();
+
+};
+
+
+const validarUsuario = (req, res, next) => {
+
+    const { nombre, email, password, rol } = req.body;
+    const errores = [];
+
+    if (!nombre || typeof nombre !== "string") {
+        errores.push("nombre es obligatorio y debe ser texto");
+    }
+
+    if (!email || typeof email !== "string" || !/^\S+@\S+\.\S+$/.test(email)) {
+        errores.push("email es obligatorio y debe tener formato de email");
+    }
+
+    if (!password || typeof password !== "string" || password.length < 6) {
+        errores.push("password es obligatorio y debe tener al menos 6 caracteres");
+    }
+
+    if (rol !== undefined && !ROLES.includes(rol)) {
+        errores.push(`rol debe ser uno de: ${ROLES.join(", ")}`);
+    }
+
+    if (errores.length > 0) {
+
+        return res.status(400).json({
+            mensaje: "Datos de usuario inválidos",
+            errores
+        });
+
+    }
+
+    next();
+
+};
+
+
 module.exports = {
+    validarLogin,
+    validarUsuario,
     validarCliente,
     validarClienteUpdate,
     validarPedido,
