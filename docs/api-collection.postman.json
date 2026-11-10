@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FreshRoute B2B",
-    "description": "Colección de pruebas de la API. Segundo Parcial DSWB - LosBuleanos (persistencia en MongoDB).\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000.\nLos ids son ObjectId de MongoDB: no hace falta copiarlos a mano, los scripts de test de los GET/POST los guardan en variables de la colección (clienteId, choferId, pedidoId, clienteNuevoId, pedidoNuevoId). Correrla en orden (Run collection) con la base recién cargada (npm run seed). Cada request verifica el status esperado.",
+    "description": "Colección de pruebas de la API. Entrega final DSWB - LosBuleanos (MongoDB + autenticación JWT).\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000 (cambiarla por la URL del deploy para probar en línea).\nTodas las rutas salvo el login piden token: la carpeta Autenticación hace login como admin y guarda el JWT en {{token}}, que la colección manda como Bearer en cada request. Por eso hay que correrla en orden (Run collection) con la base recién cargada (npm run seed, que crea admin@freshroute.test / admin123 y operador@freshroute.test / operador123).\nLos ids son ObjectId de MongoDB: los scripts de test los guardan en variables de la colección (clienteId, choferId, pedidoId, clienteNuevoId, pedidoNuevoId). Cada request verifica el status esperado.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -28,9 +28,340 @@
     {
       "key": "pedidoNuevoId",
       "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tokenOperador",
+      "value": ""
     }
   ],
   "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "GET ruta protegida sin token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes"
+              ]
+            },
+            "description": "Sin header Authorization → 401 { mensaje: \"Se requiere iniciar sesión\" }."
+          }
+        },
+        {
+          "name": "POST login con contraseña incorrecta (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@freshroute.test\",\n  \"password\": \"incorrecta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "401 { mensaje: \"Email o contraseña incorrectos\" } (mismo mensaje si el email no existe)."
+          }
+        },
+        {
+          "name": "POST login operador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"tokenOperador\", pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"operador@freshroute.test\",\n  \"password\": \"operador123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "200 { mensaje, token, usuario }. Guarda el token en {{tokenOperador}}."
+          }
+        },
+        {
+          "name": "DELETE cliente como operador (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenOperador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "000000000000000000000000"
+              ]
+            },
+            "description": "Borrar es solo para el rol admin → 403 { mensaje: \"No tenés permisos para realizar esta acción\" }."
+          }
+        },
+        {
+          "name": "POST login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@freshroute.test\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "200 { mensaje, token, usuario }. Guarda el token en {{token}}, que usa el resto de la colección."
+          }
+        },
+        {
+          "name": "GET perfil",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"es el admin\", () => pm.expect(pm.response.json().rol).to.eql(\"admin\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "perfil"
+              ]
+            },
+            "description": "200 → datos del usuario dueño del token (sin contraseña)."
+          }
+        },
+        {
+          "name": "GET usuarios (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios"
+              ]
+            },
+            "description": "Solo admin. 200 → array de usuarios."
+          }
+        },
+        {
+          "name": "POST crear usuario con datos inválidos (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"X\",\n  \"email\": \"no-es-email\",\n  \"password\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios"
+              ]
+            },
+            "description": "400 { mensaje: \"Datos de usuario inválidos\", errores: [...] }."
+          }
+        }
+      ]
+    },
     {
       "name": "Clientes",
       "item": [
@@ -867,5 +1198,15 @@
         }
       ]
     }
-  ]
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
 }
