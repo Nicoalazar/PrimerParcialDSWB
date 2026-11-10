@@ -18,6 +18,7 @@ const {
 } = require("../../controllers/pedidosController");
 
 const { validarPedido, validarPedidoUpdate } = require("../../middlewares/validate");
+const { autorizar } = require("../../middlewares/auth");
 
 
 // rutas CRUD
@@ -30,7 +31,8 @@ router.post("/", validarPedido, crearPedido);
 
 router.put("/:id", validarPedidoUpdate, actualizarPedido);
 
-router.delete("/:id", eliminarPedido);
+// app.js ya exige token para todo el router; borrar queda solo para el admin
+router.delete("/:id", autorizar("admin"), eliminarPedido);
 
 router.patch("/:id/estado", cambiarEstado);
 

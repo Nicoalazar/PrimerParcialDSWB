@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h2 Error #{status}
+  p.error= mensaje
+  p
+    a(href="javascript:history.back()") Volver

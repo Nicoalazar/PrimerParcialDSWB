@@ -4,6 +4,7 @@ const router = express.Router();
 
 const Cliente = require("../../models/Cliente");
 const { validarCliente, validarClienteUpdate } = require("../../middlewares/validate");
+const { autorizar } = require("../../middlewares/auth");
 
 // Las rutas son async: si una consulta a Mongo falla, Express 5 manda el
 // error al errorHandler sin necesidad de try/catch.
@@ -70,7 +71,7 @@ router.post("/:id/editar", validarClienteUpdate, async (req, res) => {
 
 
 // POST /:id/eliminar - borrar
-router.post("/:id/eliminar", async (req, res) => {
+router.post("/:id/eliminar", autorizar("admin"), async (req, res) => {
 
     await Cliente.findByIdAndDelete(req.params.id);
 
