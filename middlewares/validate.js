@@ -13,6 +13,15 @@
 const { isValidObjectId } = require("mongoose");
 const { ROLES } = require("../models/Usuario");
 
+// Responde el 400: en la API (Postman) devuelve JSON { mensaje, errores };
+// en los formularios web muestra la pagina de error con la lista de errores.
+const rechazar = (req, res, mensaje, errores) => {
+    if (req.originalUrl.startsWith("/api")) {
+        return res.status(400).json({ mensaje, errores });
+    }
+    res.status(400).render("error", { titulo: "Datos inválidos", status: 400, mensaje, errores });
+};
+
 const validarCliente = (req, res, next) => {
 
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
@@ -40,10 +49,7 @@ const validarCliente = (req, res, next) => {
 
     if (errores.length > 0) {
 
-        return res.status(400).json({
-            mensaje: "Datos de cliente inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de cliente inválidos", errores);
 
     }
 
@@ -86,10 +92,7 @@ const validarClienteUpdate = (req, res, next) => {
 
     if (errores.length > 0) {
 
-        return res.status(400).json({
-            mensaje: "Datos de cliente inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de cliente inválidos", errores);
 
     }
 
@@ -130,10 +133,7 @@ const validarPedido = (req, res, next) => {
 
     if (errores.length > 0) {
 
-        return res.status(400).json({
-            mensaje: "Datos de pedido inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de pedido inválidos", errores);
 
     }
 
@@ -183,10 +183,7 @@ const validarPedidoUpdate = (req, res, next) => {
 
     if (errores.length > 0) {
 
-        return res.status(400).json({
-            mensaje: "Datos de pedido inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de pedido inválidos", errores);
 
     }
 
@@ -210,10 +207,7 @@ const validarLogin = (req, res, next) => {
 
     if (errores.length > 0) {
 
-        return res.status(400).json({
-            mensaje: "Datos de login inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de login inválidos", errores);
 
     }
 
@@ -245,10 +239,7 @@ const validarUsuario = (req, res, next) => {
 
     if (errores.length > 0) {
 
-        return res.status(400).json({
-            mensaje: "Datos de usuario inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de usuario inválidos", errores);
 
     }
 

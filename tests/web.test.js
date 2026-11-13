@@ -108,4 +108,24 @@ describe("Vistas web", () => {
 
         assert.equal(res.status, 404);
     });
+
+    it("un formulario web con datos inválidos muestra la página de error 400 (no JSON)", async () => {
+        const cookie = await loginWeb("operador@test.com", "operador123");
+        const web = await request(app).post("/clientes").type("form").set("Cookie", cookie).send({});
+
+        assert.equal(web.status, 400);
+        assert.match(web.headers["content-type"], /html/);
+        assert.match(web.text, /Datos de cliente inválidos/);
+        assert.match(web.text, /nombre es obligatorio/);
+
+        // la API sigue respondiendo JSON con { mensaje, errores }
+        const api = await request(app)
+            .post("/api/clientes")
+            .set("Authorization", `Bearer ${datos.tokenOperador}`)
+            .send({});
+
+        assert.equal(api.status, 400);
+        assert.equal(api.body.mensaje, "Datos de cliente inválidos");
+        assert.ok(Array.isArray(api.body.errores));
+    });
 });
