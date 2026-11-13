@@ -6,6 +6,7 @@ Capturas de request/response de cada endpoint de la API, tomadas desde Postman c
 |---|---|---|
 | [`parcial1/`](parcial1/) | Primer parcial | Archivos JSON (ids numéricos) |
 | [`parcial2/`](parcial2/) | Segundo parcial | MongoDB con Mongoose (ids ObjectId) |
+| [`parcial3/`](parcial3/) | Entrega final | MongoDB Atlas + autenticación JWT, local y en el deploy |
 
 ## Nomenclatura
 
@@ -43,3 +44,19 @@ En `parcial2/` los 404 usan el id `000000000000000000000000` (formato válido de
 
 - [`parcial2/newman-run.txt`](parcial2/newman-run.txt) — la colección Postman completa corrida con newman (22 requests, 22 asserts).
 - [`parcial2/smoke-test.txt`](parcial2/smoke-test.txt) — `node docs/smoke-test.js` (API + vistas web).
+
+## Entrega final (`parcial3/`)
+
+Pruebas de la v3.0 (autenticación JWT y roles), tanto en local contra MongoDB Atlas como contra el deploy en Render (`https://losbuleanos.onrender.com`). Las capturas de una misma corrida se numeran en orden (`_1`, `_2`, …).
+
+| Archivo | Qué muestra | Resultado |
+|---|---|---|
+| `tests_locales_1.png`, `tests_locales_2.png` | `npm test` (node:test + supertest con MongoDB en memoria) | 39/39 OK |
+| `smoke_local_1.png`, `smoke_local_2.png` | `node docs/smoke-test.js http://localhost:3000` contra la base de Atlas `freshroute_fernando` | 55 OK · 0 FALLA(S) |
+| `smoke_deploy_1.png`, `smoke_deploy_2.png` | `node docs/smoke-test.js https://losbuleanos.onrender.com` | 55 OK · 0 FALLA(S) |
+| `postman_deploy_1.png` … `postman_deploy_4.png` | Colección Postman completa con *Run collection* contra el deploy (detalle de cada request) | 31/31 asserts OK |
+| `postman_deploy_resumen.png` | Resumen de esa corrida | 31 tests, 0 errores |
+| `clientes_get_401.png` | `GET /api/clientes` sin token → `{ mensaje: "Se requiere iniciar sesión" }` | 401 |
+| `clientes_delete_403.png` | `DELETE /api/clientes/:id` con el token del operador → `{ mensaje: "No tenés permisos para realizar esta acción" }` | 403 |
+
+Los tests se capturaron antes del PR #46, que sumó un test (los 400 de los formularios web): hoy `npm test` da 40/40.
