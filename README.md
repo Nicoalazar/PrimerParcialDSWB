@@ -34,8 +34,9 @@ Servidor en `http://localhost:3000`. El servidor solo empieza a escuchar una vez
 
 | Email | Contraseña | Rol | Puede |
 |---|---|---|---|
-| `admin@freshroute.test` | `admin123` | `admin` | Todo: además de lo del operador, borrar clientes y pedidos, y listar/crear usuarios |
-| `operador@freshroute.test` | `operador123` | `operador` | Ver, crear y editar clientes y pedidos, y avanzar estados |
+| `admin@freshroute.test` | `admin123` | `admin` | Todo: además de lo del operador, borrar clientes, choferes y pedidos, y listar/crear usuarios |
+
+| `operador@freshroute.test` | `operador123` | `operador` | Ver, crear y editar clientes, choferes y pedidos, y avanzar estados |
 
 Son credenciales de prueba para desarrollo y la demo (están en `data/usuarios.json`); en un entorno real se cambian o se borran.
 
@@ -64,7 +65,7 @@ config/
   db.js             → conexión a MongoDB con mongoose.connect (async/await)
 routes/
   api/              → rutas JSON (se prueban con Postman)         → /api/auth, /api/usuarios, /api/clientes, /api/pedidos, /api/choferes
-  web/              → rutas que renderizan vistas Pug             → /login, /logout, /clientes, /pedidos
+  web/              → rutas que renderizan vistas Pug             → /login, /logout, /clientes, /choferes, /pedidos
 controllers/        → lógica de cada endpoint de la API (async/await)
 models/             → schemas y modelos de Mongoose: Usuario, Cliente, Pedido, Chofer
 services/           → reglas de negocio: PedidoService (cliente/chofer existentes, transiciones de estado) y AuthService (login, firma y verificación del JWT)
@@ -97,7 +98,7 @@ Los controllers, el service y las rutas web son funciones `async` y no llevan `t
 |---|---|---|
 | `Usuario` | `usuarios` | `nombre`, `email` (único, en minúsculas), `password` (hash bcrypt, `select: false`, mínimo 6 caracteres), `rol` (`enum`: `admin` / `operador`, default `operador`) |
 | `Cliente` | `clientes` | `nombre`, `direccion`, `zona`, `contacto`, `horarioEntrega` (todos `String`, `required`) |
-| `Chofer` | `choferes` | `nombre`, `apellido`, `vehiculo`, `zona` (todos `String`, `required`) — solo lectura |
+| `Chofer` | `choferes` | `nombre`, `apellido`, `vehiculo`, `zona` (todos `String`, `required`) |
 | `Pedido` | `pedidos` | `clienteId` (`ObjectId`, `ref: "Cliente"`), `choferId` (`ObjectId`, `ref: "Chofer"`), `items` (`[{ descripcion: String, cantidad: Number ≥ 1 }]`, al menos uno), `estado` (`enum`, default `pendiente`), `fechaHoraProgramada` (`String`) |
 
 Cada documento tiene el `_id` (ObjectId) que genera MongoDB; nunca se toma del body. Las vistas web usan `populate("clienteId")` / `populate("choferId")` para mostrar los nombres del cliente y el chofer de cada pedido.
@@ -106,7 +107,7 @@ Cada documento tiene el `_id` (ObjectId) que genera MongoDB; nunca se toma del b
 
 - **Clientes**: CRUD completo (`/api/clientes` y vistas en `/clientes`)
 - **Pedidos**: CRUD completo + cambio de estado (`/api/pedidos`, `PATCH /api/pedidos/:id/estado` y vistas en `/pedidos`)
-- **Choferes**: colección cargada por el seed y expuesta en `GET /api/choferes` (solo lectura, no es un módulo)
+- **Choferes**: CRUD completo (`/api/choferes` y vistas en `/choferes`)
 
 ## API — Endpoints por módulo
 
@@ -150,13 +151,17 @@ Campos de `Pedido`: `clienteId` (ObjectId de un cliente existente), `choferId` (
 
 **Estados:** el único camino es `pendiente → asignado → en tránsito → entregado`, de a un paso. No se permiten saltos ni retrocesos (`PedidoService.cambiarEstado`).
 
-### Choferes — `/api/choferes` (solo lectura)
+### Módulo Choferes — `/api/choferes`
 
 | Método | Ruta | Body de ejemplo | Respuesta |
 |---|---|---|---|
 | `GET` | `/api/choferes` | — | `200` `[ { "_id": "<id>", "nombre": "Carlos", "apellido": "Gómez", "vehiculo": "Camioneta refrigerada - AB 123 CD", "zona": "Norte" }, … ]` |
+| `GET` | `/api/choferes/:id` | — | `200` `{ "_id": "<id>", "nombre": "Carlos", … }` · `404` `{ "mensaje": "Chofer no encontrado" }` · `400` `{ "mensaje": "Id inválido: abc" }` |
+| `POST` | `/api/choferes` | `{ "nombre": "Juan", "apellido": "Pérez", "vehiculo": "Utilitario", "zona": "Sur" }` | `201` `{ "mensaje": "Chofer creado", "chofer": { "_id": "<id>", "nombre": "Juan", … } }` · `400` `{ "mensaje": "Datos de chofer inválidos", "errores": [ … ] }` |
+| `PUT` | `/api/choferes/:id` | `{ "vehiculo": "Camión mediano" }` (parcial: solo se pisan los campos enviados) | `200` `{ "mensaje": "Chofer actualizado", "chofer": { … } }` · `400` si no viene ningún campo o un tipo es incorrecto · `404` `{ "mensaje": "Chofer no encontrado" }` |
+| `DELETE` | `/api/choferes/:id` (**admin**) | — | `204` (sin contenido) / `200` `{ "mensaje": "Chofer eliminado" }` · `400` `{ "mensaje": "No se puede eliminar el chofer porque tiene pedidos asignados." }` · `404` `{ "mensaje": "Chofer no encontrado" }` |
 
-`POST`, `PUT` y `DELETE` sobre `/api/choferes` (con token) responden `404 { "mensaje": "Ruta no encontrada" }`: no es un módulo, es una colección de referencia (cargada por el seed) para asignar choferes a pedidos.
+Campos de `Chofer` (todos texto, obligatorios en `POST`): `nombre`, `apellido`, `vehiculo`, `zona`.
 
 ### Respuestas de error
 
@@ -193,6 +198,10 @@ Los formularios HTML solo pueden enviar `GET` y `POST`, por eso cada módulo tie
 | | `GET /pedidos/:id/editar` · `POST /pedidos/:id/editar` | Formulario precargado y edición |
 | | `POST /pedidos/:id/estado` | Avanza al siguiente estado |
 | | `POST /pedidos/:id/eliminar` | Baja (solo admin) |
+| Choferes | `GET /choferes` | Listado |
+| | `GET /choferes/nuevo` · `POST /choferes` | Formulario y alta |
+| | `GET /choferes/:id/editar` · `POST /choferes/:id/editar` | Formulario y edición |
+| | `POST /choferes/:id/eliminar` | Baja (solo admin; rechaza si tiene pedidos asignados) |
 
 Todas salvo el inicio y el login piden sesión. Después de cada `POST` se redirige al listado (o al detalle, en el caso del estado).
 
@@ -222,6 +231,7 @@ Usan el runner que trae Node (`node:test` + `node:assert`) y **supertest** para 
 | `tests/auth.test.js` | Login correcto/incorrecto, token ausente, vencido o adulterado, perfil, permisos por rol, alta de usuarios con hash de contraseña |
 | `tests/pedidos.test.js` | Reglas de `PedidoService`: nace en `pendiente`, cliente/chofer inexistentes, ítems inválidos, transiciones (sin saltos ni retrocesos), `PUT` no toca el estado, baja solo admin |
 | `tests/web.test.js` | Redirección al login, cookie `httpOnly`, botones según rol, 403 en la web, logout, 404 HTML vs JSON, ids inválidos |
+| `tests/choferes.test.js` | CRUD de choferes, listado, alta, validaciones de campos obligatorios, restricciones de rol (operador no borra) y regla de negocio de rechazo de baja si tiene pedidos asignados |
 
 ### Colección Postman
 
@@ -263,7 +273,7 @@ Capturas de cada request/response en [`docs/evidencia/`](docs/evidencia/), con n
 |---|---|
 | Nicolás Zalazar | Estructura base del proyecto y seed de choferes |
 | Laura Olivera | Backend Clientes y vistas web de Clientes |
-| Christian Albornoz | Backend Pedidos + `GET /api/choferes` y vistas web de Pedidos |
+| Christian Albornoz | Backend Pedidos y CRUD completo de Choferes (API + web), y vistas web de Pedidos y Choferes |
 | Laura Belén Blanco | `PedidoService` y middlewares: logger, validación, manejo de errores |
 | Fernando Guevara | QA: code review cruzado, bug bash, smoke test y documentación |
 
@@ -271,3 +281,7 @@ Capturas de cada request/response en [`docs/evidencia/`](docs/evidencia/), con n
 - Release plan: primer parcial [`docs/RELEASE_PLAN.md`](docs/RELEASE_PLAN.md) · entrega final [`docs/RELEASE_PLAN_Parte3.md`](docs/RELEASE_PLAN_Parte3.md)
 - Bibliografía: [`docs/bibliografia.md`](docs/bibliografia.md)
 - Documentación de entrega (fuente del PDF): [`docs/DOCUMENTACION_Parte2.md`](docs/DOCUMENTACION_Parte2.md) · primer parcial: [`docs/DOCUMENTACION_Parte1.md`](docs/DOCUMENTACION_Parte1.md)
+
+
+
+

@@ -12,7 +12,7 @@ let token = null;
 
 let ok = 0;
 let fallos = 0;
-const creados = { clientes: [], pedidos: [] };
+const creados = { clientes: [], pedidos: [], choferes: [] };
 
 async function pedir(metodo, ruta, body) {
     // redirect manual: si no, fetch sigue el 302 y siempre veríamos un 200
@@ -109,11 +109,25 @@ async function main() {
     await verificar("edición de inexistente", 404, "PUT", `/api/clientes/${ID_INEXISTENTE}`, { zona: "Norte" });
     await verificar("baja de inexistente", 404, "DELETE", `/api/clientes/${ID_INEXISTENTE}`);
 
-    console.log("\n--- Choferes (solo lectura) ---");
+    console.log("\n--- Módulo Choferes (API) ---");
     const choferes = await verificar("listar choferes", 200, "GET", "/api/choferes");
-    const idChofer = choferes.length ? choferes[0]._id : ID_INEXISTENTE;
-    await verificar("alta de chofer no existe", 404, "POST", "/api/choferes", { nombre: "x" });
-    await verificar("baja de chofer no existe", 404, "DELETE", `/api/choferes/${idChofer}`);
+    const idChoferSeed = choferes.length ? choferes[0]._id : ID_INEXISTENTE;
+    
+    const altaChofer = await verificar("alta de chofer válida", 201, "POST", "/api/choferes", {
+        nombre: "Carlos",
+        apellido: "Prueba",
+        vehiculo: "Utilitario",
+        zona: "Norte"
+    });
+    const idChoferCreado = altaChofer && altaChofer.chofer ? altaChofer.chofer._id : (altaChofer && altaChofer._id ? altaChofer._id : null);
+    if (idChoferCreado) creados.choferes.push(idChoferCreado);
+
+    await verificar("alta de chofer sin campos", 400, "POST", "/api/choferes", {});
+    
+    // Validar la regla de negocio usando el chofer del seed (que ya viene con pedidos)
+    await verificar("rechaza baja de chofer con pedidos asignados", 400, "DELETE", `/api/choferes/${idChoferSeed}`);
+
+    await verificar("baja de chofer inexistente", 404, "DELETE", `/api/choferes/${ID_INEXISTENTE}`);
 
     console.log("\n--- Módulo Pedidos (API) ---");
     const pedidos = await verificar("listar", 200, "GET", "/api/pedidos");
@@ -123,7 +137,7 @@ async function main() {
 
     const altaPedido = await verificar("alta válida", 201, "POST", "/api/pedidos", {
         clienteId: idCliente,
-        choferId: idChofer,
+        choferId: idChoferSeed,
         items: [{ descripcion: "Cajón de prueba", cantidad: 1 }],
         fechaHoraProgramada: "2026-09-30T08:00:00"
     });
@@ -138,7 +152,7 @@ async function main() {
 
     await verificar("alta con cliente inexistente", 400, "POST", "/api/pedidos", {
         clienteId: ID_INEXISTENTE,
-        choferId: idChofer,
+        choferId: idChoferSeed,
         items: [{ descripcion: "x", cantidad: 1 }],
         fechaHoraProgramada: "2026-09-30T08:00:00"
     });
@@ -150,19 +164,19 @@ async function main() {
     });
     await verificar("alta con clienteId mal formado", 400, "POST", "/api/pedidos", {
         clienteId: 1,
-        choferId: idChofer,
+        choferId: idChoferSeed,
         items: [{ descripcion: "x", cantidad: 1 }],
         fechaHoraProgramada: "2026-09-30T08:00:00"
     });
     await verificar("alta sin items", 400, "POST", "/api/pedidos", {
         clienteId: idCliente,
-        choferId: idChofer,
+        choferId: idChoferSeed,
         items: [],
         fechaHoraProgramada: "2026-09-30T08:00:00"
     });
     await verificar("alta con cantidad 0 (la rechaza el schema)", 400, "POST", "/api/pedidos", {
         clienteId: idCliente,
-        choferId: idChofer,
+        choferId: idChoferSeed,
         items: [{ descripcion: "x", cantidad: 0 }],
         fechaHoraProgramada: "2026-09-30T08:00:00"
     });
@@ -203,6 +217,9 @@ async function main() {
     }
     for (const id of creados.clientes) {
         await verificar("borrar cliente de prueba", 200, "DELETE", `/api/clientes/${id}`);
+    }
+    for (const id of creados.choferes) {
+        await verificar("borrar chofer de prueba", 204, "DELETE", `/api/choferes/${id}`);
     }
 
     console.log("\n" + "=".repeat(60));

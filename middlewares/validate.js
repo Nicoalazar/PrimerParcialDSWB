@@ -1,20 +1,16 @@
-// Middlewares de validación de body para POST/PUT de Clientes y Pedidos,
+// Middlewares de validación de body para POST/PUT de Clientes, Pedidos y Choferes,
 // y para el login y el alta de usuarios.
 // Si falta algo o el tipo no es el esperado, responde 400 con { mensaje, errores }
 // y no deja pasar el request al controller.
 //
-// POST (validarCliente / validarPedido): exige TODOS los campos, porque es un alta.
-// PUT (validarClienteUpdate / validarPedidoUpdate): valida solo los campos que
+// POST (validarCliente / validarPedido / validarChofer): exige TODOS los campos, porque es un alta.
+// PUT (validarClienteUpdate / validarPedidoUpdate / validarChoferUpdate): valida solo los campos que
 // vinieron en el body (edición parcial); si no vino ninguno, responde 400.
-//
-// clienteId y choferId tienen que tener formato de id de MongoDB (ObjectId);
-// que además existan en la base lo verifica PedidoService.
 
 const { isValidObjectId } = require("mongoose");
 const { ROLES } = require("../models/Usuario");
 
 const validarCliente = (req, res, next) => {
-
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
     const errores = [];
 
@@ -39,21 +35,16 @@ const validarCliente = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-
         return res.status(400).json({
             mensaje: "Datos de cliente inválidos",
             errores
         });
-
     }
 
     next();
-
 };
 
-
 const validarClienteUpdate = (req, res, next) => {
-
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
     const errores = [];
 
@@ -85,21 +76,16 @@ const validarClienteUpdate = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-
         return res.status(400).json({
             mensaje: "Datos de cliente inválidos",
             errores
         });
-
     }
 
     next();
-
 };
 
-
 const validarPedido = (req, res, next) => {
-
     const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
     const errores = [];
 
@@ -129,21 +115,16 @@ const validarPedido = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-
         return res.status(400).json({
             mensaje: "Datos de pedido inválidos",
             errores
         });
-
     }
 
     next();
-
 };
 
-
 const validarPedidoUpdate = (req, res, next) => {
-
     const { clienteId, choferId, items, fechaHoraProgramada } = req.body;
     const errores = [];
 
@@ -182,21 +163,84 @@ const validarPedidoUpdate = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-
         return res.status(400).json({
             mensaje: "Datos de pedido inválidos",
             errores
         });
-
     }
 
     next();
-
 };
 
+// --- NUEVOS VALIDADORES PARA CHOFERES ---
+const validarChofer = (req, res, next) => {
+    const { nombre, apellido, vehiculo, zona } = req.body;
+    const errores = [];
+
+    if (!nombre || typeof nombre !== "string") {
+        errores.push("nombre es obligatorio y debe ser texto");
+    }
+
+    if (!apellido || typeof apellido !== "string") {
+        errores.push("apellido es obligatorio y debe ser texto");
+    }
+
+    if (!vehiculo || typeof vehiculo !== "string") {
+        errores.push("vehiculo es obligatorio y debe ser texto");
+    }
+
+    if (!zona || typeof zona !== "string") {
+        errores.push("zona es obligatoria y debe ser texto");
+    }
+
+    if (errores.length > 0) {
+        return res.status(400).json({
+            mensaje: "Datos de chofer inválidos",
+            errores
+        });
+    }
+
+    next();
+};
+
+const validarChoferUpdate = (req, res, next) => {
+    const { nombre, apellido, vehiculo, zona } = req.body;
+    const errores = [];
+
+    const vinoAlgunCampo = [nombre, apellido, vehiculo, zona]
+        .some((valor) => valor !== undefined);
+
+    if (!vinoAlgunCampo) {
+        errores.push("hay que mandar al menos un campo para actualizar");
+    }
+
+    if (nombre !== undefined && (!nombre || typeof nombre !== "string")) {
+        errores.push("nombre debe ser texto");
+    }
+
+    if (apellido !== undefined && (!apellido || typeof apellido !== "string")) {
+        errores.push("apellido debe ser texto");
+    }
+
+    if (vehiculo !== undefined && (!vehiculo || typeof vehiculo !== "string")) {
+        errores.push("vehiculo debe ser texto");
+    }
+
+    if (zona !== undefined && (!zona || typeof zona !== "string")) {
+        errores.push("zona debe ser texto");
+    }
+
+    if (errores.length > 0) {
+        return res.status(400).json({
+            mensaje: "Datos de chofer inválidos",
+            errores
+        });
+    }
+
+    next();
+};
 
 const validarLogin = (req, res, next) => {
-
     const { email, password } = req.body;
     const errores = [];
 
@@ -209,21 +253,16 @@ const validarLogin = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-
         return res.status(400).json({
             mensaje: "Datos de login inválidos",
             errores
         });
-
     }
 
     next();
-
 };
 
-
 const validarUsuario = (req, res, next) => {
-
     const { nombre, email, password, rol } = req.body;
     const errores = [];
 
@@ -244,18 +283,14 @@ const validarUsuario = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-
         return res.status(400).json({
             mensaje: "Datos de usuario inválidos",
             errores
         });
-
     }
 
     next();
-
 };
-
 
 module.exports = {
     validarLogin,
@@ -263,5 +298,8 @@ module.exports = {
     validarCliente,
     validarClienteUpdate,
     validarPedido,
-    validarPedidoUpdate
+    validarPedidoUpdate,
+    validarChofer,
+    validarChoferUpdate
 };
+

@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+    .container.mt-4
+        h2.mb-4= titulo
+
+        if usuario && usuario.rol === 'admin'
+            a.btn.btn-primary.mb-3(href="/choferes/crear") Nuevo Chofer
+
+        table.table.table-striped.table-dark.text-white
+            thead
+                tr
+                    th Nombre
+                    th Apellido
+                    th Vehículo
+                    th Zona
+                    if usuario && usuario.rol === 'admin'
+                        th Acciones
+            tbody
+                each chofer in choferes
+                    tr
+                        td= chofer.nombre
+                        td= chofer.apellido
+                        td= chofer.vehiculo
+                        td= chofer.zona
+                        if usuario && usuario.rol === 'admin'
+                            td
+                                a.btn.btn-sm.btn-warning.me-2(href=`/choferes/editar/${chofer._id}`) Editar
+                                form.d-inline(action=`/choferes/eliminar/${chofer._id}`, method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este chofer?');")
+                                    button.btn.btn-sm.btn-danger(type="submit") Eliminar
