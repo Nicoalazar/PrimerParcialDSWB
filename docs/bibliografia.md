@@ -18,6 +18,19 @@
 - Node.js — módulo `path` — https://nodejs.org/api/path.html
 - Node.js — `fetch` global (usado en `docs/smoke-test.js`) — https://nodejs.org/api/globals.html#fetch
 
+### MongoDB y Mongoose (segundo parcial)
+
+- Mongoose — Getting Started — https://mongoosejs.com/docs/index.html
+- Mongoose — Schemas y SchemaTypes (`required`, `enum`, `min`, `ref`) — https://mongoosejs.com/docs/guide.html · https://mongoosejs.com/docs/schematypes.html
+- Mongoose — Models y Queries (`find`, `findById`, `findByIdAndUpdate`, `findByIdAndDelete`, `exists`) — https://mongoosejs.com/docs/models.html · https://mongoosejs.com/docs/queries.html
+- Mongoose — Validación (`ValidationError`, `runValidators`) — https://mongoosejs.com/docs/validation.html
+- Mongoose — Populate (referencias entre colecciones) — https://mongoosejs.com/docs/populate.html
+- Mongoose — Conexiones (`mongoose.connect`) — https://mongoosejs.com/docs/connections.html
+- MongoDB — Manual (documentos, colecciones, ObjectId) — https://www.mongodb.com/docs/manual/
+- MongoDB Atlas — Crear un cluster gratuito — https://www.mongodb.com/docs/atlas/getting-started/
+- dotenv — variables de entorno desde `.env` — https://github.com/motdotla/dotenv#readme
+- MDN — async/await — https://developer.mozilla.org/es/docs/Learn/JavaScript/Asynchronous/Promises
+
 ### Vistas
 
 - Pug — Referencia del lenguaje (`extends`, `block`, `each`, atributos) — https://pugjs.org/language/attributes.html
@@ -30,8 +43,3 @@
 - GitHub — CODEOWNERS — https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 - MDN — Métodos HTTP y códigos de estado — https://developer.mozilla.org/es/docs/Web/HTTP/Status
 
-## Videos
-
-<<COMPLETAR: agregar los videos de YouTube que usó el equipo, con título y link. Ejemplo de formato:>>
-
-- <<Título del video>> — <<canal>> — <<https://www.youtube.com/watch?v=...>>

@@ -1,12 +1,15 @@
-// Cliente de FreshRoute: restaurante, comedor o cocina industrial
-class Cliente {
-    constructor(nombre, direccion, zona, contacto, horarioEntrega) {
-        this.nombre = nombre;
-        this.direccion = direccion;
-        this.zona = zona;
-        this.contacto = contacto;
-        this.horarioEntrega = horarioEntrega;
-    }
-}
+const mongoose = require("mongoose");
 
-module.exports = Cliente;
+// Cliente de FreshRoute: restaurante, comedor o cocina industrial
+const clienteSchema = new mongoose.Schema(
+    {
+        nombre: { type: String, required: true, trim: true },
+        direccion: { type: String, required: true, trim: true },
+        zona: { type: String, required: true, trim: true },
+        contacto: { type: String, required: true, trim: true },
+        horarioEntrega: { type: String, required: true, trim: true }
+    },
+    { versionKey: false }
+);
+
+module.exports = mongoose.model("Cliente", clienteSchema, "clientes");

@@ -30,5 +30,7 @@ block content
                             |  | 
                             a(href=`/pedidos/${pedido.id}/editar`) Editar
                             |  | 
-                            form(action=`/pedidos/${pedido.id}/eliminar` method="POST" style="display:inline;")
-                                button(type="submit") Eliminar
+                            //- borrar es solo para el admin (el backend también lo controla)
+                            if usuario && usuario.rol === "admin"
+                                form(action=`/pedidos/${pedido.id}/eliminar` method="POST" style="display:inline;")
+                                    button(type="submit") Eliminar

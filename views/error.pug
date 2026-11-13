@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h2 Error #{status}
+  p.error= mensaje
+  if errores && errores.length
+    ul.error
+      each e in errores
+        li= e
+  p
+    a(href="javascript:history.back()") Volver

@@ -1,16 +1,17 @@
 extends ../layout
 
 block content
-    h2 Nuevo pedido
+    - const items = pedido && pedido.items.length > 0 ? pedido.items : [{ descripcion: "", cantidad: "" }]
+    h2= pedido ? "Editar pedido" : "Nuevo pedido"
 
-    form(action="/pedidos" method="POST")
+    form(action=pedido ? `/pedidos/${pedido.id}/editar` : "/pedidos" method="POST")
         div
             label(for="clienteId") Cliente:
             br
             select(name="clienteId" id="clienteId" required)
                 option(value="") -- Seleccione un cliente --
                 each cliente in clientes
-                    option(value=cliente.id)= cliente.nombre
+                    option(value=cliente.id selected=pedido && pedido.clienteId.equals(cliente._id))= cliente.nombre
 
         br
         div
@@ -19,13 +20,13 @@ block content
             select(name="choferId" id="choferId" required)
                 option(value="") -- Seleccione un chofer --
                 each chofer in choferes
-                    option(value=chofer.id)= chofer.nombre
+                    option(value=chofer.id selected=pedido && pedido.choferId.equals(chofer._id))= chofer.nombre
 
         br
         div
             label(for="fechaHoraProgramada") Fecha y hora programada:
             br
-            input(type="text" name="fechaHoraProgramada" id="fechaHoraProgramada" placeholder="2026-09-16T08:00:00" required)
+            input(type="text" name="fechaHoraProgramada" id="fechaHoraProgramada" placeholder="2026-09-16T08:00:00" value=pedido ? pedido.fechaHoraProgramada : "" required)
 
         br
         h3 Ítems del pedido
@@ -36,17 +37,18 @@ block content
                     th Descripción (con unidad/presentación)
                     th Cantidad
             tbody#items-tbody
-                tr
-                    td
-                        input(type="text" name="item_descripcion[]" class="input-desc" placeholder="Ej: Lechuga (cajón)" required)
-                    td
-                        input(type="number" name="item_cantidad[]" min="1" placeholder="10" required)
+                each item, i in items
+                    tr
+                        td
+                            input(type="text" name="item_descripcion[]" class="input-desc" placeholder="Ej: Lechuga (cajón)" value=item.descripcion required=(i === 0))
+                        td
+                            input(type="number" name="item_cantidad[]" min="1" placeholder="10" value=item.cantidad required=(i === 0))
 
         p
             button(type="button" id="btn-agregar") + Agregar otro ítem
 
         br
-        button(type="submit") Guardar pedido
+        button(type="submit")= pedido ? "Guardar cambios" : "Guardar pedido"
         |  
         a(href="/pedidos") Cancelar
 

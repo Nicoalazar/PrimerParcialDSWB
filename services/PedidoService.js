@@ -1,85 +1,64 @@
-const JsonRepository = require("../repositories/JsonRepository");
 const Pedido = require("../models/Pedido");
+const Cliente = require("../models/Cliente");
+const Chofer = require("../models/Chofer");
 
-const pedidosRepo = new JsonRepository("pedidos.json");
-const clientesRepo = new JsonRepository("clientes.json");
-const choferesRepo = new JsonRepository("choferes.json");
+const { ESTADOS } = Pedido;
 
-const ESTADOS = ["pendiente", "asignado", "en tránsito", "entregado"];
+// arma un error con statusCode para que lo responda el errorHandler
+const crearError = (mensaje, statusCode) => {
+    const error = new Error(mensaje);
+    error.statusCode = statusCode;
+    return error;
+};
 
 class PedidoService {
-    crearPedido(datos) {
+    async validarReferencias(clienteId, choferId) {
+        if (clienteId !== undefined && !(await Cliente.exists({ _id: clienteId }))) {
+            throw crearError(`El cliente con id ${clienteId} no existe`, 400);
+        }
+
+        if (choferId !== undefined && !(await Chofer.exists({ _id: choferId }))) {
+            throw crearError(`El chofer con id ${choferId} no existe`, 400);
+        }
+    }
+
+    async crearPedido(datos) {
         const { clienteId, choferId, items, fechaHoraProgramada } = datos;
 
-        // 1. Validar existencia de clienteId en clientes.json
-        const cliente = clientesRepo.getById(Number(clienteId));
-        if (!cliente) {
-            const error = new Error(`El cliente con id ${clienteId} no existe`);
-            error.statusCode = 400;
-            throw error;
-        }
+        // 1. Validar que existan el cliente y el chofer en la base
+        await this.validarReferencias(clienteId, choferId);
 
-        // 2. Validar existencia de choferId en choferes.json
-        const chofer = choferesRepo.getById(Number(choferId));
-        if (!chofer) {
-            const error = new Error(`El chofer con id ${choferId} no existe`);
-            error.statusCode = 400;
-            throw error;
-        }
-
-        // 3. Crear instancia con estado inicial 'pendiente'
-        const nuevoPedido = new Pedido(
-            Number(clienteId),
-            Number(choferId),
+        // 2. Crear el pedido: siempre nace en 'pendiente' (el estado del body se ignora)
+        return Pedido.create({
+            clienteId,
+            choferId,
             items,
-            ESTADOS[0],
+            estado: ESTADOS[0],
             fechaHoraProgramada
-        );
-
-        return pedidosRepo.create(nuevoPedido);
+        });
     }
 
-    actualizarPedido(id, datos) {
-        const pedido = pedidosRepo.getById(Number(id));
+    async actualizarPedido(id, datos) {
+        const pedido = await Pedido.findById(id);
         if (!pedido) {
-            const error = new Error("Pedido no encontrado");
-            error.statusCode = 404;
-            throw error;
+            throw crearError("Pedido no encontrado", 404);
         }
 
-        if (datos.clienteId !== undefined) {
-            const cliente = clientesRepo.getById(Number(datos.clienteId));
-            if (!cliente) {
-                const error = new Error(`El cliente con id ${datos.clienteId} no existe`);
-                error.statusCode = 400;
-                throw error;
-            }
-        }
+        await this.validarReferencias(datos.clienteId, datos.choferId);
 
-        if (datos.choferId !== undefined) {
-            const chofer = choferesRepo.getById(Number(datos.choferId));
-            if (!chofer) {
-                const error = new Error(`El chofer con id ${datos.choferId} no existe`);
-                error.statusCode = 400;
-                throw error;
-            }
-        }
-
-        return pedidosRepo.update(Number(id), datos);
+        // el estado no se cambia por acá, solo por cambiarEstado
+        Object.assign(pedido, datos);
+        return pedido.save();
     }
 
-    cambiarEstado(id, nuevoEstado) {
-        const pedido = pedidosRepo.getById(Number(id));
+    async cambiarEstado(id, nuevoEstado) {
+        const pedido = await Pedido.findById(id);
         if (!pedido) {
-            const error = new Error("Pedido no encontrado");
-            error.statusCode = 404;
-            throw error;
+            throw crearError("Pedido no encontrado", 404);
         }
 
         if (!ESTADOS.includes(nuevoEstado)) {
-            const error = new Error(`Estado inválido. Valores permitidos: ${ESTADOS.join(", ")}`);
-            error.statusCode = 400;
-            throw error;
+            throw crearError(`Estado inválido. Valores permitidos: ${ESTADOS.join(", ")}`, 400);
         }
 
         const indiceActual = ESTADOS.indexOf(pedido.estado);
@@ -87,12 +66,11 @@ class PedidoService {
 
         // Solo transición al estado siguiente: sin saltos ni retrocesos
         if (indiceNuevo !== indiceActual + 1) {
-            const error = new Error(`Transición inválida: no se puede pasar de "${pedido.estado}" a "${nuevoEstado}"`);
-            error.statusCode = 400;
-            throw error;
+            throw crearError(`Transición inválida: no se puede pasar de "${pedido.estado}" a "${nuevoEstado}"`, 400);
         }
 
-        return pedidosRepo.update(Number(id), { estado: nuevoEstado });
+        pedido.estado = nuevoEstado;
+        return pedido.save();
     }
 }
 

@@ -1,0 +1,14 @@
+[
+    {
+        "nombre": "Admin FreshRoute",
+        "email": "admin@freshroute.test",
+        "password": "admin123",
+        "rol": "admin"
+    },
+    {
+        "nombre": "Operador FreshRoute",
+        "email": "operador@freshroute.test",
+        "password": "operador123",
+        "rol": "operador"
+    }
+]
