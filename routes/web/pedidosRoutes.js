@@ -6,6 +6,7 @@ const Cliente = require("../../models/Cliente");
 const Chofer = require("../../models/Chofer");
 const pedidoService = require("../../services/PedidoService");
 const { validarPedido } = require("../../middlewares/validate");
+const { autorizar } = require("../../middlewares/auth");
 
 const { ESTADOS } = Pedido;
 
@@ -107,7 +108,7 @@ router.post("/:id/editar", normalizarBodyWeb, validarPedido, async (req, res) =>
 });
 
 // POST /:id/eliminar - Borrar pedido
-router.post("/:id/eliminar", async (req, res) => {
+router.post("/:id/eliminar", autorizar("admin"), async (req, res) => {
     await Pedido.findByIdAndDelete(req.params.id);
     res.redirect("/pedidos");
 });

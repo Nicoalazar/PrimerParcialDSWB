@@ -12,3 +12,8 @@ th { background: #e6f0ed; }
 form label { display: block; margin-top: 12px; }
 input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; }
 button { margin-top: 16px; padding: 8px 16px; background: #0b5d4a; color: #fff; border: 0; cursor: pointer; }
+header .sesion { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+header .sesion a { color: #fff; }
+header .sesion form { margin: 0; }
+header .sesion button { margin-top: 0; padding: 4px 10px; background: #fff; color: #0b5d4a; }
+.error { color: #b00020; font-weight: 600; }

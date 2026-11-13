@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
+const config = require("./index");
 
-// Conexión única a MongoDB. La URI sale de .env (MONGO_URI); si no está,
-// se usa una base local.
-const conectarDB = async () => {
-    const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/freshroute";
-
+// Conexión única a MongoDB. Por defecto usa MONGO_URI (local o Atlas);
+// los tests le pasan su propia URI para no tocar la base de desarrollo.
+const conectarDB = async (uri = config.mongoUri) => {
     await mongoose.connect(uri);
 
     console.log("MongoDB conectado: " + mongoose.connection.name);

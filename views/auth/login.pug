@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+  h2 Iniciar sesión
+  if error
+    p.error= error
+  form(action="/login" method="POST")
+    label(for="email") Email
+    input(type="email" id="email" name="email" value=email || "" required autocomplete="username")
+
+    label(for="password") Contraseña
+    input(type="password" id="password" name="password" required autocomplete="current-password")
+
+    button(type="submit") Ingresar

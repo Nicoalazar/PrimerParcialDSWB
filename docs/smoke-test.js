@@ -3,16 +3,28 @@ const BASE = process.argv[2] || process.env.BASE_URL || "http://localhost:3000";
 // ObjectId con formato válido que no existe en la base (para probar los 404)
 const ID_INEXISTENTE = "000000000000000000000000";
 
+// usuarios del seed (data/usuarios.json): npm run seed antes de correr esto
+const ADMIN = { email: "admin@freshroute.test", password: "admin123" };
+const OPERADOR = { email: "operador@freshroute.test", password: "operador123" };
+
+// token con el que viajan los requests; null = sin sesión
+let token = null;
+
 let ok = 0;
 let fallos = 0;
 const creados = { clientes: [], pedidos: [] };
 
 async function pedir(metodo, ruta, body) {
     // redirect manual: si no, fetch sigue el 302 y siempre veríamos un 200
-    const opciones = { method: metodo, redirect: "manual" };
+    const opciones = { method: metodo, redirect: "manual", headers: {} };
+
+    // el header Authorization sirve tanto para la API como para las vistas web
+    if (token) {
+        opciones.headers.Authorization = `Bearer ${token}`;
+    }
 
     if (body !== undefined) {
-        opciones.headers = { "Content-Type": "application/json" };
+        opciones.headers["Content-Type"] = "application/json";
         opciones.body = JSON.stringify(body);
     }
 
@@ -48,6 +60,23 @@ async function verificar(descripcion, esperado, metodo, ruta, body) {
 
 async function main() {
     console.log(`\nSmoke test contra ${BASE}\n${"=".repeat(60)}`);
+
+    console.log("\n--- Autenticación ---");
+    await verificar("ruta protegida sin token", 401, "GET", "/api/clientes");
+    await verificar("login con contraseña incorrecta", 401, "POST", "/api/auth/login", { email: ADMIN.email, password: "mal" });
+    await verificar("login sin campos", 400, "POST", "/api/auth/login", {});
+    await verificar("vista web sin sesión redirige al login", 302, "GET", "/pedidos");
+
+    const loginOperador = await verificar("login operador", 200, "POST", "/api/auth/login", OPERADOR);
+    token = loginOperador.token;
+    await verificar("perfil del operador", 200, "GET", "/api/auth/perfil");
+    await verificar("operador no lista usuarios", 403, "GET", "/api/usuarios");
+    await verificar("operador no borra clientes", 403, "DELETE", `/api/clientes/${ID_INEXISTENTE}`);
+
+    // el resto corre como admin (la limpieza del final necesita poder borrar)
+    const loginAdmin = await verificar("login admin", 200, "POST", "/api/auth/login", ADMIN);
+    token = loginAdmin.token;
+    await verificar("admin lista usuarios", 200, "GET", "/api/usuarios");
 
     console.log("\n--- Módulo Clientes (API) ---");
     const clientes = await verificar("listar", 200, "GET", "/api/clientes");

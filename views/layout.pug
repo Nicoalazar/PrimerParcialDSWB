@@ -10,9 +10,17 @@ html(lang="es")
       h1 FreshRoute B2B
       nav
         a(href="/") Inicio
-        a(href="/clientes") Clientes
-        a(href="/pedidos") Pedidos
+        if usuario
+          a(href="/clientes") Clientes
+          a(href="/pedidos") Pedidos
+      .sesion
+        if usuario
+          span #{usuario.nombre} (#{usuario.rol})
+          form(action="/logout" method="POST")
+            button(type="submit") Cerrar sesión
+        else
+          a(href="/login") Iniciar sesión
     main
       block content
     footer
-      p Segundo Parcial DSWB - 2C 2026
+      p Entrega Final DSWB - 2C 2026
