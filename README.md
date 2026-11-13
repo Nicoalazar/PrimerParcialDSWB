@@ -5,6 +5,8 @@
 Backend en Node.js + Express con arquitectura MVC, persistencia en **MongoDB** usando **Mongoose** y autenticación con **JWT** (roles `admin` y `operador`).
 Caso de negocio: logística de distribución refrigerada para restaurantes, comedores y cocinas industriales.
 
+**App en línea:** https://losbuleanos.onrender.com — desplegada en Render (plan gratuito) con la base en MongoDB Atlas. Se entra con los [usuarios de prueba](#usuarios-de-prueba-los-crea-npm-run-seed). El servicio se duerme tras unos minutos sin uso, así que la primera visita puede tardar cerca de un minuto.
+
 > Versiones anteriores: primer parcial (persistencia en archivos JSON) en el tag `v1.0-primer-parcial`; segundo parcial (migración a MongoDB, sin autenticación) en el tag `v2.0-segundo-parcial`.
 
 ## Requisitos
@@ -225,7 +227,7 @@ Usan el runner que trae Node (`node:test` + `node:assert`) y **supertest** para 
 
 1. `npm run seed` y levantar el servidor.
 2. Abrir Postman → *File > Import* → elegir `docs/api-collection.postman.json`.
-3. La colección trae la variable `baseUrl = http://localhost:3000` y usa autenticación *Bearer* con la variable `token`, que completa sola el request **POST login admin** de la carpeta *Autenticación*. Los ids **no se copian a mano**: el script de test de cada `GET` de listado y de cada `POST` guarda el `_id` en una variable de la colección (`clienteId`, `choferId`, `pedidoId`, `clienteNuevoId`, `pedidoNuevoId`).
+3. La colección trae la variable `baseUrl = http://localhost:3000` (para probar el deploy, cambiarla por `https://losbuleanos.onrender.com`) y usa autenticación *Bearer* con la variable `token`, que completa sola el request **POST login admin** de la carpeta *Autenticación*. Los ids **no se copian a mano**: el script de test de cada `GET` de listado y de cada `POST` guarda el `_id` en una variable de la colección (`clienteId`, `choferId`, `pedidoId`, `clienteNuevoId`, `pedidoNuevoId`).
 4. Correrla en orden con *Run collection*. Carpetas: **Autenticación** (8 requests), **Clientes** (9), **Choferes** (1), **Pedidos** (11), **Errores** (1). Cada request verifica su status esperado.
 
 ### Smoke test automático
@@ -237,6 +239,12 @@ node docs/smoke-test.js
 ```
 
 Primero prueba la autenticación (401 sin token, login incorrecto, 403 del operador) y después, logueado como admin, recorre los dos módulos (altas, ediciones, bajas, validaciones, ids inexistentes e inválidos, transiciones de estado, 404) y las vistas web, y termina con `N OK · 0 FALLA(S)`. Toma los ids de la base con los `GET` de listado, crea y borra sus propios registros.
+
+Contra el deploy (no hace falta levantar nada local):
+
+```bash
+node docs/smoke-test.js https://losbuleanos.onrender.com
+```
 
 ### Consultas a la base (playground de MongoDB)
 
