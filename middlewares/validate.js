@@ -10,6 +10,15 @@
 const { isValidObjectId } = require("mongoose");
 const { ROLES } = require("../models/Usuario");
 
+// Responde el 400: en la API (Postman) devuelve JSON { mensaje, errores };
+// en los formularios web muestra la pagina de error con la lista de errores.
+const rechazar = (req, res, mensaje, errores) => {
+    if (req.originalUrl.startsWith("/api")) {
+        return res.status(400).json({ mensaje, errores });
+    }
+    res.status(400).render("error", { titulo: "Datos inválidos", status: 400, mensaje, errores });
+};
+
 const validarCliente = (req, res, next) => {
     const { nombre, direccion, zona, contacto, horarioEntrega } = req.body;
     const errores = [];
@@ -35,10 +44,7 @@ const validarCliente = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de cliente inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de cliente inválidos", errores);
     }
 
     next();
@@ -76,10 +82,7 @@ const validarClienteUpdate = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de cliente inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de cliente inválidos", errores);
     }
 
     next();
@@ -115,10 +118,7 @@ const validarPedido = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de pedido inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de pedido inválidos", errores);
     }
 
     next();
@@ -163,16 +163,13 @@ const validarPedidoUpdate = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de pedido inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de pedido inválidos", errores);
     }
 
     next();
 };
 
-// --- NUEVOS VALIDADORES PARA CHOFERES ---
+// --- VALIDADORES PARA CHOFERES ---
 const validarChofer = (req, res, next) => {
     const { nombre, apellido, vehiculo, zona } = req.body;
     const errores = [];
@@ -194,10 +191,7 @@ const validarChofer = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de chofer inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de chofer inválidos", errores);
     }
 
     next();
@@ -231,10 +225,7 @@ const validarChoferUpdate = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de chofer inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de chofer inválidos", errores);
     }
 
     next();
@@ -253,10 +244,7 @@ const validarLogin = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de login inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de login inválidos", errores);
     }
 
     next();
@@ -283,10 +271,7 @@ const validarUsuario = (req, res, next) => {
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({
-            mensaje: "Datos de usuario inválidos",
-            errores
-        });
+        return rechazar(req, res, "Datos de usuario inválidos", errores);
     }
 
     next();
@@ -302,4 +287,3 @@ module.exports = {
     validarChofer,
     validarChoferUpdate
 };
-

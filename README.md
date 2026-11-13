@@ -178,6 +178,7 @@ Campos de `Chofer` (todos texto, obligatorios en `POST`): `nombre`, `apellido`, 
 | `500` | `middlewares/errorHandler.js` (error no previsto, ej. se cae la conexión a Mongo) | `{ "mensaje": "Error interno del servidor" }` (el detalle queda solo en el log del servidor) |
 
 En las vistas web, los errores que pasan por el `errorHandler` (401/403/404/500, transiciones inválidas, etc.) se muestran en una página (`views/error.pug`) en lugar de JSON.
+Los `400` de validación de los formularios web (`validate.js`) también muestran `error.pug`, con la lista de errores; la API sigue respondiendo el JSON `{ mensaje, errores }`.
 
 ## Vistas web (Pug)
 
