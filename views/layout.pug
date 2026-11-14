@@ -13,6 +13,8 @@ html(lang="es")
         if usuario
           a(href="/clientes") Clientes
           a(href="/pedidos") Pedidos
+          if usuario.rol === "admin"
+            a(href="/usuarios") Usuarios
       .sesion
         if usuario
           span #{usuario.nombre} (#{usuario.rol})
