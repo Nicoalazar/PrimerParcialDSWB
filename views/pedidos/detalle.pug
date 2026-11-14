@@ -35,10 +35,12 @@ block content
                     span= h.estado
                     |  — 
                     strong Usuario: 
-                    span= h.usuarioId ? h.usuarioId.nombre : "Sistema / Desconocido"
-                    |  — 
-                    strong Fecha: 
-                    span= new Date(h.fecha).toLocaleString()
+                    //- si el usuario se borró, populate deja null
+                    span= h.usuarioId ? h.usuarioId.nombre : "(usuario eliminado)"
+                    |  —
+                    strong Fecha:
+                    //- hora de Argentina aunque el server (Render) corra en UTC
+                    span= new Date(h.fecha).toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })
     else
         p No hay registros en el historial.
 

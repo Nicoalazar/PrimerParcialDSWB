@@ -38,7 +38,7 @@ class PedidoService {
             historial: [
                 {
                     estado: ESTADOS[0],
-                    usuarioId: usuarioId || datos.usuarioId
+                    usuarioId
                 }
             ]
         });

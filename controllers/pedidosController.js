@@ -6,16 +6,14 @@ const Pedido = require("../models/Pedido");
 
 // GET ALL
 const obtenerPedidos = async (req, res) => {
-    const pedidos = await Pedido.find().populate("historial.usuarioId");
+    // del usuario de cada entrada del historial solo se trae el nombre
+    const pedidos = await Pedido.find().populate("historial.usuarioId", "nombre");
     res.json(pedidos);
 };
 
 // GET BY ID
 const obtenerPedidoPorId = async (req, res) => {
-    const pedido = await Pedido.findById(req.params.id)
-        .populate("clienteId")
-        .populate("choferId")
-        .populate("historial.usuarioId");
+    const pedido = await Pedido.findById(req.params.id).populate("historial.usuarioId", "nombre");
 
     if (!pedido) {
         return res.status(404).json({
@@ -28,8 +26,8 @@ const obtenerPedidoPorId = async (req, res) => {
 
 // CREATE (Usa PedidoService)
 const crearPedido = async (req, res) => {
-    const usuarioId = req.usuario ? req.usuario._id : undefined;
-    const pedidoCreado = await PedidoService.crearPedido(req.body, usuarioId);
+    // el usuario del historial sale del token, nunca del body
+    const pedidoCreado = await PedidoService.crearPedido(req.body, req.usuario.id);
     res.status(201).json({
         mensaje: "Pedido creado",
         pedido: pedidoCreado
@@ -72,9 +70,8 @@ const eliminarPedido = async (req, res) => {
 // PATCH estado (Usa PedidoService)
 const cambiarEstado = async (req, res) => {
     const { estado } = req.body;
-    const usuarioId = req.usuario ? req.usuario._id : undefined;
 
-    const pedidoActualizado = await PedidoService.cambiarEstado(req.params.id, estado, usuarioId);
+    const pedidoActualizado = await PedidoService.cambiarEstado(req.params.id, estado, req.usuario.id);
 
     res.json({
         mensaje: "Estado actualizado",
