@@ -10,8 +10,16 @@ const itemSchema = new mongoose.Schema(
     { _id: false }
 );
 
+const historialSchema = new mongoose.Schema(
+    {
+        estado: { type: String, enum: ESTADOS, required: true },
+        usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
+        fecha: { type: Date, default: Date.now }
+    },
+    { _id: false }
+);
+
 // Pedido de FreshRoute: encargo de un cliente asignado a un chofer para reparto.
-// clienteId y choferId guardan el _id del documento referenciado (ref → populate).
 const pedidoSchema = new mongoose.Schema(
     {
         clienteId: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente", required: true },
@@ -21,7 +29,8 @@ const pedidoSchema = new mongoose.Schema(
             validate: (items) => items.length > 0
         },
         estado: { type: String, enum: ESTADOS, default: ESTADOS[0] },
-        fechaHoraProgramada: { type: String, required: true }
+        fechaHoraProgramada: { type: String, required: true },
+        historial: [historialSchema]
     },
     { versionKey: false }
 );

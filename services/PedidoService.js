@@ -22,19 +22,25 @@ class PedidoService {
         }
     }
 
-    async crearPedido(datos) {
+    async crearPedido(datos, usuarioId) {
         const { clienteId, choferId, items, fechaHoraProgramada } = datos;
 
         // 1. Validar que existan el cliente y el chofer en la base
         await this.validarReferencias(clienteId, choferId);
 
-        // 2. Crear el pedido: siempre nace en 'pendiente' (el estado del body se ignora)
+        // 2. Crear el pedido y registrar el estado inicial en el historial
         return Pedido.create({
             clienteId,
             choferId,
             items,
             estado: ESTADOS[0],
-            fechaHoraProgramada
+            fechaHoraProgramada,
+            historial: [
+                {
+                    estado: ESTADOS[0],
+                    usuarioId: usuarioId || datos.usuarioId
+                }
+            ]
         });
     }
 
@@ -51,7 +57,7 @@ class PedidoService {
         return pedido.save();
     }
 
-    async cambiarEstado(id, nuevoEstado) {
+    async cambiarEstado(id, nuevoEstado, usuarioId) {
         const pedido = await Pedido.findById(id);
         if (!pedido) {
             throw crearError("Pedido no encontrado", 404);
@@ -70,6 +76,13 @@ class PedidoService {
         }
 
         pedido.estado = nuevoEstado;
+        
+        // Registrar la nueva transición en el historial
+        pedido.historial.push({
+            estado: nuevoEstado,
+            usuarioId
+        });
+
         return pedido.save();
     }
 }
