@@ -1051,7 +1051,8 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"status 204 or 200\", () => pm.expect(pm.response.code).to.be.oneOf([200, 204]));"
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"mensaje\", () => pm.expect(pm.response.json().mensaje).to.eql(\"Chofer eliminado\"));"
                 ]
               }
             }
@@ -1070,7 +1071,7 @@
                 "{{choferNuevoId}}"
               ]
             },
-            "description": "Elimina el chofer de prueba creado en esta colección."
+            "description": "Solo admin. 200 → { mensaje: \"Chofer eliminado\" }."
           }
         }
       ]
@@ -1235,7 +1236,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"el historial registra la transición y el usuario\", () => {",
+                  "    const historial = pm.response.json().pedido.historial;",
+                  "    const ultimo = historial[historial.length - 1];",
+                  "    pm.expect(ultimo.estado).to.eql(\"asignado\");",
+                  "    pm.expect(ultimo.usuarioId).to.be.a(\"string\");",
+                  "});"
                 ]
               }
             }
@@ -1556,5 +1563,3 @@
     ]
   }
 }
-
-

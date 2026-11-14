@@ -119,10 +119,13 @@ async function main() {
         vehiculo: "Utilitario",
         zona: "Norte"
     });
-    const idChoferCreado = altaChofer && altaChofer.chofer ? altaChofer.chofer._id : (altaChofer && altaChofer._id ? altaChofer._id : null);
+    const idChoferCreado = altaChofer && altaChofer.chofer ? altaChofer.chofer._id : null;
     if (idChoferCreado) creados.choferes.push(idChoferCreado);
 
     await verificar("alta de chofer sin campos", 400, "POST", "/api/choferes", {});
+    await verificar("obtener chofer por id", 200, "GET", `/api/choferes/${idChoferSeed}`);
+    await verificar("chofer inexistente", 404, "GET", `/api/choferes/${ID_INEXISTENTE}`);
+    await verificar("edición parcial de chofer", 200, "PUT", `/api/choferes/${idChoferCreado}`, { zona: "Sur" });
     
     // Validar la regla de negocio usando el chofer del seed (que ya viene con pedidos)
     await verificar("rechaza baja de chofer con pedidos asignados", 400, "DELETE", `/api/choferes/${idChoferSeed}`);
@@ -209,6 +212,9 @@ async function main() {
     await verificar("form de alta de pedido", 200, "GET", "/pedidos/nuevo");
     await verificar("form de edición de pedido", 200, "GET", `/pedidos/${idPedido}/editar`);
     await verificar("detalle de pedido", 200, "GET", `/pedidos/${idPedido}`);
+    await verificar("listado de choferes", 200, "GET", "/choferes");
+    await verificar("form de alta de chofer", 200, "GET", "/choferes/nuevo");
+    await verificar("form de edición de chofer", 200, "GET", `/choferes/${idChoferSeed}/editar`);
     await verificar("detalle inexistente redirige", 302, "GET", `/pedidos/${ID_INEXISTENTE}`);
 
     console.log("\n--- Limpieza ---");
@@ -219,7 +225,7 @@ async function main() {
         await verificar("borrar cliente de prueba", 200, "DELETE", `/api/clientes/${id}`);
     }
     for (const id of creados.choferes) {
-        await verificar("borrar chofer de prueba", 204, "DELETE", `/api/choferes/${id}`);
+        await verificar("borrar chofer de prueba", 200, "DELETE", `/api/choferes/${id}`);
     }
 
     console.log("\n" + "=".repeat(60));

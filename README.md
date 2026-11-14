@@ -99,14 +99,14 @@ Los controllers, el service y las rutas web son funciones `async` y no llevan `t
 | `Usuario` | `usuarios` | `nombre`, `email` (único, en minúsculas), `password` (hash bcrypt, `select: false`, mínimo 6 caracteres), `rol` (`enum`: `admin` / `operador`, default `operador`) |
 | `Cliente` | `clientes` | `nombre`, `direccion`, `zona`, `contacto`, `horarioEntrega` (todos `String`, `required`) |
 | `Chofer` | `choferes` | `nombre`, `apellido`, `vehiculo`, `zona` (todos `String`, `required`) |
-| `Pedido` | `pedidos` | `clienteId` (`ObjectId`, `ref: "Cliente"`), `choferId` (`ObjectId`, `ref: "Chofer"`), `items` (`[{ descripcion: String, cantidad: Number ≥ 1 }]`, al menos uno), `estado` (`enum`, default `pendiente`), `fechaHoraProgramada` (`String`) |
+| `Pedido` | `pedidos` | `clienteId` (`ObjectId`, `ref: "Cliente"`), `choferId` (`ObjectId`, `ref: "Chofer"`), `items` (`[{ descripcion: String, cantidad: Number ≥ 1 }]`, al menos uno), `estado` (`enum`, default `pendiente`), `fechaHoraProgramada` (`String`), `historial` (`[{ estado, usuarioId (ref: "Usuario"), fecha }]`, lo arma el servidor) |
 
 Cada documento tiene el `_id` (ObjectId) que genera MongoDB; nunca se toma del body. Las vistas web usan `populate("clienteId")` / `populate("choferId")` para mostrar los nombres del cliente y el chofer de cada pedido.
 
 ## Módulos
 
 - **Clientes**: CRUD completo (`/api/clientes` y vistas en `/clientes`)
-- **Pedidos**: CRUD completo + cambio de estado (`/api/pedidos`, `PATCH /api/pedidos/:id/estado` y vistas en `/pedidos`)
+- **Pedidos**: CRUD completo + cambio de estado con historial (`/api/pedidos`, `PATCH /api/pedidos/:id/estado` y vistas en `/pedidos`)
 - **Choferes**: CRUD completo (`/api/choferes` y vistas en `/choferes`)
 - **Usuarios** (solo admin): CRUD completo (`/api/usuarios` y vistas en `/usuarios`)
 
@@ -143,14 +143,16 @@ Campos de `Cliente` (todos texto, obligatorios en `POST`): `nombre`, `direccion`
 
 | Método | Ruta | Body de ejemplo | Respuesta |
 |---|---|---|---|
-| `GET` | `/api/pedidos` | — | `200` `[ { "_id": "<id>", "clienteId": "<id>", "choferId": "<id>", "items": [ { "descripcion": "Cajón de verduras frescas", "cantidad": 10 } ], "estado": "pendiente", "fechaHoraProgramada": "2026-09-16T08:00:00" }, … ]` |
-| `GET` | `/api/pedidos/:id` | — | `200` `{ "_id": "<id>", "clienteId": "<id>", … }` · `404` `{ "mensaje": "Pedido no encontrado" }` |
+| `GET` | `/api/pedidos` | — | `200` `[ { "_id": "<id>", "clienteId": "<id>", "choferId": "<id>", "items": [ { "descripcion": "Cajón de verduras frescas", "cantidad": 10 } ], "estado": "pendiente", "fechaHoraProgramada": "2026-09-16T08:00:00", "historial": [ { "estado": "pendiente", "usuarioId": { "_id": "<id>", "nombre": "Operador FreshRoute" }, "fecha": "2026-11-14T12:00:00.000Z" } ] }, … ]` |
+| `GET` | `/api/pedidos/:id` | — | `200` `{ "_id": "<id>", "clienteId": "<id>", …, "historial": [ … ] }` (`clienteId` y `choferId` como ids; del usuario del historial solo viene el `nombre`) · `404` `{ "mensaje": "Pedido no encontrado" }` |
 | `POST` | `/api/pedidos` | `{ "clienteId": "<id de cliente>", "choferId": "<id de chofer>", "items": [ { "descripcion": "Cajón de frutas", "cantidad": 8 } ], "fechaHoraProgramada": "2026-09-17T07:00:00" }` | `201` `{ "mensaje": "Pedido creado", "pedido": { "_id": "<id>", …, "estado": "pendiente" } }` (siempre nace en `pendiente`) · `400` `{ "mensaje": "Datos de pedido inválidos", "errores": [ … ] }` · `400` `{ "mensaje": "El cliente con id <id> no existe" }` / `"El chofer con id <id> no existe"` |
 | `PUT` | `/api/pedidos/:id` | `{ "fechaHoraProgramada": "2026-09-16T07:00:00" }` (parcial; el `estado` no se cambia por acá) | `200` `{ "mensaje": "Pedido actualizado", "pedido": { … } }` · `400` validación o cliente/chofer inexistente · `404` `{ "mensaje": "Pedido no encontrado" }` |
 | `PATCH` | `/api/pedidos/:id/estado` | `{ "estado": "asignado" }` | `200` `{ "mensaje": "Estado actualizado", "pedido": { …, "estado": "asignado" } }` · `400` `{ "mensaje": "Transición inválida: no se puede pasar de \"pendiente\" a \"entregado\"" }` · `400` `{ "mensaje": "Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado" }` · `404` |
 | `DELETE` | `/api/pedidos/:id` (**admin**) | — | `200` `{ "mensaje": "Pedido eliminado" }` · `404` `{ "mensaje": "Pedido no encontrado" }` |
 
-Campos de `Pedido`: `clienteId` (ObjectId de un cliente existente), `choferId` (ObjectId de un chofer existente), `items` (arreglo no vacío de `{ descripcion: texto, cantidad: número ≥ 1 }`), `fechaHoraProgramada` (texto ISO), `estado` (lo maneja el servidor).
+Campos de `Pedido`: `clienteId` (ObjectId de un cliente existente), `choferId` (ObjectId de un chofer existente), `items` (arreglo no vacío de `{ descripcion: texto, cantidad: número ≥ 1 }`), `fechaHoraProgramada` (texto ISO), `estado` e `historial` (los maneja el servidor).
+
+**Historial:** al crear el pedido se registra `pendiente`, y cada `PATCH /api/pedidos/:id/estado` (o el botón "Avanzar estado" de la web) agrega `{ estado, usuarioId, fecha }`. El usuario sale siempre del token, nunca del body. El detalle web lo muestra con el nombre del usuario y la hora de Argentina. Los pedidos del seed arrancan sin historial.
 
 **Estados:** el único camino es `pendiente → asignado → en tránsito → entregado`, de a un paso. No se permiten saltos ni retrocesos (`PedidoService.cambiarEstado`).
 
@@ -162,7 +164,7 @@ Campos de `Pedido`: `clienteId` (ObjectId de un cliente existente), `choferId` (
 | `GET` | `/api/choferes/:id` | — | `200` `{ "_id": "<id>", "nombre": "Carlos", … }` · `404` `{ "mensaje": "Chofer no encontrado" }` · `400` `{ "mensaje": "Id inválido: abc" }` |
 | `POST` | `/api/choferes` | `{ "nombre": "Juan", "apellido": "Pérez", "vehiculo": "Utilitario", "zona": "Sur" }` | `201` `{ "mensaje": "Chofer creado", "chofer": { "_id": "<id>", "nombre": "Juan", … } }` · `400` `{ "mensaje": "Datos de chofer inválidos", "errores": [ … ] }` |
 | `PUT` | `/api/choferes/:id` | `{ "vehiculo": "Camión mediano" }` (parcial: solo se pisan los campos enviados) | `200` `{ "mensaje": "Chofer actualizado", "chofer": { … } }` · `400` si no viene ningún campo o un tipo es incorrecto · `404` `{ "mensaje": "Chofer no encontrado" }` |
-| `DELETE` | `/api/choferes/:id` (**admin**) | — | `204` (sin contenido) / `200` `{ "mensaje": "Chofer eliminado" }` · `400` `{ "mensaje": "No se puede eliminar el chofer porque tiene pedidos asignados." }` · `404` `{ "mensaje": "Chofer no encontrado" }` |
+| `DELETE` | `/api/choferes/:id` (**admin**) | — | `200` `{ "mensaje": "Chofer eliminado" }` · `400` `{ "mensaje": "No se puede eliminar el chofer porque tiene pedidos asignados" }` · `404` `{ "mensaje": "Chofer no encontrado" }` |
 
 Campos de `Chofer` (todos texto, obligatorios en `POST`): `nombre`, `apellido`, `vehiculo`, `zona`.
 
@@ -237,17 +239,17 @@ Usan el runner que trae Node (`node:test` + `node:assert`) y **supertest** para 
 | Archivo | Qué cubre |
 |---|---|
 | `tests/auth.test.js` | Login correcto/incorrecto, token ausente, vencido o adulterado, perfil, permisos por rol, alta de usuarios con hash de contraseña |
-| `tests/pedidos.test.js` | Reglas de `PedidoService`: nace en `pendiente`, cliente/chofer inexistentes, ítems inválidos, transiciones (sin saltos ni retrocesos), `PUT` no toca el estado, baja solo admin |
+| `tests/pedidos.test.js` | Reglas de `PedidoService`: nace en `pendiente`, cliente/chofer inexistentes, ítems inválidos, transiciones (sin saltos ni retrocesos), `PUT` no toca el estado, historial con el usuario del token (no del body), baja solo admin |
 | `tests/usuarios.test.js` | Edición y baja de usuarios por API y web, contraseña rehasheada, el admin no se borra ni se quita el rol, token de un usuario borrado (`401` / redirección) o con el rol cambiado (`403`), link del menú solo para admin |
-| `tests/web.test.js` | Redirección al login, cookie `httpOnly`, botones según rol, 403 en la web, logout, 404 HTML vs JSON, ids inválidos |
-| `tests/choferes.test.js` | CRUD de choferes, listado, alta, validaciones de campos obligatorios, restricciones de rol (operador no borra) y regla de negocio de rechazo de baja si tiene pedidos asignados |
+| `tests/web.test.js` | Redirección al login, cookie `httpOnly`, botones según rol, 403 en la web, logout, 404 HTML vs JSON, ids inválidos, choferes web por rol e historial al avanzar el estado desde la web |
+| `tests/choferes.test.js` | CRUD de choferes (consulta, alta, edición parcial, baja), 404 e id inválido, `_id` del body ignorado, operador no borra y rechazo de la baja si tiene pedidos asignados |
 
 ### Colección Postman
 
 1. `npm run seed` y levantar el servidor.
 2. Abrir Postman → *File > Import* → elegir `docs/api-collection.postman.json`.
 3. La colección trae la variable `baseUrl = http://localhost:3000` (para probar el deploy, cambiarla por `https://losbuleanos.onrender.com`) y usa autenticación *Bearer* con la variable `token`, que completa sola el request **POST login admin** de la carpeta *Autenticación*. Los ids **no se copian a mano**: el script de test de cada `GET` de listado y de cada `POST` guarda el `_id` en una variable de la colección (`clienteId`, `choferId`, `pedidoId`, `clienteNuevoId`, `pedidoNuevoId`).
-4. Correrla en orden con *Run collection*. Carpetas: **Autenticación** (12 requests), **Clientes** (9), **Choferes** (1), **Pedidos** (11), **Errores** (1). Cada request verifica su status esperado.
+4. Correrla en orden con *Run collection*. Carpetas: **Autenticación** (12 requests), **Clientes** (9), **Choferes** (6), **Pedidos** (11), **Errores** (1). Cada request verifica su status esperado.
 
 ### Smoke test automático
 
@@ -290,7 +292,3 @@ Capturas de cada request/response en [`docs/evidencia/`](docs/evidencia/), con n
 - Release plan: primer parcial [`docs/RELEASE_PLAN.md`](docs/RELEASE_PLAN.md) · entrega final [`docs/RELEASE_PLAN_Parte3.md`](docs/RELEASE_PLAN_Parte3.md)
 - Bibliografía: [`docs/bibliografia.md`](docs/bibliografia.md)
 - Documentación de entrega (fuente del PDF): [`docs/DOCUMENTACION_Parte2.md`](docs/DOCUMENTACION_Parte2.md) · primer parcial: [`docs/DOCUMENTACION_Parte1.md`](docs/DOCUMENTACION_Parte1.md)
-
-
-
-
