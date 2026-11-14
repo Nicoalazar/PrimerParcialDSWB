@@ -254,5 +254,7 @@ module.exports = {
     validarCliente,
     validarClienteUpdate,
     validarPedido,
-    validarPedidoUpdate
+    validarPedidoUpdate,
+    // lo reusan los validadores de otros archivos (validateUsuarios.js)
+    rechazar
 };
