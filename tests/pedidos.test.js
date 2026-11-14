@@ -145,6 +145,41 @@ describe("Pedidos", () => {
         });
     });
 
+    describe("historial de estados", () => {
+        it("registra el estado inicial y cada transición con el usuario del token", async () => {
+            const id = await crearPedido();
+            await cambiarEstado(id, "asignado");
+
+            const res = await request(app).get(`/api/pedidos/${id}`).set(auth);
+            const { historial } = res.body;
+
+            assert.equal(res.status, 200);
+            assert.deepEqual(historial.map((h) => h.estado), ["pendiente", "asignado"]);
+            for (const entrada of historial) {
+                assert.equal(entrada.usuarioId.nombre, "Operador");
+                assert.ok(entrada.fecha);
+            }
+        });
+
+        it("no toma el usuario del body", async () => {
+            const res = await request(app)
+                .post("/api/pedidos")
+                .set(auth)
+                .send({ ...pedidoValido(), usuarioId: "aaaaaaaaaaaaaaaaaaaaaaaa" });
+
+            assert.equal(res.status, 201);
+            assert.notEqual(String(res.body.pedido.historial[0].usuarioId), "aaaaaaaaaaaaaaaaaaaaaaaa");
+        });
+
+        it("GET por id devuelve clienteId y choferId como ids, igual que el listado", async () => {
+            const id = await crearPedido();
+            const res = await request(app).get(`/api/pedidos/${id}`).set(auth);
+
+            assert.equal(res.body.clienteId, datos.idCliente);
+            assert.equal(res.body.choferId, datos.idChofer);
+        });
+    });
+
     describe("baja", () => {
         it("el operador no puede borrar (403)", async () => {
             const id = await crearPedido();

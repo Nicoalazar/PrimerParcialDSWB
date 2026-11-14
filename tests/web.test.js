@@ -128,4 +128,51 @@ describe("Vistas web", () => {
         assert.equal(api.body.mensaje, "Datos de cliente inválidos");
         assert.ok(Array.isArray(api.body.errores));
     });
+
+    it("choferes web: el operador crea y edita, pero no ve el botón Eliminar", async () => {
+        const cookie = await loginWeb("operador@test.com", "operador123");
+
+        const alta = await request(app)
+            .post("/choferes")
+            .type("form")
+            .set("Cookie", cookie)
+            .send({ nombre: "Web", apellido: "Test", vehiculo: "Moto", zona: "Sur" });
+        const lista = await request(app).get("/choferes").set("Cookie", cookie);
+        const edicion = await request(app).get(`/choferes/${datos.idChofer}/editar`).set("Cookie", cookie);
+
+        assert.equal(alta.status, 302);
+        assert.equal(alta.headers.location, "/choferes");
+        assert.match(lista.text, /Web/);
+        assert.doesNotMatch(lista.text, /Eliminar/);
+        assert.equal(edicion.status, 200);
+    });
+
+    it("choferes web: un formulario vacío muestra la página de error con los errores", async () => {
+        const cookie = await loginWeb("operador@test.com", "operador123");
+        const res = await request(app).post("/choferes").type("form").set("Cookie", cookie).send({});
+
+        assert.equal(res.status, 400);
+        assert.match(res.text, /Datos de chofer inválidos/);
+    });
+
+    it("avanzar el estado desde la web guarda en el historial quién lo hizo", async () => {
+        const cookie = await loginWeb("admin@test.com", "admin123");
+
+        const alta = await request(app)
+            .post("/api/pedidos")
+            .set("Authorization", `Bearer ${datos.tokenOperador}`)
+            .send({
+                clienteId: datos.idCliente,
+                choferId: datos.idChofer,
+                items: [{ descripcion: "Caja", cantidad: 1 }],
+                fechaHoraProgramada: "2026-12-01T10:00:00"
+            });
+        const id = alta.body.pedido._id;
+
+        await request(app).post(`/pedidos/${id}/estado`).set("Cookie", cookie);
+        const detalle = await request(app).get(`/pedidos/${id}`).set("Cookie", cookie);
+
+        assert.match(detalle.text, /pendiente.*Operador/s);
+        assert.match(detalle.text, /asignado.*Admin/s);
+    });
 });
