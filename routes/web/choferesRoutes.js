@@ -1,35 +1,30 @@
-// routes/web/choferesRoutes.js
 const express = require('express');
 const router = express.Router();
 const choferesController = require('../../controllers/choferesController');
 const { autorizar } = require('../../middlewares/auth');
+const { validarChofer, validarChoferUpdate } = require('../../middlewares/validate');
 const Chofer = require('../../models/Chofer');
 
-// Listado web (como app.js ya protege con requiereLoginWeb, acá solo listamos)
+// Listado web
 router.get('/', choferesController.listarChoferes);
 
-// Formulario de alta (solo admin)
-router.get('/crear', autorizar('admin'), (req, res) => {
+// Formulario de alta (admin y operador)
+router.get('/nuevo', autorizar('admin', 'operador'), (req, res) => {
     res.render('choferes/crear', { titulo: 'Nuevo Chofer', chofer: null });
 });
-router.post('/', autorizar('admin'), choferesController.crearChofer);
+router.post('/', autorizar('admin', 'operador'), validarChofer, choferesController.crearChofer);
 
-// Formulario de edición (solo admin)
-router.get('/editar/:id', autorizar('admin'), async (req, res) => {
-    try {
-        const chofer = await Chofer.findById(req.params.id);
-        if (!chofer) {
-            return res.redirect('/choferes');
-        }
-        res.render('choferes/editar', { titulo: 'Editar Chofer', chofer });
-    } catch (error) {
-        res.status(500).send('Error al cargar el formulario de edición');
+// Formulario de edición (admin y operador)
+router.get('/:id/editar', autorizar('admin', 'operador'), async (req, res) => {
+    const chofer = await Chofer.findById(req.params.id);
+    if (!chofer) {
+        return res.redirect('/choferes');
     }
+    res.render('choferes/editar', { titulo: 'Editar Chofer', chofer });
 });
-router.post('/actualizar/:id', autorizar('admin'), choferesController.actualizarChofer);
+router.post('/:id/actualizar', autorizar('admin', 'operador'), validarChoferUpdate, choferesController.actualizarChofer);
 
-// Baja web (solo admin, tal como pide el issue)
-router.post('/eliminar/:id', autorizar('admin'), choferesController.eliminarChofer);
+// Baja web (SOLO administradores)
+router.post('/:id/eliminar', autorizar('admin'), choferesController.eliminarChofer);
 
 module.exports = router;
-

@@ -4,7 +4,7 @@ block content
     .container.mt-4
         h2.mb-4= titulo
 
-        form(action=`/choferes/actualizar/${chofer._id}`, method="POST")
+        form(action=`/choferes/${chofer._id}/actualizar`, method="POST")
             .mb-3
                 label.form-label(for="nombre") Nombre
                 input.form-control(type="text" id="nombre" name="nombre", value=chofer.nombre, required)
@@ -23,3 +23,5 @@ block content
 
             button.btn.btn-success(type="submit") Actualizar Chofer
             a.btn.btn-secondary.ms-2(href="/choferes") Cancelar
+
+            

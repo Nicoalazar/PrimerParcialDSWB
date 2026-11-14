@@ -1,19 +1,21 @@
 const PedidoService = require("../services/PedidoService");
 const Pedido = require("../models/Pedido");
-const Chofer = require("../models/Chofer");
 
 // Ningún controller lleva try/catch: si PedidoService tira un error (o falla
 // una consulta a Mongo), Express 5 lo agarra solo y lo manda al errorHandler.
 
 // GET ALL
 const obtenerPedidos = async (req, res) => {
-    const pedidos = await Pedido.find();
+    const pedidos = await Pedido.find().populate("historial.usuarioId");
     res.json(pedidos);
 };
 
 // GET BY ID
 const obtenerPedidoPorId = async (req, res) => {
-    const pedido = await Pedido.findById(req.params.id);
+    const pedido = await Pedido.findById(req.params.id)
+        .populate("clienteId")
+        .populate("choferId")
+        .populate("historial.usuarioId");
 
     if (!pedido) {
         return res.status(404).json({
@@ -26,7 +28,8 @@ const obtenerPedidoPorId = async (req, res) => {
 
 // CREATE (Usa PedidoService)
 const crearPedido = async (req, res) => {
-    const pedidoCreado = await PedidoService.crearPedido(req.body);
+    const usuarioId = req.usuario ? req.usuario._id : undefined;
+    const pedidoCreado = await PedidoService.crearPedido(req.body, usuarioId);
     res.status(201).json({
         mensaje: "Pedido creado",
         pedido: pedidoCreado
@@ -69,19 +72,14 @@ const eliminarPedido = async (req, res) => {
 // PATCH estado (Usa PedidoService)
 const cambiarEstado = async (req, res) => {
     const { estado } = req.body;
+    const usuarioId = req.usuario ? req.usuario._id : undefined;
 
-    const pedidoActualizado = await PedidoService.cambiarEstado(req.params.id, estado);
+    const pedidoActualizado = await PedidoService.cambiarEstado(req.params.id, estado, usuarioId);
 
     res.json({
         mensaje: "Estado actualizado",
         pedido: pedidoActualizado
     });
-};
-
-// GET choferes (solo lectura del seed)
-const listarChoferes = async (req, res) => {
-    const choferes = await Chofer.find();
-    res.json(choferes);
 };
 
 module.exports = {
@@ -90,6 +88,5 @@ module.exports = {
     crearPedido,
     actualizarPedido,
     eliminarPedido,
-    cambiarEstado,
-    listarChoferes
+    cambiarEstado
 };
