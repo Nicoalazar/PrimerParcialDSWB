@@ -36,12 +36,14 @@ app.use("/api/clientes", requiereLogin, require("./routes/api/clientesRoutes"));
 
 const pedidosRoutes = require("./routes/api/pedidosRoutes");
 app.use("/api/pedidos", requiereLogin, pedidosRoutes);
-app.use("/api/choferes", requiereLogin, pedidosRoutes.choferesRouter);
+// Reemplazamos la ruta vieja de choferes que salía de pedidosRoutes por el nuevo módulo independiente:
+app.use("/api/choferes", requiereLogin, require("./routes/api/choferesRoutes"));
 
 // rutas web (vistas Pug). Sin sesión, redirigen a /login.
 app.use("/", require("./routes/web/authRoutes"));
 app.use("/clientes", requiereLoginWeb, require("./routes/web/clientesRoutes"));
 app.use("/pedidos", requiereLoginWeb, require("./routes/web/pedidosRoutes"));
+app.use("/choferes", requiereLoginWeb, require("./routes/web/choferesRoutes"));
 app.use("/usuarios", requiereLoginWeb, require("./routes/web/usuariosRoutes"));
 
 // 404 para rutas inexistentes y manejo centralizado de errores (siempre al final)
@@ -49,3 +51,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 module.exports = app;
+
+
+

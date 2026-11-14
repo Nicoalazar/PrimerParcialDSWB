@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  h2 Choferes
+  p
+    a(href="/choferes/nuevo") + Nuevo chofer
+  table
+    thead
+      tr
+        th Nombre
+        th Apellido
+        th Vehículo
+        th Zona
+        th Acciones
+    tbody
+      if choferes.length === 0
+        tr
+          td(colspan="5") No hay choferes cargados.
+      else
+        each chofer in choferes
+          tr
+            td= chofer.nombre
+            td= chofer.apellido
+            td= chofer.vehiculo
+            td= chofer.zona
+            td
+              a(href=`/choferes/${chofer.id}/editar`) Editar
+              |
+              |
+              //- borrar es solo para el admin (el backend también lo controla)
+              if usuario && usuario.rol === "admin"
+                form(action=`/choferes/${chofer.id}/eliminar` method="POST" style="display:inline")
+                  button(type="submit") Eliminar

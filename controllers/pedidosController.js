@@ -1,19 +1,19 @@
 const PedidoService = require("../services/PedidoService");
 const Pedido = require("../models/Pedido");
-const Chofer = require("../models/Chofer");
 
 // Ningún controller lleva try/catch: si PedidoService tira un error (o falla
 // una consulta a Mongo), Express 5 lo agarra solo y lo manda al errorHandler.
 
 // GET ALL
 const obtenerPedidos = async (req, res) => {
-    const pedidos = await Pedido.find();
+    // del usuario de cada entrada del historial solo se trae el nombre
+    const pedidos = await Pedido.find().populate("historial.usuarioId", "nombre");
     res.json(pedidos);
 };
 
 // GET BY ID
 const obtenerPedidoPorId = async (req, res) => {
-    const pedido = await Pedido.findById(req.params.id);
+    const pedido = await Pedido.findById(req.params.id).populate("historial.usuarioId", "nombre");
 
     if (!pedido) {
         return res.status(404).json({
@@ -26,7 +26,8 @@ const obtenerPedidoPorId = async (req, res) => {
 
 // CREATE (Usa PedidoService)
 const crearPedido = async (req, res) => {
-    const pedidoCreado = await PedidoService.crearPedido(req.body);
+    // el usuario del historial sale del token, nunca del body
+    const pedidoCreado = await PedidoService.crearPedido(req.body, req.usuario.id);
     res.status(201).json({
         mensaje: "Pedido creado",
         pedido: pedidoCreado
@@ -70,18 +71,12 @@ const eliminarPedido = async (req, res) => {
 const cambiarEstado = async (req, res) => {
     const { estado } = req.body;
 
-    const pedidoActualizado = await PedidoService.cambiarEstado(req.params.id, estado);
+    const pedidoActualizado = await PedidoService.cambiarEstado(req.params.id, estado, req.usuario.id);
 
     res.json({
         mensaje: "Estado actualizado",
         pedido: pedidoActualizado
     });
-};
-
-// GET choferes (solo lectura del seed)
-const listarChoferes = async (req, res) => {
-    const choferes = await Chofer.find();
-    res.json(choferes);
 };
 
 module.exports = {
@@ -90,6 +85,5 @@ module.exports = {
     crearPedido,
     actualizarPedido,
     eliminarPedido,
-    cambiarEstado,
-    listarChoferes
+    cambiarEstado
 };
