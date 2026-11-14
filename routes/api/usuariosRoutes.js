@@ -2,8 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const { listarUsuarios, crearUsuario } = require("../../controllers/authController");
-const { actualizarUsuario, eliminarUsuario } = require("../../controllers/usuariosController");
+const { listarUsuarios, crearUsuario, actualizarUsuario, eliminarUsuario } = require("../../controllers/usuariosController");
 const { autorizar } = require("../../middlewares/auth");
 const { validarUsuario } = require("../../middlewares/validate");
 const { validarUsuarioUpdate } = require("../../middlewares/validateUsuarios");

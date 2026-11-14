@@ -1,19 +1,13 @@
 // Validación del PUT de usuarios (API y formulario de edición web).
 // Está en un archivo aparte de validate.js para no pisar los cambios que
-// otros issues hacen sobre ese archivo. Mismo formato de respuesta que
-// validate.js: 400 con { mensaje, errores } en la API y la página de error en la web.
+// otros issues hacen sobre ese archivo. Usa el mismo rechazar() de validate.js:
+// 400 con { mensaje, errores } en la API y la página de error en la web.
 //
 // Valida solo los campos que vinieron (edición parcial); si no vino ninguno, 400.
 // El email no se edita.
 
 const { ROLES } = require("../models/Usuario");
-
-const rechazar = (req, res, mensaje, errores) => {
-    if (req.originalUrl.startsWith("/api")) {
-        return res.status(400).json({ mensaje, errores });
-    }
-    res.status(400).render("error", { titulo: "Datos inválidos", status: 400, mensaje, errores });
-};
+const { rechazar } = require("./validate");
 
 const validarUsuarioUpdate = (req, res, next) => {
 
