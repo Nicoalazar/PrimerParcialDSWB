@@ -22,6 +22,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // si el request trae un token válido (header o cookie), deja el usuario en req.usuario
 app.use(cargarUsuario);
+// confirma en la base que el dueño del token sigue existiendo (y toma su rol actual)
+app.use(require("./middlewares/usuarioActivo").verificarUsuarioActivo);
 
 app.get("/", (req, res) => {
     res.render("index", { titulo: "FreshRoute B2B" });
@@ -41,8 +43,8 @@ app.use("/api/choferes", requiereLogin, require("./routes/api/choferesRoutes"));
 app.use("/", require("./routes/web/authRoutes"));
 app.use("/clientes", requiereLoginWeb, require("./routes/web/clientesRoutes"));
 app.use("/pedidos", requiereLoginWeb, require("./routes/web/pedidosRoutes"));
-// Agregamos la nueva ruta web para choferes:
 app.use("/choferes", requiereLoginWeb, require("./routes/web/choferesRoutes"));
+app.use("/usuarios", requiereLoginWeb, require("./routes/web/usuariosRoutes"));
 
 // 404 para rutas inexistentes y manejo centralizado de errores (siempre al final)
 app.use(notFound);

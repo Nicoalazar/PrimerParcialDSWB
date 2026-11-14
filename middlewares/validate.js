@@ -285,5 +285,7 @@ module.exports = {
     validarPedido,
     validarPedidoUpdate,
     validarChofer,
-    validarChoferUpdate
+    validarChoferUpdate,
+    // lo reusan los validadores de otros archivos (validateUsuarios.js)
+    rechazar
 };

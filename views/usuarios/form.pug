@@ -1,0 +1,30 @@
+extends ../layout
+
+//- "editado" es el usuario que se edita; "usuario" (del layout) es el admin logueado
+block content
+  h2= editado ? "Editar usuario" : "Nuevo usuario"
+  form(action=editado ? `/usuarios/${editado.id}/editar` : "/usuarios" method="POST")
+    label(for="nombre") Nombre
+    input(type="text" id="nombre" name="nombre" value=editado ? editado.nombre : "" required)
+
+    label(for="email") Email
+    if editado
+      //- el email no se edita
+      input(type="email" id="email" value=editado.email disabled)
+    else
+      input(type="email" id="email" name="email" required)
+
+    label(for="password")= editado ? "Contraseña nueva (dejar vacía para no cambiarla)" : "Contraseña"
+    if editado
+      input(type="password" id="password" name="password" minlength="6")
+    else
+      input(type="password" id="password" name="password" minlength="6" required)
+
+    label(for="rol") Rol
+    select(id="rol" name="rol")
+      each r in roles
+        option(value=r selected=(editado ? editado.rol === r : r === "operador"))= r
+
+    button(type="submit")= editado ? "Guardar cambios" : "Crear usuario"
+  p
+    a(href="/usuarios") Volver al listado

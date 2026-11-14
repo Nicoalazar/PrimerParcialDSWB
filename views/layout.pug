@@ -14,6 +14,8 @@ html(lang="es")
           a(href="/clientes") Clientes
           a(href="/choferes") Choferes
           a(href="/pedidos") Pedidos
+          if usuario.rol === "admin"
+            a(href="/usuarios") Usuarios
       .sesion
         if usuario
           span #{usuario.nombre} (#{usuario.rol})

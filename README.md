@@ -34,8 +34,7 @@ Servidor en `http://localhost:3000`. El servidor solo empieza a escuchar una vez
 
 | Email | Contraseña | Rol | Puede |
 |---|---|---|---|
-| `admin@freshroute.test` | `admin123` | `admin` | Todo: además de lo del operador, borrar clientes, choferes y pedidos, y listar/crear usuarios |
-
+| `admin@freshroute.test` | `admin123` | `admin` | Todo: además de lo del operador, borrar clientes, choferes y pedidos, y gestionar usuarios (listar, crear, editar y borrar) |
 | `operador@freshroute.test` | `operador123` | `operador` | Ver, crear y editar clientes, choferes y pedidos, y avanzar estados |
 
 Son credenciales de prueba para desarrollo y la demo (están en `data/usuarios.json`); en un entorno real se cambian o se borran.
@@ -65,12 +64,12 @@ config/
   db.js             → conexión a MongoDB con mongoose.connect (async/await)
 routes/
   api/              → rutas JSON (se prueban con Postman)         → /api/auth, /api/usuarios, /api/clientes, /api/pedidos, /api/choferes
-  web/              → rutas que renderizan vistas Pug             → /login, /logout, /clientes, /choferes, /pedidos
+  web/              → rutas que renderizan vistas Pug             → /login, /logout, /clientes, /choferes, /pedidos, /usuarios
 controllers/        → lógica de cada endpoint de la API (async/await)
 models/             → schemas y modelos de Mongoose: Usuario, Cliente, Pedido, Chofer
-services/           → reglas de negocio: PedidoService (cliente/chofer existentes, transiciones de estado) y AuthService (login, firma y verificación del JWT)
+services/           → reglas de negocio: PedidoService (cliente/chofer existentes, transiciones de estado) AuthService (login, firma y verificación del JWT) y UsuarioService (alta, edición y baja de usuarios)
 middlewares/        → logger, autenticación/autorización (auth.js), validación de body, manejo de errores y 404
-views/              → vistas Pug (layout, index, error, auth/, clientes/, pedidos/)
+views/              → vistas Pug (layout, index, error, auth/, clientes/, pedidos/, usuarios/)
 public/             → archivos estáticos (CSS)
 data/               → datos de ejemplo en JSON que usa el seed (ya no es la persistencia)
 tests/              → tests automáticos (node:test + supertest + MongoDB en memoria)
@@ -79,7 +78,7 @@ docs/               → documentación de entrega, roles, bibliografía, colecci
 
 ### Flujo de un request
 
-`logger` → `express.json / urlencoded` → `cookieParser` → `static` → `cargarUsuario` → `requiereLogin` → `routes` → (`autorizar`) → (`validate`) → `controller` → (`service`) → `model` (Mongoose) → MongoDB
+`logger` → `express.json / urlencoded` → `cookieParser` → `static` → `cargarUsuario` → `verificarUsuarioActivo` → `requiereLogin` → `routes` → (`autorizar`) → (`validate`) → `controller` → (`service`) → `model` (Mongoose) → MongoDB
 
 Los controllers, el service y las rutas web son funciones `async` y no llevan `try/catch`: Express 5 pasa solo al `errorHandler` cualquier promesa rechazada (un error lanzado por el service con `statusCode`, un id con formato inválido, una validación del schema, etc.). Cualquier ruta no montada cae en el 404 de `notFound`.
 
@@ -89,8 +88,9 @@ Los controllers, el service y las rutas web son funciones `async` y no llevan `t
 - **API:** el token se manda en el header `Authorization: Bearer <token>`. Todas las rutas de `/api` salvo el login lo exigen.
 - **Web:** el formulario de `/login` usa el mismo `AuthService` y guarda el token en una cookie `httpOnly` (el JavaScript del navegador no la puede leer). `POST /logout` la borra. Sin sesión, las vistas redirigen a `/login`.
 - **Middlewares** ([`middlewares/auth.js`](middlewares/auth.js)): `cargarUsuario` (global) lee el token del header o de la cookie y deja el usuario en `req.usuario`; `requiereLogin` (API → 401) y `requiereLoginWeb` (web → redirección) cortan si no hay sesión; `autorizar("admin")` responde 403 si el rol no alcanza.
+- **Usuario activo** ([`middlewares/usuarioActivo.js`](middlewares/usuarioActivo.js)): después de `cargarUsuario`, `verificarUsuarioActivo` confirma en la base que el dueño del token sigue existiendo. Si el admin lo borró, el token deja de servir en el momento (API → `401`, web → vuelve a `/login`) aunque todavía no haya vencido. Además toma el `nombre` y el `rol` de la base, así un cambio de rol vale enseguida.
 - **Permisos:** las bajas (`DELETE` en la API y `POST …/eliminar` en la web) y la gestión de usuarios son solo para `admin`. En las vistas, el operador no ve los botones de eliminar (y si fuerza el request, el backend responde 403).
-- No hay registro abierto: es un sistema interno, los usuarios los da de alta un admin con `POST /api/usuarios`.
+- No hay registro abierto: es un sistema interno, los usuarios los da de alta un admin (`POST /api/usuarios` o el formulario de `/usuarios`). El admin también puede editarlos y borrarlos, pero no puede borrarse a sí mismo ni quitarse su propio rol de admin, para que el sistema no se quede sin administradores.
 
 ## Modelos (Mongoose)
 
@@ -108,6 +108,7 @@ Cada documento tiene el `_id` (ObjectId) que genera MongoDB; nunca se toma del b
 - **Clientes**: CRUD completo (`/api/clientes` y vistas en `/clientes`)
 - **Pedidos**: CRUD completo + cambio de estado (`/api/pedidos`, `PATCH /api/pedidos/:id/estado` y vistas en `/pedidos`)
 - **Choferes**: CRUD completo (`/api/choferes` y vistas en `/choferes`)
+- **Usuarios** (solo admin): CRUD completo (`/api/usuarios` y vistas en `/usuarios`)
 
 ## API — Endpoints por módulo
 
@@ -123,6 +124,8 @@ Salvo `POST /api/auth/login`, **todas las rutas piden** `Authorization: Bearer <
 | `GET` | `/api/auth/perfil` | — | `200` `{ "_id": "<id>", "nombre": …, "email": …, "rol": … }` (el dueño del token) |
 | `GET` | `/api/usuarios` (**admin**) | — | `200` `[ { "_id": "<id>", "nombre": …, "email": …, "rol": … }, … ]` |
 | `POST` | `/api/usuarios` (**admin**) | `{ "nombre": "Ana López", "email": "ana@freshroute.test", "password": "secreto1", "rol": "operador" }` (`rol` opcional, default `operador`) | `201` `{ "mensaje": "Usuario creado", "usuario": { … } }` · `400` `{ "mensaje": "Datos de usuario inválidos", "errores": [ … ] }` · `400` `{ "mensaje": "Ya existe un usuario con el email …" }` |
+| `PUT` | `/api/usuarios/:id` (**admin**) | `{ "nombre": "Ana María López", "rol": "admin", "password": "otraClave1" }` (todos opcionales, al menos uno; el email no se edita; la contraseña se vuelve a hashear) | `200` `{ "mensaje": "Usuario actualizado", "usuario": { … } }` · `400` `{ "mensaje": "Datos de usuario inválidos", "errores": [ … ] }` · `400` `{ "mensaje": "Un administrador no puede quitarse su propio rol de admin" }` · `404` `{ "mensaje": "Usuario no encontrado" }` |
+| `DELETE` | `/api/usuarios/:id` (**admin**) | — | `200` `{ "mensaje": "Usuario eliminado" }` · `400` `{ "mensaje": "Un administrador no puede eliminarse a sí mismo" }` · `404` `{ "mensaje": "Usuario no encontrado" }` |
 
 ### Módulo Clientes — `/api/clientes`
 
@@ -203,6 +206,10 @@ Los formularios HTML solo pueden enviar `GET` y `POST`, por eso cada módulo tie
 | | `GET /choferes/nuevo` · `POST /choferes` | Formulario y alta |
 | | `GET /choferes/:id/editar` · `POST /choferes/:id/editar` | Formulario y edición |
 | | `POST /choferes/:id/eliminar` | Baja (solo admin; rechaza si tiene pedidos asignados) |
+| Usuarios (solo admin) | `GET /usuarios` | Listado (link en el menú solo para el admin; un operador recibe `403`) |
+| | `GET /usuarios/nuevo` · `POST /usuarios` | Formulario y alta |
+| | `GET /usuarios/:id/editar` · `POST /usuarios/:id/editar` | Formulario y edición (contraseña vacía = no se cambia) |
+| | `POST /usuarios/:id/eliminar` | Baja (el admin no ve el botón para borrarse a sí mismo) |
 
 Todas salvo el inicio y el login piden sesión. Después de cada `POST` se redirige al listado (o al detalle, en el caso del estado).
 
@@ -210,7 +217,7 @@ Todas salvo el inicio y el login piden sesión. Después de cada `POST` se redir
 
 | Colección | Documentos del seed | Origen del seed | CRUD |
 |---|---|---|---|
-| `usuarios` | 2 | `data/usuarios.json` | Alta y listado (admin) |
+| `usuarios` | 2 | `data/usuarios.json` | Sí, solo admin (Usuarios) |
 | `clientes` | 5 | `data/clientes.json` | Sí (Módulo Clientes) |
 | `pedidos` | 3 | `data/pedidos.json` | Sí (Módulo Pedidos) |
 | `choferes` | 4 | `data/choferes.json` | No (solo lectura) |
@@ -231,6 +238,7 @@ Usan el runner que trae Node (`node:test` + `node:assert`) y **supertest** para 
 |---|---|
 | `tests/auth.test.js` | Login correcto/incorrecto, token ausente, vencido o adulterado, perfil, permisos por rol, alta de usuarios con hash de contraseña |
 | `tests/pedidos.test.js` | Reglas de `PedidoService`: nace en `pendiente`, cliente/chofer inexistentes, ítems inválidos, transiciones (sin saltos ni retrocesos), `PUT` no toca el estado, baja solo admin |
+| `tests/usuarios.test.js` | Edición y baja de usuarios por API y web, contraseña rehasheada, el admin no se borra ni se quita el rol, token de un usuario borrado (`401` / redirección) o con el rol cambiado (`403`), link del menú solo para admin |
 | `tests/web.test.js` | Redirección al login, cookie `httpOnly`, botones según rol, 403 en la web, logout, 404 HTML vs JSON, ids inválidos |
 | `tests/choferes.test.js` | CRUD de choferes, listado, alta, validaciones de campos obligatorios, restricciones de rol (operador no borra) y regla de negocio de rechazo de baja si tiene pedidos asignados |
 
@@ -239,7 +247,7 @@ Usan el runner que trae Node (`node:test` + `node:assert`) y **supertest** para 
 1. `npm run seed` y levantar el servidor.
 2. Abrir Postman → *File > Import* → elegir `docs/api-collection.postman.json`.
 3. La colección trae la variable `baseUrl = http://localhost:3000` (para probar el deploy, cambiarla por `https://losbuleanos.onrender.com`) y usa autenticación *Bearer* con la variable `token`, que completa sola el request **POST login admin** de la carpeta *Autenticación*. Los ids **no se copian a mano**: el script de test de cada `GET` de listado y de cada `POST` guarda el `_id` en una variable de la colección (`clienteId`, `choferId`, `pedidoId`, `clienteNuevoId`, `pedidoNuevoId`).
-4. Correrla en orden con *Run collection*. Carpetas: **Autenticación** (8 requests), **Clientes** (9), **Choferes** (1), **Pedidos** (11), **Errores** (1). Cada request verifica su status esperado.
+4. Correrla en orden con *Run collection*. Carpetas: **Autenticación** (12 requests), **Clientes** (9), **Choferes** (1), **Pedidos** (11), **Errores** (1). Cada request verifica su status esperado.
 
 ### Smoke test automático
 

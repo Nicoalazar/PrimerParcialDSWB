@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FreshRoute B2B",
-    "description": "Colección de pruebas de la API. Entrega final DSWB - LosBuleanos (MongoDB + autenticación JWT).\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000 (cambiarla por la URL del deploy para probar en línea).\nTodas las rutas salvo el login piden token: la carpeta Autenticación hace login como admin y guarda el JWT en {{token}}, que la colección manda como Bearer en cada request. Por eso hay que correrla en orden (Run collection) con la base recién cargada (npm run seed, que crea admin@freshroute.test / admin123 y operador@freshroute.test / operador123).\nLos ids son ObjectId de MongoDB: los scripts de test los guardan en variables de la colección (clienteId, choferId, pedidoId, clienteNuevoId, pedidoNuevoId). Cada request verifica el status esperado.",
+    "description": "Colección de pruebas de la API. Entrega final DSWB - LosBuleanos (MongoDB + autenticación JWT).\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000 (cambiarla por la URL del deploy para probar en línea).\nTodas las rutas salvo el login piden token: la carpeta Autenticación hace login como admin y guarda el JWT en {{token}}, que la colección manda como Bearer en cada request. Por eso hay que correrla en orden (Run collection) con la base recién cargada (npm run seed, que crea admin@freshroute.test / admin123 y operador@freshroute.test / operador123).\nLos ids son ObjectId de MongoDB: los scripts de test los guardan en variables de la colección (clienteId, choferId, pedidoId, clienteNuevoId, pedidoNuevoId, adminId, usuarioNuevoId). Cada request verifica el status esperado.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -39,6 +39,14 @@
     },
     {
       "key": "choferNuevoId",
+      "value": ""
+    },
+    {
+      "key": "adminId",
+      "value": ""
+    },
+    {
+      "key": "usuarioNuevoId",
       "value": ""
     }
   ],
@@ -270,7 +278,8 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"es el admin\", () => pm.expect(pm.response.json().rol).to.eql(\"admin\"));"
+                  "pm.test(\"es el admin\", () => pm.expect(pm.response.json().rol).to.eql(\"admin\"));",
+                  "pm.collectionVariables.set(\"adminId\", pm.response.json()._id);"
                 ]
               }
             }
@@ -289,7 +298,7 @@
                 "perfil"
               ]
             },
-            "description": "200 → datos del usuario dueño del token (sin contraseña)."
+            "description": "200 → datos del usuario dueño del token (sin contraseña). Guarda el _id del admin en {{adminId}}."
           }
         },
         {
@@ -362,6 +371,161 @@
               ]
             },
             "description": "400 { mensaje: \"Datos de usuario inválidos\", errores: [...] }."
+          }
+        },
+        {
+          "name": "POST crear usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"usuarioNuevoId\", pm.response.json().usuario._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana López\",\n  \"email\": \"ana@freshroute.test\",\n  \"password\": \"secreto1\",\n  \"rol\": \"operador\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios"
+              ]
+            },
+            "description": "Solo admin. 201 { mensaje, usuario } (sin contraseña). Guarda el _id en {{usuarioNuevoId}}. Lo borra el DELETE de más abajo, así la colección se puede volver a correr."
+          }
+        },
+        {
+          "name": "PUT actualizar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"cambió el nombre y el rol\", () => {",
+                  "    const u = pm.response.json().usuario;",
+                  "    pm.expect(u.nombre).to.eql(\"Ana María López\");",
+                  "    pm.expect(u.rol).to.eql(\"admin\");",
+                  "    pm.expect(u.password).to.be.undefined;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana María López\",\n  \"rol\": \"admin\",\n  \"password\": \"otraClave1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{usuarioNuevoId}}"
+              ]
+            },
+            "description": "Solo admin. 200 { mensaje, usuario }. Campos opcionales (al menos uno): nombre, rol, password. La contraseña se vuelve a hashear; el email no se edita."
+          }
+        },
+        {
+          "name": "DELETE eliminar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{usuarioNuevoId}}"
+              ]
+            },
+            "description": "Solo admin. 200 { mensaje: \"Usuario eliminado\" }."
+          }
+        },
+        {
+          "name": "DELETE admin a sí mismo (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"mensaje\", () => pm.expect(pm.response.json().mensaje).to.eql(\"Un administrador no puede eliminarse a sí mismo\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{adminId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{adminId}}"
+              ]
+            },
+            "description": "400: un administrador no puede eliminarse a sí mismo."
           }
         }
       ]
