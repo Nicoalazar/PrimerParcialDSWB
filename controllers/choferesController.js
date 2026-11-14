@@ -1,7 +1,13 @@
-const Chofer = require('../models/Chofer');
-const Pedido = require('../models/Pedido');
+const Chofer = require("../models/Chofer");
+const Pedido = require("../models/Pedido");
 
-// Helper para crear errores con statusCode para el errorHandler de Express 5
+// Lo usan la API (/api/choferes, responde JSON) y la web (/choferes, renderiza
+// o redirige). Sin try/catch: los 400/404 se tiran con statusCode y los
+// CastError de Mongoose (id mal formado) los responde el errorHandler.
+
+const esApi = (req) => req.originalUrl.startsWith("/api");
+
+// arma un error con statusCode para que lo responda el errorHandler
 const crearError = (mensaje, statusCode) => {
     const error = new Error(mensaje);
     error.statusCode = statusCode;
@@ -11,83 +17,90 @@ const crearError = (mensaje, statusCode) => {
 // GET /api/choferes o /choferes
 const listarChoferes = async (req, res) => {
     const choferes = await Chofer.find();
-    
-    if (req.originalUrl.startsWith('/api')) {
+
+    if (esApi(req)) {
         return res.json(choferes);
     }
-    
-    res.render('choferes/index', { choferes, usuario: req.usuario, titulo: 'Listado de Choferes' });
+
+    res.render("choferes/index", { titulo: "Choferes", choferes });
 };
 
 // GET /api/choferes/:id
 const obtenerChoferPorId = async (req, res) => {
     const chofer = await Chofer.findById(req.params.id);
+
     if (!chofer) {
         throw crearError("Chofer no encontrado", 404);
     }
+
     res.json(chofer);
 };
 
-// POST /api/choferes o /choferes/crear
+// POST /api/choferes o /choferes
 const crearChofer = async (req, res) => {
+    // solo los campos del chofer: el _id nunca se toma del body
     const { nombre, apellido, vehiculo, zona } = req.body;
 
-    const nuevoChofer = await Chofer.create({
-        nombre,
-        apellido,
-        vehiculo,
-        zona
-    });
-    
-    if (req.originalUrl.startsWith('/api')) {
-        return res.status(201).json(nuevoChofer);
+    const chofer = await Chofer.create({ nombre, apellido, vehiculo, zona });
+
+    if (esApi(req)) {
+        return res.status(201).json({
+            mensaje: "Chofer creado",
+            chofer
+        });
     }
-    
-    res.redirect('/choferes');
+
+    res.redirect("/choferes");
 };
 
-// PUT /api/choferes/:id o POST /choferes/actualizar/:id
+// PUT /api/choferes/:id o POST /choferes/:id/editar
 const actualizarChofer = async (req, res) => {
-    const { id } = req.params;
     const { nombre, apellido, vehiculo, zona } = req.body;
 
-    const choferActualizado = await Chofer.findByIdAndUpdate(
-        id,
-        { nombre, apellido, vehiculo, zona },
-        { new: true, runValidators: true }
-    );
-    
-    if (!choferActualizado) {
+    // solo se pisan los campos que vienen en el body
+    const datos = {};
+    if (nombre !== undefined) datos.nombre = nombre;
+    if (apellido !== undefined) datos.apellido = apellido;
+    if (vehiculo !== undefined) datos.vehiculo = vehiculo;
+    if (zona !== undefined) datos.zona = zona;
+
+    // returnDocument: "after" devuelve el documento ya actualizado (no el de antes)
+    const chofer = await Chofer.findByIdAndUpdate(req.params.id, datos, { returnDocument: "after", runValidators: true });
+
+    if (!chofer) {
         throw crearError("Chofer no encontrado", 404);
     }
 
-    if (req.originalUrl.startsWith('/api')) {
-        return res.json(choferActualizado);
+    if (esApi(req)) {
+        return res.json({
+            mensaje: "Chofer actualizado",
+            chofer
+        });
     }
-    
-    res.redirect('/choferes');
+
+    res.redirect("/choferes");
 };
 
-// DELETE /api/choferes/:id o POST /choferes/eliminar/:id
+// DELETE /api/choferes/:id o POST /choferes/:id/eliminar
 const eliminarChofer = async (req, res) => {
-    const { id } = req.params;
-
-    // Validar si tiene pedidos asignados
-    const pedidosAsignados = await Pedido.findOne({ choferId: id });
-    if (pedidosAsignados) {
-        throw crearError('No se puede eliminar el chofer porque tiene pedidos asignados.', 400);
+    // no se puede borrar un chofer que tiene pedidos asignados
+    if (await Pedido.exists({ choferId: req.params.id })) {
+        throw crearError("No se puede eliminar el chofer porque tiene pedidos asignados", 400);
     }
 
-    const choferEliminado = await Chofer.findByIdAndDelete(id);
-    if (!choferEliminado) {
+    const eliminado = await Chofer.findByIdAndDelete(req.params.id);
+
+    if (!eliminado) {
         throw crearError("Chofer no encontrado", 404);
     }
 
-    if (req.originalUrl.startsWith('/api')) {
-        return res.status(204).send();
+    if (esApi(req)) {
+        return res.json({
+            mensaje: "Chofer eliminado"
+        });
     }
-    
-    res.redirect('/choferes');
+
+    res.redirect("/choferes");
 };
 
 module.exports = {
@@ -97,4 +110,3 @@ module.exports = {
     actualizarChofer,
     eliminarChofer
 };
-

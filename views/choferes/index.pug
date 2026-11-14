@@ -1,31 +1,33 @@
 extends ../layout
 
 block content
-    .container.mt-4
-        h2.mb-4= titulo
-
-        if usuario && (usuario.rol === 'admin' || usuario.rol === 'operador')
-            a.btn.btn-primary.mb-3(href="/choferes/nuevo") Nuevo Chofer
-
-        table.table.table-striped.table-dark.text-white
-            thead
-                tr
-                    th Nombre
-                    th Apellido
-                    th Vehículo
-                    th Zona
-                    if usuario && (usuario.rol === 'admin' || usuario.rol === 'operador')
-                        th Acciones
-            tbody
-                each chofer in choferes
-                    tr
-                        td= chofer.nombre
-                        td= chofer.apellido
-                        td= chofer.vehiculo
-                        td= chofer.zona
-                        if usuario && (usuario.rol === 'admin' || usuario.rol === 'operador')
-                            td
-                                a.btn.btn-sm.btn-warning.me-2(href=`/choferes/${chofer._id}/editar`) Editar
-                                if usuario.rol === 'admin'
-                                    form.d-inline(action=`/choferes/${chofer._id}/eliminar`, method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este chofer?');")
-                                        button.btn.btn-sm.btn-danger(type="submit") Eliminar
+  h2 Choferes
+  p
+    a(href="/choferes/nuevo") + Nuevo chofer
+  table
+    thead
+      tr
+        th Nombre
+        th Apellido
+        th Vehículo
+        th Zona
+        th Acciones
+    tbody
+      if choferes.length === 0
+        tr
+          td(colspan="5") No hay choferes cargados.
+      else
+        each chofer in choferes
+          tr
+            td= chofer.nombre
+            td= chofer.apellido
+            td= chofer.vehiculo
+            td= chofer.zona
+            td
+              a(href=`/choferes/${chofer.id}/editar`) Editar
+              |
+              |
+              //- borrar es solo para el admin (el backend también lo controla)
+              if usuario && usuario.rol === "admin"
+                form(action=`/choferes/${chofer.id}/eliminar` method="POST" style="display:inline")
+                  button(type="submit") Eliminar

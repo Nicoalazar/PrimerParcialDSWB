@@ -1,22 +1,31 @@
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
-const choferesController = require('../../controllers/choferesController');
-const { requiereLogin, autorizar } = require('../../middlewares/auth');
-const { validarChofer, validarChoferUpdate } = require('../../middlewares/validate');
 
-// Listar todos los choferes
-router.get('/', requiereLogin, choferesController.listarChoferes);
+const {
+    listarChoferes,
+    obtenerChoferPorId,
+    crearChofer,
+    actualizarChofer,
+    eliminarChofer
+} = require("../../controllers/choferesController");
 
-// Obtener un chofer por ID
-router.get('/:id', requiereLogin, choferesController.obtenerChoferPorId);
+const { validarChofer, validarChoferUpdate } = require("../../middlewares/validate");
+const { autorizar } = require("../../middlewares/auth");
 
-// Crear chofer (admin y operador, según el README)
-router.post('/', requiereLogin, autorizar('admin', 'operador'), validarChofer, choferesController.crearChofer);
 
-// Actualizar chofer (admin y operador)
-router.put('/:id', requiereLogin, autorizar('admin', 'operador'), validarChoferUpdate, choferesController.actualizarChofer);
+// rutas CRUD (app.js ya exige token para todo el router)
 
-// Eliminar chofer (SOLO administradores)
-router.delete('/:id', requiereLogin, autorizar('admin'), choferesController.eliminarChofer);
+router.get("/", listarChoferes);
+
+router.get("/:id", obtenerChoferPorId);
+
+router.post("/", validarChofer, crearChofer);
+
+router.put("/:id", validarChoferUpdate, actualizarChofer);
+
+// borrar queda solo para el admin (y se rechaza si el chofer tiene pedidos)
+router.delete("/:id", autorizar("admin"), eliminarChofer);
+
 
 module.exports = router;

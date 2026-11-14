@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+  h2= chofer ? "Editar chofer" : "Nuevo chofer"
+  form(action=chofer ? `/choferes/${chofer.id}/editar` : "/choferes" method="POST")
+    label(for="nombre") Nombre
+    input(type="text" id="nombre" name="nombre" value=chofer ? chofer.nombre : "" required)
+
+    label(for="apellido") Apellido
+    input(type="text" id="apellido" name="apellido" value=chofer ? chofer.apellido : "" required)
+
+    label(for="vehiculo") Vehículo
+    input(type="text" id="vehiculo" name="vehiculo" value=chofer ? chofer.vehiculo : "" required)
+
+    label(for="zona") Zona
+    input(type="text" id="zona" name="zona" value=chofer ? chofer.zona : "" required)
+
+    button(type="submit")= chofer ? "Guardar cambios" : "Crear chofer"
+  p
+    a(href="/choferes") Volver al listado

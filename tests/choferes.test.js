@@ -1,4 +1,4 @@
-// tests/choferes.test.js
+// Módulo Choferes: CRUD por la API, permisos y regla de baja con pedidos asignados
 const { describe, it, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const { app, request, ID_INEXISTENTE, iniciarBase, cerrarBase, cargarDatos } = require("./helpers");
@@ -11,10 +11,14 @@ describe("Choferes", () => {
     const choferValido = () => ({
         nombre: "Carlos",
         apellido: "Gómez",
-        vehiculos: "Utilitario", // o vehiculo según tu modelo, revisemos abajo
         vehiculo: "Utilitario",
         zona: "Norte"
     });
+
+    const crearChofer = async () => {
+        const res = await request(app).post("/api/choferes").set(authOperador).send(choferValido());
+        return res.body.chofer._id;
+    };
 
     before(async () => {
         await iniciarBase();
@@ -25,93 +29,120 @@ describe("Choferes", () => {
 
     after(cerrarBase);
 
-    describe("listado", () => {
-        it("permite listar los choferes", async () => {
+    describe("consulta", () => {
+        it("lista los choferes", async () => {
             const res = await request(app).get("/api/choferes").set(authOperador);
+
             assert.equal(res.status, 200);
-            assert(Array.isArray(res.body));
+            assert.ok(Array.isArray(res.body));
+        });
+
+        it("obtiene un chofer por id", async () => {
+            const res = await request(app).get(`/api/choferes/${datos.idChofer}`).set(authOperador);
+
+            assert.equal(res.status, 200);
+            assert.equal(res.body.nombre, "Juan");
+        });
+
+        it("responde 404 para un chofer inexistente y 400 para un id mal formado", async () => {
+            const inexistente = await request(app).get(`/api/choferes/${ID_INEXISTENTE}`).set(authOperador);
+            const malFormado = await request(app).get("/api/choferes/abc").set(authOperador);
+
+            assert.equal(inexistente.status, 404);
+            assert.equal(inexistente.body.mensaje, "Chofer no encontrado");
+            assert.equal(malFormado.status, 400);
+            assert.match(malFormado.body.mensaje, /Id inválido/);
         });
     });
 
     describe("alta", () => {
-        it("crea un chofer exitosamente con datos válidos", async () => {
+        it("crea un chofer y responde { mensaje, chofer }", async () => {
+            const res = await request(app).post("/api/choferes").set(authOperador).send(choferValido());
+
+            assert.equal(res.status, 201);
+            assert.equal(res.body.mensaje, "Chofer creado");
+            assert.equal(res.body.chofer.nombre, "Carlos");
+        });
+
+        it("ignora el _id que venga en el body", async () => {
             const res = await request(app)
                 .post("/api/choferes")
                 .set(authOperador)
-                .send(choferValido());
+                .send({ ...choferValido(), _id: "aaaaaaaaaaaaaaaaaaaaaaaa" });
 
             assert.equal(res.status, 201);
-            assert.equal(res.body.nombre, "Carlos");
+            assert.notEqual(res.body.chofer._id, "aaaaaaaaaaaaaaaaaaaaaaaa");
         });
 
         it("rechaza un chofer si faltan campos obligatorios (400)", async () => {
-            const res = await request(app)
-                .post("/api/choferes")
-                .set(authOperador)
-                .send({ nombre: "Solo Nombre" });
+            const res = await request(app).post("/api/choferes").set(authOperador).send({ nombre: "Solo Nombre" });
 
             assert.equal(res.status, 400);
+            assert.equal(res.body.mensaje, "Datos de chofer inválidos");
+            assert.equal(res.body.errores.length, 3);
+        });
+    });
+
+    describe("edición", () => {
+        it("PUT parcial solo pisa los campos enviados", async () => {
+            const id = await crearChofer();
+            const res = await request(app).put(`/api/choferes/${id}`).set(authOperador).send({ zona: "Sur" });
+
+            assert.equal(res.status, 200);
+            assert.equal(res.body.mensaje, "Chofer actualizado");
+            assert.equal(res.body.chofer.zona, "Sur");
+            assert.equal(res.body.chofer.nombre, "Carlos");
+        });
+
+        it("PUT sin campos responde 400 y PUT de inexistente 404", async () => {
+            const id = await crearChofer();
+            const sinCampos = await request(app).put(`/api/choferes/${id}`).set(authOperador).send({});
+            const inexistente = await request(app)
+                .put(`/api/choferes/${ID_INEXISTENTE}`)
+                .set(authOperador)
+                .send({ zona: "Sur" });
+
+            assert.equal(sinCampos.status, 400);
+            assert.equal(inexistente.status, 404);
         });
     });
 
     describe("baja", () => {
         it("un operador no puede eliminar un chofer (403)", async () => {
-            const choferRes = await request(app)
-                .post("/api/choferes")
-                .set(authOperador)
-                .send(choferValido());
-
-            const choferId = choferRes.body._id;
-
-            const res = await request(app)
-                .delete(`/api/choferes/${choferId}`)
-                .set(authOperador);
+            const id = await crearChofer();
+            const res = await request(app).delete(`/api/choferes/${id}`).set(authOperador);
 
             assert.equal(res.status, 403);
         });
 
         it("rechaza eliminar un chofer que tiene pedidos asignados (400)", async () => {
-            // 1. Creamos un chofer nuevo
-            const choferRes = await request(app)
-                .post("/api/choferes")
-                .set(authAdmin)
-                .send({ nombre: "Chofer Ocupado", apellido: "Test", vehiculo: "Camión", zona: "Oeste" });
+            const id = await crearChofer();
 
-            const choferId = choferRes.body._id;
+            await request(app).post("/api/pedidos").set(authAdmin).send({
+                clienteId: datos.idCliente,
+                choferId: id,
+                items: [{ descripcion: "Caja", cantidad: 1 }],
+                fechaHoraProgramada: "2026-12-01T10:00:00"
+            });
 
-            // 2. Creamos un pedido asociado a este chofer para asegurarnos de que tenga pedidos
-            await request(app)
-                .post("/api/pedidos")
-                .set(authAdmin)
-                .send({
-                    clienteId: datos.idCliente,
-                    choferId: choferId,
-                    items: [{ descripcion: "Caja", cantidad: 1 }],
-                    fechaHoraProgramada: "2026-12-01T10:00:00"
-                });
-
-            // 3. Intentamos borrarlo (debe fallar con 400)
-            const res = await request(app)
-                .delete(`/api/choferes/${choferId}`)
-                .set(authAdmin);
+            const res = await request(app).delete(`/api/choferes/${id}`).set(authAdmin);
 
             assert.equal(res.status, 400);
+            assert.match(res.body.mensaje, /tiene pedidos asignados/);
         });
 
         it("un admin puede eliminar un chofer sin pedidos", async () => {
-            const choferRes = await request(app)
-                .post("/api/choferes")
-                .set(authAdmin)
-                .send({ nombre: "Juan", apellido: "Pérez", vehiculo: "Moto", zona: "Sur" });
+            const id = await crearChofer();
+            const res = await request(app).delete(`/api/choferes/${id}`).set(authAdmin);
 
-            const choferId = choferRes.body._id;
+            assert.equal(res.status, 200);
+            assert.equal(res.body.mensaje, "Chofer eliminado");
+        });
 
-            const res = await request(app)
-                .delete(`/api/choferes/${choferId}`)
-                .set(authAdmin);
+        it("responde 404 al eliminar un chofer inexistente", async () => {
+            const res = await request(app).delete(`/api/choferes/${ID_INEXISTENTE}`).set(authAdmin);
 
-            assert.equal(res.status, 204);
+            assert.equal(res.status, 404);
         });
     });
 });
-
