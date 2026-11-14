@@ -31,6 +31,31 @@
 - dotenv — variables de entorno desde `.env` — https://github.com/motdotla/dotenv#readme
 - MDN — async/await — https://developer.mozilla.org/es/docs/Learn/JavaScript/Asynchronous/Promises
 
+### Autenticación y seguridad (entrega final)
+
+- Introducción a JSON Web Tokens — https://jwt.io/introduction
+- jsonwebtoken — firmar y verificar tokens (`sign`, `verify`, `expiresIn`) — https://github.com/auth0/node-jsonwebtoken#readme
+- bcryptjs — hash y comparación de contraseñas — https://github.com/dcodeIO/bcrypt.js#readme
+- Mongoose — Middleware (`pre("save")`, usado para hashear la contraseña) — https://mongoosejs.com/docs/middleware.html
+- cookie-parser — https://expressjs.com/en/resources/middleware/cookie-parser.html
+- Express — `res.cookie` (`httpOnly`, `secure`, `sameSite`) — https://expressjs.com/en/5x/api.html#res.cookie
+- MDN — Cookies HTTP (`HttpOnly`, `Secure`, `SameSite`) — https://developer.mozilla.org/es/docs/Web/HTTP/Cookies
+- Express — Buenas prácticas de seguridad en producción — https://expressjs.com/en/advanced/best-practice-security.html
+- OWASP — Password Storage Cheat Sheet — https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+
+### Pruebas automáticas (entrega final)
+
+- Node.js — Test runner (`node:test`) — https://nodejs.org/api/test.html
+- Node.js — `node:assert` — https://nodejs.org/api/assert.html
+- supertest — https://github.com/ladjs/supertest#readme
+- mongodb-memory-server — https://github.com/typegoose/mongodb-memory-server#readme
+
+### Despliegue (entrega final)
+
+- Render — Deploy de una app Node/Express — https://render.com/docs/deploy-node-express-app
+- Render — Variables de entorno — https://render.com/docs/configure-environment-variables
+- MongoDB Atlas — Seguridad: usuarios de base de datos y acceso de red — https://www.mongodb.com/docs/atlas/security/
+
 ### Vistas
 
 - Pug — Referencia del lenguaje (`extends`, `block`, `each`, atributos) — https://pugjs.org/language/attributes.html
@@ -42,4 +67,6 @@
 - Postman — Importar y exportar colecciones (formato v2.1) — https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-and-exporting-overview/
 - GitHub — CODEOWNERS — https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 - MDN — Métodos HTTP y códigos de estado — https://developer.mozilla.org/es/docs/Web/HTTP/Status
+- GitHub Projects — tableros de planificación — https://docs.github.com/en/issues/planning-and-tracking-with-projects
+- Mermaid — diagramas de casos de uso, clases, secuencia y ER de la documentación — https://mermaid.js.org/
 
