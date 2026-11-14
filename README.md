@@ -291,4 +291,4 @@ Capturas de cada request/response en [`docs/evidencia/`](docs/evidencia/), con n
 - Roles (primer y segundo parcial): [`docs/roles.md`](docs/roles.md)
 - Release plan: primer parcial [`docs/RELEASE_PLAN.md`](docs/RELEASE_PLAN.md) · entrega final [`docs/RELEASE_PLAN_Parte3.md`](docs/RELEASE_PLAN_Parte3.md)
 - Bibliografía: [`docs/bibliografia.md`](docs/bibliografia.md)
-- Documentación de entrega (fuente del PDF): [`docs/DOCUMENTACION_Parte2.md`](docs/DOCUMENTACION_Parte2.md) · primer parcial: [`docs/DOCUMENTACION_Parte1.md`](docs/DOCUMENTACION_Parte1.md)
+- Documentación de entrega (fuente del PDF): entrega final [`docs/DOCUMENTACION_Parte3.md`](docs/DOCUMENTACION_Parte3.md) · segundo parcial [`docs/DOCUMENTACION_Parte2.md`](docs/DOCUMENTACION_Parte2.md) · primer parcial [`docs/DOCUMENTACION_Parte1.md`](docs/DOCUMENTACION_Parte1.md)
