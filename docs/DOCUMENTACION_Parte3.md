@@ -626,7 +626,7 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 ## 12. Roles y responsabilidades
 
-⚠️ COMPLETAR: confirmar en equipo qué hizo realmente cada integrante en esta entrega y qué parte explica en el video. Como referencia, el reparto planificado en `docs/RELEASE_PLAN_Parte3.md` fue:
+El reparto planificado en `docs/RELEASE_PLAN_Parte3.md` fue:
 
 | Integrante | Responsabilidad planificada | Lo que hizo |
 |---|---|---|
@@ -640,8 +640,6 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 ## 13. Uso de inteligencia artificial
 
-⚠️ COMPLETAR: revisar y ajustar esta sección en equipo; tiene que reflejar exactamente cómo se usó.
-
 El equipo usó herramientas de IA como apoyo (**Claude** y **Gemini**, según el integrante):
 
 - **Código:** generó la base de la autenticación con JWT, los roles, la configuración centralizada y los tests automáticos (PR #34). También se usó para revisar los pull requests del equipo y corregir lo encontrado en las revisiones (choferes, historial y usuarios).
@@ -649,8 +647,6 @@ El equipo usó herramientas de IA como apoyo (**Claude** y **Gemini**, según el
 - **Documentación:** redactó partes del README, la evidencia de pruebas y el borrador de este documento, incluidos los diagramas en Mermaid.
 
 **Cómo lo revisamos:** cada cambio entró por pull request y se probó antes de mergear (tests automáticos y smoke test). 
-
-⚠️ COMPLETAR: cada integrante describe qué revisó, entendió o modificó de lo generado en su parte, ya que la consigna pide poder explicar todo sin depender de la herramienta.
 
 - **Christian Albornoz:** usé **Gemini** como apoyo puntual en consultas de sintaxis para Node.js y Express, en la estructuración de esquemas en Mongoose (modelos de choferes y pedidos) y para redactar borradores iniciales de la documentación técnica. Me aseguré de que ningún fragmento se incorporara de forma automática: todo el código se revisó para adaptarlo a la arquitectura MVC y las sugerencias se refactorizaron para ajustarlas a las reglas de negocio específicas, como la gestión de choferes y las transiciones de estado de los pedidos. Cada desarrollo pasó por pruebas locales, validación en Postman y revisión en equipo, lo que nos permitió dominar la implementación.
 
@@ -710,10 +706,8 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 
 ## 15. Conclusión
 
-⚠️ COMPLETAR: la consigna pide responder estas preguntas. Conviene que cada integrante aporte su respuesta (puede ir un párrafo por persona o una respuesta en conjunto).
-
 **¿Qué aprendimos este cuatrimestre?**
-⚠️ COMPLETAR    
+
 - **Christian Albornoz:** Este cuatrimestre reforcé mis bases en el desarrollo backend con Node.js y Express.
 - **Fernando Guevara:** Aprendí cómo se construye y se prueba un backend completo: la diferencia entre autenticación (quién sos) y autorización (qué podés hacer), entre un 401 y un 403, y qué aporta cada nivel de prueba.
 - **Laura Belén Blanco:** Este cuatrimestre aprendí a armar un backend con Node y Express separado en capas (rutas, controladores, servicios y modelos), a pasar de archivos JSON a MongoDB y a usar middlewares para validar, proteger rutas y manejar errores.
@@ -721,11 +715,7 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 - **Nicolás Zalazar:** Aprendí a armar un backend completo separado en capas (rutas, controllers, services y modelos), a pasar de archivos JSON a MongoDB y a agregar autenticación con JWT y roles. También aprendí a llevar un proyecto en equipo con ramas, pull requests, revisiones y un tablero de tareas, y a desplegarlo en la nube.
 
 
-
-  
 **¿Qué dificultades tuvimos y cómo las resolvimos?**
-
-⚠️ COMPLETAR (ideas del recorrido: migrar de archivos JSON a MongoDB sin cambiar las rutas; trabajar cinco personas sobre el mismo repo con ramas y pull requests y resolver conflictos; pull requests apuntados a la rama equivocada; configurar Atlas y el deploy).
    
 - **Christian Albornoz:** El mayor desafío fue manejar la asincronía compleja y resolver cruces de ramas y commits en Git, lo que superé con depuración detallada y orden en el equipo
 - **Fernando Guevara:** Mis dificultades fueron las credenciales de Atlas (un `bad auth` que resolví revisando el usuario y la contraseña de mi base), correr el Postman en una pc laboral que tiene accesos restringidos y el deploy gratuito, que se duerme y tarda en responder.
@@ -736,7 +726,6 @@ Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama co
 
 **¿Qué parte del desarrollo Back End nos interesó más?**
 
-⚠️ COMPLETAR
 - **Christian Albornoz:** Lo que más me interesó fue diseñar la lógica de negocio
 - **Fernando Guevara:** Lo que más me interesó fue ver cómo el backend le da vida a un negocio en una aplicación web: los datos de la base (pedidos, clientes, choferes) se convierten en pantallas que el personal de la empresa puede usar. También me gustó lo fácil que resulta generar esas pantallas con plantillas Pug, en lugar de escribir el HTML a mano cada vez.
 - **Laura Belén Blanco:** Lo que más me interesó fue la parte de middlewares y manejo de errores, ver cómo cada request pasa por “filtros” antes de llegar al controlador. 
@@ -744,8 +733,7 @@ Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama co
 - **Nicolás Zalazar:** Lo que más me interesó fue llevar la aplicación a producción: separar la configuración en variables de entorno, armar la base en Atlas y desplegarla en Render, y ver que la misma app funciona igual en mi máquina y en línea.
 
 **¿Qué deberíamos reforzar?**
-
-⚠️ COMPLETAR
+s
 - **Christian Albornoz:** Hacia adelante, creo que necesito reforzar las estrategias avanzadas de pruebas automatizadas y el rendimiento de consultas complejas en bases de datos no relacionales.
 - **Fernando Guevara:** Me queda pendiente reforzar mi uso con Postman, y mejorar mis habilidades de Github.
 - **Laura Belén Blanco:** Tengo que reforzar los tests automáticos que la única experiencia que tengo fue academica, con la materia de Test y este trabajo ya que me sería útil para mi trabajo.
@@ -755,8 +743,6 @@ Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama co
 ---
 
 ## 16. Video y entrega
-
-**Video:** ⚠️ COMPLETAR (link con permisos de visualización). Todos los integrantes aparecen en cámara y explican la parte en la que trabajaron, y se muestra la demostración de las pruebas (tests, smoke test y Postman, con casos de error).
 
 **Entrega del código.** Cada integrante sube su propia copia al campus en **ZIP y RAR**, con dos carpetas:
 
