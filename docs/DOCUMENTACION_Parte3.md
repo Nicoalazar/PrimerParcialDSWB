@@ -632,7 +632,7 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 | Integrante | Responsabilidad planificada | Lo que hizo |
 |---|---|---|
 | **Nicolás Zalazar** | Configuración, `server.js`, seed de usuarios, deploy en Render + Atlas | ⚠️ COMPLETAR |
-| **Laura Olivera** | Modelo `Usuario`, login y gestión de usuarios desde la web (#44) | ⚠️ COMPLETAR |
+| **Laura Olivera** | Modelo `Usuario`, login y gestión de usuarios desde la web (#44) | Implementó la gestión de usuarios desde la web (#44): el admin puede dar de alta, editar, borrar y cambiar el rol de los usuarios, con sus pantallas y un link en el menú que solo ve el admin. Agregó la regla que impide que el admin se borre o se saque su propio rol, y el middleware `verificarUsuarioActivo`, que confirma en la base que el usuario del token todavía existe, así un usuario borrado pierde el acceso y un cambio de rol aplica al instante. Sumó los tests de usuarios y actualizó el README y la colección de Postman. |
 | **Christian Albornoz** | CRUD de Choferes (#36) e historial de estados (#37) | Desarrollo del backend y de la arquitectura MVC en Node.js y Express. Implementó el módulo de Choferes (#36) con su persistencia en MongoDB (API y vistas), el historial de cambios de estado de los pedidos (#37) con trazabilidad en la base, los endpoints REST y las validaciones correspondientes. Trabajó el control de versiones con Git (ramas y resolución de conflictos) y colaboró en el despliegue. |
 | **Laura Belén Blanco** | Middlewares de autenticación y autorización, errores web (#41) y dependencias (#40) | Actualizó las dependencias con vulnerabilidades (#40, PR #47) e hizo que en la web los errores de validación de los formularios muestren la página de error en vez del JSON (#41, PR #46), con un test nuevo y una línea en el README. También revisó el commit de middlewares del PR #34 (#35). |
 | **Fernando Guevara** | Tests, evidencia (#39) y documentación (#42) | QA y documentación: revisó y aprobó el commit de pruebas del PR #34; ejecutó los tests automáticos, el smoke test y la colección de Postman contra su base de Atlas y contra el deploy, guardó la evidencia (#39) y armó esta documentación (#42). |
@@ -659,6 +659,13 @@ El equipo usó herramientas de IA como apoyo (**Claude** y **Gemini**, según el
 
 - **Laura Belén Blanco:** Usé Claude como ayuda para las tareas #40 y #41 y para revisar el commit de middlewares. Me ayudó a armar el cambio en validate.js (la función rechazar, que responde JSON si es la API y muestra la página de error si es la web) y el test nuevo. Los cambios los apliqué yo en mi rama, corrí los tests (40 en verde) y el smoke test (55 OK) en las dos ramas, y revisé que la API siguiera respondiendo igual que antes. Me tomé el tiempo de repasar qué hace cada middleware y por qué van en ese orden
 
+- **Laura Olivera:** Usé Claude, en su versión paga, como ayuda para consultar dudas y armar algunas partes del código
+Lo usé sobre todo para entender cómo hacer la edición y la baja de usuarios y cómo volver a encriptar la contraseña al editarla.
+Todo lo que me sugirió lo revisé y lo adapté a cómo estaba armado nuestro proyecto.
+Probé cada parte con los tests, el smoke test y Postman antes de abrir el PR.
+Me aseguré de entender qué hace cada parte para poder explicarla en el video.
+
+- **Nicolás Zalazar:** 
 
 ---
 
@@ -711,6 +718,11 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 - **Christian Albornoz:** Este cuatrimestre reforcé mis bases en el desarrollo backend con Node.js y Express.
 - **Fernando Guevara:** Aprendí cómo se construye y se prueba un backend completo: la diferencia entre autenticación (quién sos) y autorización (qué podés hacer), entre un 401 y un 403, y qué aporta cada nivel de prueba.
 - **Laura Belén Blanco:** Este cuatrimestre aprendí a armar un backend con Node y Express separado en capas (rutas, controladores, servicios y modelos), a pasar de archivos JSON a MongoDB y a usar middlewares para validar, proteger rutas y manejar errores.
+- **Laura Olivera:** Este cuatrimestre aprendí a armar un backend con Node y Express, a trabajar con MongoDB y a manejar el login con usuarios y roles
+- **Nicolás Zalazar:**
+
+
+
   
 **¿Qué dificultades tuvimos y cómo las resolvimos?**
 
@@ -719,6 +731,9 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 - **Christian Albornoz:** El mayor desafío fue manejar la asincronía compleja y resolver cruces de ramas y commits en Git, lo que superé con depuración detallada y orden en el equipo
 - **Fernando Guevara:** Mis dificultades fueron las credenciales de Atlas (un `bad auth` que resolví revisando el usuario y la contraseña de mi base), correr el Postman en una pc laboral que tiene accesos restringidos y el deploy gratuito, que se duerme y tarda en responder.
 - **Laura Belén Blanco:** Las dificultades que tuve fueron más que nada de entorno y de Git: los tests no me corrían porque tenía una versión vieja de Node, y al server le faltaba el JWT_SECRET en el .env. Lo fui resolviendo leyendo los errores de a uno y probando.
+- **Laura Olivera:** Una dificultad fue coordinar con el resto del equipo porque mi parte tocaba archivos que también usaban otros, como validate.js y auth.js.
+Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama con main antes de mergear.
+- **Nicolás Zalazar:**
 
 **¿Qué parte del desarrollo Back End nos interesó más?**
 
@@ -726,7 +741,8 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 - **Christian Albornoz:** Lo que más me interesó fue diseñar la lógica de negocio
 - **Fernando Guevara:** Lo que más me interesó fue ver cómo el backend le da vida a un negocio en una aplicación web: los datos de la base (pedidos, clientes, choferes) se convierten en pantallas que el personal de la empresa puede usar. También me gustó lo fácil que resulta generar esas pantallas con plantillas Pug, en lugar de escribir el HTML a mano cada vez.
 - **Laura Belén Blanco:** Lo que más me interesó fue la parte de middlewares y manejo de errores, ver cómo cada request pasa por “filtros” antes de llegar al controlador. 
-
+- **Laura Olivera:** Lo que más me interesó fue la parte de seguridad, ver cómo se controla quién puede entrar y qué puede hacer cada usuario.
+- **Nicolás Zalazar:**
 
 **¿Qué deberíamos reforzar?**
 
@@ -734,6 +750,9 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 - **Christian Albornoz:** Hacia adelante, creo que necesito reforzar las estrategias avanzadas de pruebas automatizadas y el rendimiento de consultas complejas en bases de datos no relacionales.
 - **Fernando Guevara:** Me queda pendiente reforzar mi uso con Postman, y mejorar mis habilidades de Github.
 - **Laura Belén Blanco:** Tengo que reforzar los tests automáticos que la única experiencia que tengo fue academica, con la materia de Test y este trabajo ya que me sería útil para mi trabajo.
+- **Laura Olivera:** Tengo que reforzar los tests automáticos y el uso de Git.
+- **Nicolás Zalazar:**
+
 ---
 
 ## 16. Video y entrega
