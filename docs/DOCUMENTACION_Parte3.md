@@ -151,9 +151,9 @@ Prioridad en formato MoSCoW: **M** (must, obligatorio por la consigna), **S** (s
 
 | Id | Historia de usuario | Prioridad | Estimación | Issue / PR |
 |---|---|---|---|---|
-| HU01 | Como **usuario del sistema** quiero iniciar sesión para que solo el personal de FreshRoute acceda a los datos | M | ⚠️ COMPLETAR | PR #34 |
-| HU02 | Como **admin** quiero que solo yo pueda borrar registros para evitar bajas por error | M | ⚠️ COMPLETAR | PR #34 |
-| HU03 | Como **equipo** queremos la aplicación desplegada en línea con la base en la nube para poder mostrarla sin instalar nada | M | ⚠️ COMPLETAR | #38 / PR #45 |
+| HU01 | Como **usuario del sistema** quiero iniciar sesión para que solo el personal de FreshRoute acceda a los datos | M | 4 horas (junto con HU02) | PR #34 |
+| HU02 | Como **admin** quiero que solo yo pueda borrar registros para evitar bajas por error | M | Incluida en HU01 | PR #34 |
+| HU03 | Como **equipo** queremos la aplicación desplegada en línea con la base en la nube para poder mostrarla sin instalar nada | M | 1 hora | #38 / PR #45 |
 | HU04 | Como **equipo** queremos tests automáticos de lo crítico para detectar errores antes de mergear | M | 10 horas | PR #34, #39 / PR #48 |
 | HU05 | Como **operador** quiero gestionar los choferes (alta, edición) para mantener actualizada la flota | S | 5 horas | #36 / PR #50 |
 | HU06 | Como **operador** quiero ver quién y cuándo cambió el estado de un pedido para hacer el seguimiento de la entrega | S | 3 horas | #37 / PR #50 |
@@ -631,7 +631,7 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 | Integrante | Responsabilidad planificada | Lo que hizo |
 |---|---|---|
-| **Nicolás Zalazar** | Configuración, `server.js`, seed de usuarios, deploy en Render + Atlas | ⚠️ COMPLETAR |
+| **Nicolás Zalazar** | Configuración, `server.js`, seed de usuarios, deploy en Render + Atlas | Centralizó las variables de entorno en `config/index.js`, separó `app.js` (la app) de `server.js` (conexión y arranque) para poder testearla, y sumó los usuarios de prueba al seed. Armó el cluster de MongoDB Atlas con una base por integrante y otra para producción, cada una con su propio usuario y permisos solo sobre su base, y desplegó la aplicación en Render (#38, PR #45): configuró el servicio y sus variables de entorno, cargó el seed de producción y verificó el login por HTTPS. Organizó la entrega: release plan, issues, milestone y tablero. Revisó los pull requests del equipo, corrigió en las ramas lo necesario antes de mergear (choferes e historial #50, usuarios #51, evidencia #48) y fue cerrando los issues. En el video explica la configuración, las variables de entorno, Atlas y el deploy. |
 | **Laura Olivera** | Modelo `Usuario`, login y gestión de usuarios desde la web (#44) | Implementó la gestión de usuarios desde la web (#44): el admin puede dar de alta, editar, borrar y cambiar el rol de los usuarios, con sus pantallas y un link en el menú que solo ve el admin. Agregó la regla que impide que el admin se borre o se saque su propio rol, y el middleware `verificarUsuarioActivo`, que confirma en la base que el usuario del token todavía existe, así un usuario borrado pierde el acceso y un cambio de rol aplica al instante. Sumó los tests de usuarios y actualizó el README y la colección de Postman. |
 | **Christian Albornoz** | CRUD de Choferes (#36) e historial de estados (#37) | Desarrollo del backend y de la arquitectura MVC en Node.js y Express. Implementó el módulo de Choferes (#36) con su persistencia en MongoDB (API y vistas), el historial de cambios de estado de los pedidos (#37) con trazabilidad en la base, los endpoints REST y las validaciones correspondientes. Trabajó el control de versiones con Git (ramas y resolución de conflictos) y colaboró en el despliegue. |
 | **Laura Belén Blanco** | Middlewares de autenticación y autorización, errores web (#41) y dependencias (#40) | Actualizó las dependencias con vulnerabilidades (#40, PR #47) e hizo que en la web los errores de validación de los formularios muestren la página de error en vez del JSON (#41, PR #46), con un test nuevo y una línea en el README. También revisó el commit de middlewares del PR #34 (#35). |
@@ -665,7 +665,7 @@ Todo lo que me sugirió lo revisé y lo adapté a cómo estaba armado nuestro pr
 Probé cada parte con los tests, el smoke test y Postman antes de abrir el PR.
 Me aseguré de entender qué hace cada parte para poder explicarla en el video.
 
-- **Nicolás Zalazar:** 
+- **Nicolás Zalazar:** Usé **Claude Code** (de Anthropic) durante toda la entrega. Me guió en la configuración de MongoDB Atlas y del deploy en Render; y lo usé para revisar los pull requests del equipo, corregir lo que encontrábamos en las ramas y armar el borrador de esta documentación con los diagramas. Antes de mergear cada cambio corrí los tests automáticos y el smoke test, local y contra el deploy, y probé la aplicación en el navegador. Lo de mi parte (configuración, variables de entorno, Atlas y deploy) lo repasé hasta poder explicarlo sin la herramienta.
 
 ---
 
@@ -719,7 +719,7 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 - **Fernando Guevara:** Aprendí cómo se construye y se prueba un backend completo: la diferencia entre autenticación (quién sos) y autorización (qué podés hacer), entre un 401 y un 403, y qué aporta cada nivel de prueba.
 - **Laura Belén Blanco:** Este cuatrimestre aprendí a armar un backend con Node y Express separado en capas (rutas, controladores, servicios y modelos), a pasar de archivos JSON a MongoDB y a usar middlewares para validar, proteger rutas y manejar errores.
 - **Laura Olivera:** Este cuatrimestre aprendí a armar un backend con Node y Express, a trabajar con MongoDB y a manejar el login con usuarios y roles
-- **Nicolás Zalazar:**
+- **Nicolás Zalazar:** Aprendí a armar un backend completo separado en capas (rutas, controllers, services y modelos), a pasar de archivos JSON a MongoDB y a agregar autenticación con JWT y roles. También aprendí a llevar un proyecto en equipo con ramas, pull requests, revisiones y un tablero de tareas, y a desplegarlo en la nube.
 
 
 
@@ -733,7 +733,7 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 - **Laura Belén Blanco:** Las dificultades que tuve fueron más que nada de entorno y de Git: los tests no me corrían porque tenía una versión vieja de Node, y al server le faltaba el JWT_SECRET en el .env. Lo fui resolviendo leyendo los errores de a uno y probando.
 - **Laura Olivera:** Una dificultad fue coordinar con el resto del equipo porque mi parte tocaba archivos que también usaban otros, como validate.js y auth.js.
 Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama con main antes de mergear.
-- **Nicolás Zalazar:**
+- **Nicolás Zalazar:** La mayor dificultad fue coordinar a cinco personas sobre el mismo repositorio: conflictos entre ramas, pull requests apuntados a la rama equivocada y cambios que había que corregir antes de mergear. Lo resolvimos con un issue por tarea, un orden de merge acordado y revisando cada PR con los tests y el smoke test antes de que entrara a `main`. En el deploy, tuve que ajustar la conexión a Atlas (el nombre de la base en la URI y los permisos de cada usuario) hasta que todo conectara.
 
 **¿Qué parte del desarrollo Back End nos interesó más?**
 
@@ -742,7 +742,7 @@ Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama co
 - **Fernando Guevara:** Lo que más me interesó fue ver cómo el backend le da vida a un negocio en una aplicación web: los datos de la base (pedidos, clientes, choferes) se convierten en pantallas que el personal de la empresa puede usar. También me gustó lo fácil que resulta generar esas pantallas con plantillas Pug, en lugar de escribir el HTML a mano cada vez.
 - **Laura Belén Blanco:** Lo que más me interesó fue la parte de middlewares y manejo de errores, ver cómo cada request pasa por “filtros” antes de llegar al controlador. 
 - **Laura Olivera:** Lo que más me interesó fue la parte de seguridad, ver cómo se controla quién puede entrar y qué puede hacer cada usuario.
-- **Nicolás Zalazar:**
+- **Nicolás Zalazar:** Lo que más me interesó fue llevar la aplicación a producción: separar la configuración en variables de entorno, armar la base en Atlas y desplegarla en Render, y ver que la misma app funciona igual en mi máquina y en línea.
 
 **¿Qué deberíamos reforzar?**
 
@@ -751,7 +751,7 @@ Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama co
 - **Fernando Guevara:** Me queda pendiente reforzar mi uso con Postman, y mejorar mis habilidades de Github.
 - **Laura Belén Blanco:** Tengo que reforzar los tests automáticos que la única experiencia que tengo fue academica, con la materia de Test y este trabajo ya que me sería útil para mi trabajo.
 - **Laura Olivera:** Tengo que reforzar los tests automáticos y el uso de Git.
-- **Nicolás Zalazar:**
+- **Nicolás Zalazar:** Tengo que reforzar los tests automáticos ya que hoy en día sin ayuda de la IA no podría hacerlos.
 
 ---
 
