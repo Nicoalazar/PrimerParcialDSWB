@@ -588,7 +588,7 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 - **Objetivo:** verificar las reglas de negocio y de seguridad más críticas en cada cambio, antes de mergear.
 - **Procedimiento:** `node:test` + `supertest`; cada archivo levanta su propia MongoDB en memoria y carga datos de prueba.
-- **Resultado:** **78 tests, 78 OK** ⚠️ COMPLETAR (actualizar la captura: la de `tests_locales_*.png` se tomó con 39 tests).
+- **Resultado:** **78 tests, 78 OK** 
 
 | Archivo | Tests | Qué cubre |
 |---|---|---|
@@ -604,7 +604,7 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 - **Objetivo:** recorrer la aplicación completa de punta a punta, como un usuario, contra una base real.
 - **Procedimiento:** con el servidor levantado y el seed cargado, el script hace login y recorre autenticación, los cuatro módulos, las transiciones de estado, los errores y las vistas web; crea y borra sus propios registros.
-- **Resultado:** **64 OK · 0 fallas**, tanto local contra Atlas como contra el deploy en Render ⚠️ COMPLETAR (actualizar las capturas: las actuales son de cuando el smoke test tenía 55 verificaciones).
+- **Resultado:** **64 OK · 0 fallas**, tanto local contra Atlas como contra el deploy en Render.
 
 ![Smoke test contra el deploy](evidencia/parcial3/smoke_deploy_1.png)
 
@@ -612,7 +612,7 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 - **Objetivo:** probar cada endpoint de la API, incluidos los casos de error, y dejar evidencia.
 - **Procedimiento:** `docs/api-collection.postman.json`, corrida completa en orden con *Run collection*. La carpeta *Autenticación* hace login y guarda el token, que la colección envía en cada request.
-- **Resultado:** ⚠️ COMPLETAR (la corrida guardada en la evidencia es de 31/31 asserts, antes de sumar usuarios y choferes; volver a correrla y capturar).
+- **Resultado:** **39 requests, 44 asserts OK**, 0 fallas y 0 errores, corrida contra el deploy en Render.
 
 ![Postman contra el deploy](evidencia/parcial3/postman_deploy_resumen.png)
 
@@ -630,11 +630,11 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 | Integrante | Responsabilidad planificada | Lo que hizo |
 |---|---|---|
-| Nicolás Zalazar | Configuración, `server.js`, seed de usuarios, deploy en Render + Atlas | ⚠️ COMPLETAR |
-| Laura Olivera | Modelo `Usuario`, login y gestión de usuarios desde la web (#44) | ⚠️ COMPLETAR |
-| Christian Albornoz | CRUD de Choferes (#36) e historial de estados (#37) | ⚠️ COMPLETAR |
-| Laura Belén Blanco | Middlewares de autenticación y autorización, errores web (#41) y dependencias (#40) | ⚠️ COMPLETAR |
-| Fernando Guevara | Tests, evidencia (#39) y documentación (#42) | ⚠️ COMPLETAR |
+| **Nicolás Zalazar** | Configuración, `server.js`, seed de usuarios, deploy en Render + Atlas | ⚠️ COMPLETAR |
+| **Laura Olivera** | Modelo `Usuario`, login y gestión de usuarios desde la web (#44) | ⚠️ COMPLETAR |
+| **Christian Albornoz** | CRUD de Choferes (#36) e historial de estados (#37) | Desarrollo del backend y de la arquitectura MVC en Node.js y Express. Implementó el módulo de Choferes (#36) con su persistencia en MongoDB (API y vistas), el historial de cambios de estado de los pedidos (#37) con trazabilidad en la base, los endpoints REST y las validaciones correspondientes. Trabajó el control de versiones con Git (ramas y resolución de conflictos) y colaboró en el despliegue. |
+| **Laura Belén Blanco** | Middlewares de autenticación y autorización, errores web (#41) y dependencias (#40) | ⚠️ COMPLETAR |
+| **Fernando Guevara** | Tests, evidencia (#39) y documentación (#42) | QA y documentación: revisó y aprobó el commit de pruebas del PR #34; ejecutó los tests automáticos, el smoke test y la colección de Postman contra su base de Atlas y contra el deploy, guardó la evidencia (#39) y armó esta documentación (#42). |
 
 ---
 
@@ -642,13 +642,19 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 ⚠️ COMPLETAR: revisar y ajustar esta sección en equipo; tiene que reflejar exactamente cómo se usó.
 
-Usamos **Claude Code** (asistente de programación de Anthropic) como apoyo en el desarrollo y la documentación:
+El equipo usó herramientas de IA como apoyo (**Claude** y **Gemini**, según el integrante):
 
 - **Código:** generó la base de la autenticación con JWT, los roles, la configuración centralizada y los tests automáticos (PR #34). También se usó para revisar los pull requests del equipo y corregir lo encontrado en las revisiones (choferes, historial y usuarios).
 - **Infraestructura:** guió la configuración de MongoDB Atlas (bases y usuarios separados) y del deploy en Render.
 - **Documentación:** redactó partes del README, la evidencia de pruebas y el borrador de este documento, incluidos los diagramas en Mermaid.
 
-**Cómo lo revisamos:** cada cambio entró por pull request y se probó antes de mergear (tests automáticos y smoke test). ⚠️ COMPLETAR: cada integrante describe qué revisó, entendió o modificó de lo generado en su parte, ya que la consigna pide poder explicar todo sin depender de la herramienta.
+**Cómo lo revisamos:** cada cambio entró por pull request y se probó antes de mergear (tests automáticos y smoke test). 
+
+⚠️ COMPLETAR: cada integrante describe qué revisó, entendió o modificó de lo generado en su parte, ya que la consigna pide poder explicar todo sin depender de la herramienta.
+
+- **Christian Albornoz:** usé **Gemini** como apoyo puntual en consultas de sintaxis para Node.js y Express, en la estructuración de esquemas en Mongoose (modelos de choferes y pedidos) y para redactar borradores iniciales de la documentación técnica. Me aseguré de que ningún fragmento se incorporara de forma automática: todo el código se revisó para adaptarlo a la arquitectura MVC y las sugerencias se refactorizaron para ajustarlas a las reglas de negocio específicas, como la gestión de choferes y las transiciones de estado de los pedidos. Cada desarrollo pasó por pruebas locales, validación en Postman y revisión en equipo, lo que nos permitió dominar la implementación.
+
+- **Fernando Guevara:** Revisé en detalle el PR #34, prestando especial atención a los cambios realizados en `helpers.js` y en la carpeta `tests/`. Durante el proceso utilicé **Claude** como herramienta de apoyo para consultar dudas técnicas y orientarme en algunas tareas. Ejecuté los *smoke tests* y las colecciones de Postman contra el entorno publicado para comprobar el funcionamiento del sistema. Los resultados y las métricas que incluí en la sección de pruebas corresponden a las ejecuciones que realicé y a sus respectivas evidencias. Por último, me encargué de organizar y redactar la documentación y el guion técnico.
 
 ---
 
@@ -697,21 +703,28 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 ⚠️ COMPLETAR: la consigna pide responder estas preguntas. Conviene que cada integrante aporte su respuesta (puede ir un párrafo por persona o una respuesta en conjunto).
 
 **¿Qué aprendimos este cuatrimestre?**
-
-⚠️ COMPLETAR
+⚠️ COMPLETAR    
+- **Christian Albornoz:** Este cuatrimestre reforcé mis bases en el desarrollo backend con Node.js y Express.
+- **Fernando Guevara:** Aprendí cómo se construye y se prueba un backend completo: la diferencia entre autenticación (quién sos) y autorización (qué podés hacer), entre un 401 y un 403, y qué aporta cada nivel de prueba.
 
 **¿Qué dificultades tuvimos y cómo las resolvimos?**
 
 ⚠️ COMPLETAR (ideas del recorrido: migrar de archivos JSON a MongoDB sin cambiar las rutas; trabajar cinco personas sobre el mismo repo con ramas y pull requests y resolver conflictos; pull requests apuntados a la rama equivocada; configurar Atlas y el deploy).
+   
+- **Christian Albornoz:** El mayor desafío fue manejar la asincronía compleja y resolver cruces de ramas y commits en Git, lo que superé con depuración detallada y orden en el equipo
+- **Fernando Guevara:** Mis dificultades fueron las credenciales de Atlas (un `bad auth` que resolví revisando el usuario y la contraseña de mi base), correr el Postman en una pc laboral que tiene accesos restringidos y el deploy gratuito, que se duerme y tarda en responder.
 
 **¿Qué parte del desarrollo Back End nos interesó más?**
 
 ⚠️ COMPLETAR
+- **Christian Albornoz:** Lo que más me interesó fue diseñar la lógica de negocio
+- **Fernando Guevara:** Lo que más me interesó fue ver cómo el backend le da vida a un negocio en una aplicación web: los datos de la base (pedidos, clientes, choferes) se convierten en pantallas que el personal de la empresa puede usar. También me gustó lo fácil que resulta generar esas pantallas con plantillas Pug, en lugar de escribir el HTML a mano cada vez.
 
 **¿Qué deberíamos reforzar?**
 
 ⚠️ COMPLETAR
-
+- **Christian Albornoz:** Hacia adelante, creo que necesito reforzar las estrategias avanzadas de pruebas automatizadas y el rendimiento de consultas complejas en bases de datos no relacionales.
+- **Fernando Guevara:** Me queda pendiente reforzar mi uso con Postman, y mejorar mis habilidades de Github.
 ---
 
 ## 16. Video y entrega
