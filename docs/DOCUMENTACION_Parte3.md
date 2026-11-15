@@ -143,7 +143,7 @@ Esta entrega final **mejora la versión 2.0** siguiendo la consigna: agrega aute
 
 El trabajo se organizó en un **tablero de GitHub Projects** con un issue por tarea, cada uno con su responsable, y un milestone "Entrega final". Cada tarea se desarrolló en su propia rama y entró a `main` por pull request con revisión.
 
-![Tablero del proyecto](evidencia/parcial3/tablero.png) ⚠️ COMPLETAR (sacar la captura del tablero en vista Board y guardarla como `docs/evidencia/parcial3/tablero.png`)
+![Tablero del proyecto](evidencia/parcial3/board.png) 
 
 ### 5.1 Historias de usuario
 
@@ -154,13 +154,13 @@ Prioridad en formato MoSCoW: **M** (must, obligatorio por la consigna), **S** (s
 | HU01 | Como **usuario del sistema** quiero iniciar sesión para que solo el personal de FreshRoute acceda a los datos | M | ⚠️ COMPLETAR | PR #34 |
 | HU02 | Como **admin** quiero que solo yo pueda borrar registros para evitar bajas por error | M | ⚠️ COMPLETAR | PR #34 |
 | HU03 | Como **equipo** queremos la aplicación desplegada en línea con la base en la nube para poder mostrarla sin instalar nada | M | ⚠️ COMPLETAR | #38 / PR #45 |
-| HU04 | Como **equipo** queremos tests automáticos de lo crítico para detectar errores antes de mergear | M | ⚠️ COMPLETAR | PR #34, #39 / PR #48 |
-| HU05 | Como **operador** quiero gestionar los choferes (alta, edición) para mantener actualizada la flota | S | ⚠️ COMPLETAR | #36 / PR #50 |
-| HU06 | Como **operador** quiero ver quién y cuándo cambió el estado de un pedido para hacer el seguimiento de la entrega | S | ⚠️ COMPLETAR | #37 / PR #50 |
-| HU07 | Como **admin** quiero gestionar los usuarios desde la web (alta, edición, baja, rol) sin usar Postman | S | ⚠️ COMPLETAR | #44 / PR #51 |
-| HU08 | Como **usuario** quiero ver los errores de los formularios en una página legible | C | ⚠️ COMPLETAR | #41 / PR #46 |
-| HU09 | Como **equipo** queremos las dependencias sin vulnerabilidades conocidas | S | ⚠️ COMPLETAR | #40 / PR #47 |
-| HU10 | Como **equipo** queremos documentar todo y entregar las dos versiones | M | ⚠️ COMPLETAR | #42, #43 |
+| HU04 | Como **equipo** queremos tests automáticos de lo crítico para detectar errores antes de mergear | M | 10 horas | PR #34, #39 / PR #48 |
+| HU05 | Como **operador** quiero gestionar los choferes (alta, edición) para mantener actualizada la flota | S | 5 horas | #36 / PR #50 |
+| HU06 | Como **operador** quiero ver quién y cuándo cambió el estado de un pedido para hacer el seguimiento de la entrega | S | 3 horas | #37 / PR #50 |
+| HU07 | Como **admin** quiero gestionar los usuarios desde la web (alta, edición, baja, rol) sin usar Postman | S | 5 horas | #44 / PR #51 |
+| HU08 | Como **usuario** quiero ver los errores de los formularios en una página legible | C | 1 h 30 aprox. (se me fue tiempo con la versión de Node y el .env) - Revisión #35: 30 min aprox.  | #41 / PR #46 |
+| HU09 | Como **equipo** queremos las dependencias sin vulnerabilidades conocidas | S |  30 min aprox. | #40 / PR #47 |
+| HU10 | Como **equipo** queremos documentar todo y entregar las dos versiones | M | 8 horas | #42, #43 |
 
 ### 5.2 Orden de trabajo
 
