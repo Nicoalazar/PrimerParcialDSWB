@@ -173,7 +173,7 @@ Prioridad en formato MoSCoW: **M** (must, obligatorio por la consigna), **S** (s
 
 ## 6. Diagramas
 
-> Los diagramas están en Mermaid y se generaron a partir del código; ⚠️ COMPLETAR: revisarlos en equipo antes de exportar.
+> Los diagramas están en Mermaid y se generaron a partir del código final.
 
 ### 6.1 Casos de uso
 
@@ -222,8 +222,8 @@ classDiagram
         ObjectId _id
         String nombre
         String email
-        String password (hash bcrypt)
-        String rol (admin | operador)
+        String password 
+        String rol 
         compararPassword(password) Boolean
     }
     class Cliente {
@@ -287,6 +287,7 @@ classDiagram
     AuthService ..> Usuario
     UsuarioService ..> Usuario
 ```
+En el diagrama, password es el hash de bcrypt y rol toma los valores admin u operador.
 
 ### 6.3 Diagrama de secuencia — Login (API)
 
@@ -345,7 +346,7 @@ sequenceDiagram
     alt estado inválido, salto o retroceso
         S-->>U: 400 "Transición inválida…"
     end
-    S->>M: estado = nuevo; historial.push({ estado, usuarioId, fecha })
+    S->>M: estado = nuevo y historial.push(estado, usuarioId, fecha)
     S->>M: save()
     S-->>C: pedido
     C-->>U: 200 { mensaje: "Estado actualizado", pedido }
