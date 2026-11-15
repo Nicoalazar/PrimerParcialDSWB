@@ -2,7 +2,6 @@
 Fuente del PDF de la entrega final (tercer parcial). Mismo formato que las partes 1 y 2 (portada con logos, links y capturas embebidas).
 Exportar el PDF con el mismo nombre que la carpeta de Drive (confirmar el nombre: ver la sección 1).
 
-BORRADOR. Lo que falta completar está marcado con  ⚠️ COMPLETAR  (buscar ese texto antes de exportar).
 Los diagramas están en Mermaid: al exportar a PDF, usar una herramienta que los renderice
 (por ejemplo, la extensión "Markdown PDF" de VS Code con soporte Mermaid, o pegarlos en https://mermaid.live y exportar como imagen).
 -->
@@ -657,9 +656,9 @@ El equipo usó herramientas de IA como apoyo (**Claude** y **Gemini**, según el
 
 - **Fernando Guevara:** Revisé en detalle el PR #34, prestando especial atención a los cambios realizados en `helpers.js` y en la carpeta `tests/`. Durante el proceso utilicé **Claude** como herramienta de apoyo para consultar dudas técnicas y orientarme en algunas tareas. Ejecuté los *smoke tests* y las colecciones de Postman contra el entorno publicado para comprobar el funcionamiento del sistema. Los resultados y las métricas que incluí en la sección de pruebas corresponden a las ejecuciones que realicé y a sus respectivas evidencias. Por último, me encargué de organizar y redactar la documentación y el guion técnico.
 
-- **Laura Belén Blanco:** Usé Claude como ayuda para las tareas #40 y #41 y para revisar el commit de middlewares. Me ayudó a armar el cambio en validate.js (la función rechazar, que responde JSON si es la API y muestra la página de error si es la web) y el test nuevo. Los cambios los apliqué yo en mi rama, corrí los tests (40 en verde) y el smoke test (55 OK) en las dos ramas, y revisé que la API siguiera respondiendo igual que antes. Me tomé el tiempo de repasar qué hace cada middleware y por qué van en ese orden
+- **Laura Belén Blanco:** Usé **Claude** como ayuda para las tareas #40 y #41 y para revisar el commit de middlewares. Me ayudó a armar el cambio en validate.js (la función rechazar, que responde JSON si es la API y muestra la página de error si es la web) y el test nuevo. Los cambios los apliqué yo en mi rama, corrí los tests (40 en verde) y el smoke test (55 OK) en las dos ramas, y revisé que la API siguiera respondiendo igual que antes. Me tomé el tiempo de repasar qué hace cada middleware y por qué van en ese orden
 
-- **Laura Olivera:** Usé Claude, en su versión paga, como ayuda para consultar dudas y armar algunas partes del código
+- **Laura Olivera:** Usé **Claude**, en su versión paga, como ayuda para consultar dudas y armar algunas partes del código
 Lo usé sobre todo para entender cómo hacer la edición y la baja de usuarios y cómo volver a encriptar la contraseña al editarla.
 Todo lo que me sugirió lo revisé y lo adapté a cómo estaba armado nuestro proyecto.
 Probé cada parte con los tests, el smoke test y Postman antes de abrir el PR.
