@@ -1,6 +1,6 @@
 <!--
 Fuente del PDF de la entrega final (tercer parcial). Mismo formato que las partes 1 y 2 (portada con logos, links y capturas embebidas).
-Exportar el PDF con el mismo nombre que la carpeta de Drive (confirmar el nombre: ver la sección 1).
+Exportar el PDF como DSWB_2A_grupo17-parcial3_2C26.pdf (mismo nombre que la carpeta de Drive).
 
 Los diagramas están en Mermaid: al exportar a PDF, usar una herramienta que los renderice
 (por ejemplo, la extensión "Markdown PDF" de VS Code con soporte Mermaid, o pegarlos en https://mermaid.live y exportar como imagen).
@@ -24,7 +24,7 @@ Los diagramas están en Mermaid: al exportar a PDF, usar una herramienta que los
 - Laura Belén Blanco
 - Fernando Guevara
 
-**Nombre del documento / carpeta Drive:** `DSWB_2A_grupo17-parcial3_2C26` ⚠️ COMPLETAR (confirmar el nombre)
+**Nombre del documento / carpeta Drive:** `DSWB_2A_grupo17-parcial3_2C26`
 
 ---
 
@@ -56,8 +56,8 @@ Los diagramas están en Mermaid: al exportar a PDF, usar una herramienta que los
 | Aplicación en línea (Render + MongoDB Atlas) | https://losbuleanos.onrender.com |
 | Repositorio GitHub | https://github.com/Nicoalazar/PrimerParcialDSWB (versión final en `main` y en el tag `v3.0-tercer-parcial`; versiones anteriores en los tags `v2.0-segundo-parcial` y `v1.0-primer-parcial`) |
 | Tablero del proyecto (GitHub Projects) | https://github.com/users/Nicoalazar/projects/13 |
-| Carpeta Drive | ⚠️ COMPLETAR |
-| Video explicativo | ⚠️ COMPLETAR (con permisos de visualización configurados) |
+| Carpeta Drive | https://drive.google.com/drive/folders/1V7-SPTIe3AkoOlUF-S51txlZEnlTax4h |
+| Video explicativo | https://drive.google.com/file/d/1Xsdc7R2ZBGvHkD83qVGmdfic3K2hrbO1/view |
 
 **Usuarios para probar la aplicación en línea:**
 
@@ -157,7 +157,7 @@ Prioridad en formato MoSCoW: **M** (must, obligatorio por la consigna), **S** (s
 | HU05 | Como **operador** quiero gestionar los choferes (alta, edición) para mantener actualizada la flota | S | 5 horas | #36 / PR #50 |
 | HU06 | Como **operador** quiero ver quién y cuándo cambió el estado de un pedido para hacer el seguimiento de la entrega | S | 3 horas | #37 / PR #50 |
 | HU07 | Como **admin** quiero gestionar los usuarios desde la web (alta, edición, baja, rol) sin usar Postman | S | 5 horas | #44 / PR #51 |
-| HU08 | Como **usuario** quiero ver los errores de los formularios en una página legible | C | 1 h 30 aprox. (se me fue tiempo con la versión de Node y el .env) - Revisión #35: 30 min aprox.  | #41 / PR #46 |
+| HU08 | Como **usuario** quiero ver los errores de los formularios en una página legible | C | 1 h 30 aprox. (incluye resolver la versión de Node y el `.env`); revisión del #35: 30 min aprox. | #41 / PR #46 |
 | HU09 | Como **equipo** queremos las dependencias sin vulnerabilidades conocidas | S |  30 min aprox. | #40 / PR #47 |
 | HU10 | Como **equipo** queremos documentar todo y entregar las dos versiones | M | 8 horas | #42, #43 |
 
@@ -626,7 +626,11 @@ Usamos tres niveles de prueba. La evidencia completa está en `docs/evidencia/pa
 
 ## 12. Roles y responsabilidades
 
+<<<<<<< Updated upstream
 El reparto planificado en `docs/RELEASE_PLAN_Parte3.md` fue:
+=======
+La responsabilidad planificada sale del reparto de tareas de `docs/RELEASE_PLAN_Parte3.md`; al lado, lo que hizo cada integrante en esta entrega:
+>>>>>>> Stashed changes
 
 | Integrante | Responsabilidad planificada | Lo que hizo |
 |---|---|---|
@@ -646,15 +650,26 @@ El equipo usó herramientas de IA como apoyo (**Claude** y **Gemini**, según el
 - **Infraestructura:** guió la configuración de MongoDB Atlas (bases y usuarios separados) y del deploy en Render.
 - **Documentación:** redactó partes del README, la evidencia de pruebas y el borrador de este documento, incluidos los diagramas en Mermaid.
 
-**Cómo lo revisamos:** cada cambio entró por pull request y se probó antes de mergear (tests automáticos y smoke test). 
+**Cómo lo revisamos:** cada cambio entró por pull request y se probó antes de mergear (tests automáticos y smoke test).
 
+<<<<<<< Updated upstream
+=======
+Cada integrante describe qué revisó, entendió o modificó de lo generado en su parte:
+
+>>>>>>> Stashed changes
 - **Christian Albornoz:** usé **Gemini** como apoyo puntual en consultas de sintaxis para Node.js y Express, en la estructuración de esquemas en Mongoose (modelos de choferes y pedidos) y para redactar borradores iniciales de la documentación técnica. Me aseguré de que ningún fragmento se incorporara de forma automática: todo el código se revisó para adaptarlo a la arquitectura MVC y las sugerencias se refactorizaron para ajustarlas a las reglas de negocio específicas, como la gestión de choferes y las transiciones de estado de los pedidos. Cada desarrollo pasó por pruebas locales, validación en Postman y revisión en equipo, lo que nos permitió dominar la implementación.
 
 - **Fernando Guevara:** Revisé en detalle el PR #34, prestando especial atención a los cambios realizados en `helpers.js` y en la carpeta `tests/`. Durante el proceso utilicé **Claude** como herramienta de apoyo para consultar dudas técnicas y orientarme en algunas tareas. Ejecuté los *smoke tests* y las colecciones de Postman contra el entorno publicado para comprobar el funcionamiento del sistema. Los resultados y las métricas que incluí en la sección de pruebas corresponden a las ejecuciones que realicé y a sus respectivas evidencias. Por último, me encargué de organizar y redactar la documentación y el guion técnico.
 
+<<<<<<< Updated upstream
 - **Laura Belén Blanco:** Usé **Claude** como ayuda para las tareas #40 y #41 y para revisar el commit de middlewares. Me ayudó a armar el cambio en validate.js (la función rechazar, que responde JSON si es la API y muestra la página de error si es la web) y el test nuevo. Los cambios los apliqué yo en mi rama, corrí los tests (40 en verde) y el smoke test (55 OK) en las dos ramas, y revisé que la API siguiera respondiendo igual que antes. Me tomé el tiempo de repasar qué hace cada middleware y por qué van en ese orden
 
 - **Laura Olivera:** Usé **Claude**, en su versión paga, como ayuda para consultar dudas y armar algunas partes del código
+=======
+- **Laura Belén Blanco:** Usé Claude como ayuda para las tareas #40 y #41 y para revisar el commit de middlewares. Me ayudó a armar el cambio en validate.js (la función rechazar, que responde JSON si es la API y muestra la página de error si es la web) y el test nuevo. Los cambios los apliqué yo en mi rama, corrí los tests (40 en verde) y el smoke test (55 OK) en las dos ramas, y revisé que la API siguiera respondiendo igual que antes. Me tomé el tiempo de repasar qué hace cada middleware y por qué van en ese orden.
+
+- **Laura Olivera:** Usé Claude, en su versión paga, como ayuda para consultar dudas y armar algunas partes del código.
+>>>>>>> Stashed changes
 Lo usé sobre todo para entender cómo hacer la edición y la baja de usuarios y cómo volver a encriptar la contraseña al editarla.
 Todo lo que me sugirió lo revisé y lo adapté a cómo estaba armado nuestro proyecto.
 Probé cada parte con los tests, el smoke test y Postman antes de abrir el PR.
@@ -706,18 +721,29 @@ El detalle completo está en `docs/bibliografia.md` del repositorio.
 
 ## 15. Conclusión
 
+<<<<<<< Updated upstream
+=======
+Cada integrante responde las preguntas de la consigna.
+
+>>>>>>> Stashed changes
 **¿Qué aprendimos este cuatrimestre?**
 
 - **Christian Albornoz:** Este cuatrimestre reforcé mis bases en el desarrollo backend con Node.js y Express.
 - **Fernando Guevara:** Aprendí cómo se construye y se prueba un backend completo: la diferencia entre autenticación (quién sos) y autorización (qué podés hacer), entre un 401 y un 403, y qué aporta cada nivel de prueba.
 - **Laura Belén Blanco:** Este cuatrimestre aprendí a armar un backend con Node y Express separado en capas (rutas, controladores, servicios y modelos), a pasar de archivos JSON a MongoDB y a usar middlewares para validar, proteger rutas y manejar errores.
-- **Laura Olivera:** Este cuatrimestre aprendí a armar un backend con Node y Express, a trabajar con MongoDB y a manejar el login con usuarios y roles
+- **Laura Olivera:** Este cuatrimestre aprendí a armar un backend con Node y Express, a trabajar con MongoDB y a manejar el login con usuarios y roles.
 - **Nicolás Zalazar:** Aprendí a armar un backend completo separado en capas (rutas, controllers, services y modelos), a pasar de archivos JSON a MongoDB y a agregar autenticación con JWT y roles. También aprendí a llevar un proyecto en equipo con ramas, pull requests, revisiones y un tablero de tareas, y a desplegarlo en la nube.
 
+<<<<<<< Updated upstream
 
 **¿Qué dificultades tuvimos y cómo las resolvimos?**
    
 - **Christian Albornoz:** El mayor desafío fue manejar la asincronía compleja y resolver cruces de ramas y commits en Git, lo que superé con depuración detallada y orden en el equipo
+=======
+**¿Qué dificultades tuvimos y cómo las resolvimos?**
+
+- **Christian Albornoz:** El mayor desafío fue manejar la asincronía compleja y resolver cruces de ramas y commits en Git, lo que superé con depuración detallada y orden en el equipo.
+>>>>>>> Stashed changes
 - **Fernando Guevara:** Mis dificultades fueron las credenciales de Atlas (un `bad auth` que resolví revisando el usuario y la contraseña de mi base), correr el Postman en una pc laboral que tiene accesos restringidos y el deploy gratuito, que se duerme y tarda en responder.
 - **Laura Belén Blanco:** Las dificultades que tuve fueron más que nada de entorno y de Git: los tests no me corrían porque tenía una versión vieja de Node, y al server le faltaba el JWT_SECRET en el .env. Lo fui resolviendo leyendo los errores de a uno y probando.
 - **Laura Olivera:** Una dificultad fue coordinar con el resto del equipo porque mi parte tocaba archivos que también usaban otros, como validate.js y auth.js.
@@ -726,17 +752,25 @@ Lo resolví hablando con mis compañeras y compañeros y actualizando mi rama co
 
 **¿Qué parte del desarrollo Back End nos interesó más?**
 
+<<<<<<< Updated upstream
 - **Christian Albornoz:** Lo que más me interesó fue diseñar la lógica de negocio
+=======
+- **Christian Albornoz:** Lo que más me interesó fue diseñar la lógica de negocio.
+>>>>>>> Stashed changes
 - **Fernando Guevara:** Lo que más me interesó fue ver cómo el backend le da vida a un negocio en una aplicación web: los datos de la base (pedidos, clientes, choferes) se convierten en pantallas que el personal de la empresa puede usar. También me gustó lo fácil que resulta generar esas pantallas con plantillas Pug, en lugar de escribir el HTML a mano cada vez.
-- **Laura Belén Blanco:** Lo que más me interesó fue la parte de middlewares y manejo de errores, ver cómo cada request pasa por “filtros” antes de llegar al controlador. 
+- **Laura Belén Blanco:** Lo que más me interesó fue la parte de middlewares y manejo de errores, ver cómo cada request pasa por “filtros” antes de llegar al controlador.
 - **Laura Olivera:** Lo que más me interesó fue la parte de seguridad, ver cómo se controla quién puede entrar y qué puede hacer cada usuario.
 - **Nicolás Zalazar:** Lo que más me interesó fue llevar la aplicación a producción: separar la configuración en variables de entorno, armar la base en Atlas y desplegarla en Render, y ver que la misma app funciona igual en mi máquina y en línea.
 
 **¿Qué deberíamos reforzar?**
+<<<<<<< Updated upstream
 s
+=======
+
+>>>>>>> Stashed changes
 - **Christian Albornoz:** Hacia adelante, creo que necesito reforzar las estrategias avanzadas de pruebas automatizadas y el rendimiento de consultas complejas en bases de datos no relacionales.
 - **Fernando Guevara:** Me queda pendiente reforzar mi uso con Postman, y mejorar mis habilidades de Github.
-- **Laura Belén Blanco:** Tengo que reforzar los tests automáticos que la única experiencia que tengo fue academica, con la materia de Test y este trabajo ya que me sería útil para mi trabajo.
+- **Laura Belén Blanco:** Tengo que reforzar los tests automáticos que la única experiencia que tengo fue académica, con la materia de Test y este trabajo ya que me sería útil para mi trabajo.
 - **Laura Olivera:** Tengo que reforzar los tests automáticos y el uso de Git.
 - **Nicolás Zalazar:** Tengo que reforzar los tests automáticos ya que hoy en día sin ayuda de la IA no podría hacerlos.
 
@@ -744,6 +778,11 @@ s
 
 ## 16. Video y entrega
 
+<<<<<<< Updated upstream
+=======
+**Video:** https://drive.google.com/file/d/1Xsdc7R2ZBGvHkD83qVGmdfic3K2hrbO1/view — Todos los integrantes aparecen en cámara y explican la parte en la que trabajaron, y se muestra la demostración de las pruebas (tests, smoke test y Postman, con casos de error).
+
+>>>>>>> Stashed changes
 **Entrega del código.** Cada integrante sube su propia copia al campus en **ZIP y RAR**, con dos carpetas:
 
 | Carpeta | Contenido |
