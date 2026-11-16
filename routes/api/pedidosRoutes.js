@@ -1,27 +1,19 @@
 const express = require("express");
-
 const router = express.Router();
 
-// router aparte para /api/choferes: solo lectura del seed, no es un módulo con CRUD propio
-const choferesRouter = express.Router();
-
 const {
-
     obtenerPedidos,
     obtenerPedidoPorId,
     crearPedido,
     actualizarPedido,
     eliminarPedido,
-    cambiarEstado,
-    listarChoferes
-
+    cambiarEstado
 } = require("../../controllers/pedidosController");
 
 const { validarPedido, validarPedidoUpdate } = require("../../middlewares/validate");
 const { autorizar } = require("../../middlewares/auth");
 
-
-// rutas CRUD
+// rutas CRUD de pedidos
 
 router.get("/", obtenerPedidos);
 
@@ -36,11 +28,5 @@ router.delete("/:id", autorizar("admin"), eliminarPedido);
 
 router.patch("/:id/estado", cambiarEstado);
 
-
-// choferes: sin POST/PUT/DELETE
-
-choferesRouter.get("/", listarChoferes);
-
-
 module.exports = router;
-module.exports.choferesRouter = choferesRouter;
+

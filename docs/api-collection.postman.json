@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FreshRoute B2B",
-    "description": "Colección de pruebas de la API. Entrega final DSWB - LosBuleanos (MongoDB + autenticación JWT).\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000 (cambiarla por la URL del deploy para probar en línea).\nTodas las rutas salvo el login piden token: la carpeta Autenticación hace login como admin y guarda el JWT en {{token}}, que la colección manda como Bearer en cada request. Por eso hay que correrla en orden (Run collection) con la base recién cargada (npm run seed, que crea admin@freshroute.test / admin123 y operador@freshroute.test / operador123).\nLos ids son ObjectId de MongoDB: los scripts de test los guardan en variables de la colección (clienteId, choferId, pedidoId, clienteNuevoId, pedidoNuevoId). Cada request verifica el status esperado.",
+    "description": "Colección de pruebas de la API. Entrega final DSWB - LosBuleanos (MongoDB + autenticación JWT).\n\nImportar en Postman (File > Import). La variable baseUrl apunta a http://localhost:3000 (cambiarla por la URL del deploy para probar en línea).\nTodas las rutas salvo el login piden token: la carpeta Autenticación hace login como admin y guarda el JWT en {{token}}, que la colección manda como Bearer en cada request. Por eso hay que correrla en orden (Run collection) con la base recién cargada (npm run seed, que crea admin@freshroute.test / admin123 y operador@freshroute.test / operador123).\nLos ids son ObjectId de MongoDB: los scripts de test los guardan en variables de la colección (clienteId, choferId, pedidoId, clienteNuevoId, pedidoNuevoId, adminId, usuarioNuevoId). Cada request verifica el status esperado.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -35,6 +35,18 @@
     },
     {
       "key": "tokenOperador",
+      "value": ""
+    },
+    {
+      "key": "choferNuevoId",
+      "value": ""
+    },
+    {
+      "key": "adminId",
+      "value": ""
+    },
+    {
+      "key": "usuarioNuevoId",
       "value": ""
     }
   ],
@@ -266,7 +278,8 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"es el admin\", () => pm.expect(pm.response.json().rol).to.eql(\"admin\"));"
+                  "pm.test(\"es el admin\", () => pm.expect(pm.response.json().rol).to.eql(\"admin\"));",
+                  "pm.collectionVariables.set(\"adminId\", pm.response.json()._id);"
                 ]
               }
             }
@@ -285,7 +298,7 @@
                 "perfil"
               ]
             },
-            "description": "200 → datos del usuario dueño del token (sin contraseña)."
+            "description": "200 → datos del usuario dueño del token (sin contraseña). Guarda el _id del admin en {{adminId}}."
           }
         },
         {
@@ -358,6 +371,161 @@
               ]
             },
             "description": "400 { mensaje: \"Datos de usuario inválidos\", errores: [...] }."
+          }
+        },
+        {
+          "name": "POST crear usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"usuarioNuevoId\", pm.response.json().usuario._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana López\",\n  \"email\": \"ana@freshroute.test\",\n  \"password\": \"secreto1\",\n  \"rol\": \"operador\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios"
+              ]
+            },
+            "description": "Solo admin. 201 { mensaje, usuario } (sin contraseña). Guarda el _id en {{usuarioNuevoId}}. Lo borra el DELETE de más abajo, así la colección se puede volver a correr."
+          }
+        },
+        {
+          "name": "PUT actualizar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"cambió el nombre y el rol\", () => {",
+                  "    const u = pm.response.json().usuario;",
+                  "    pm.expect(u.nombre).to.eql(\"Ana María López\");",
+                  "    pm.expect(u.rol).to.eql(\"admin\");",
+                  "    pm.expect(u.password).to.be.undefined;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana María López\",\n  \"rol\": \"admin\",\n  \"password\": \"otraClave1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{usuarioNuevoId}}"
+              ]
+            },
+            "description": "Solo admin. 200 { mensaje, usuario }. Campos opcionales (al menos uno): nombre, rol, password. La contraseña se vuelve a hashear; el email no se edita."
+          }
+        },
+        {
+          "name": "DELETE eliminar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{usuarioNuevoId}}"
+              ]
+            },
+            "description": "Solo admin. 200 { mensaje: \"Usuario eliminado\" }."
+          }
+        },
+        {
+          "name": "DELETE admin a sí mismo (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"mensaje\", () => pm.expect(pm.response.json().mensaje).to.eql(\"Un administrador no puede eliminarse a sí mismo\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{adminId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{adminId}}"
+              ]
+            },
+            "description": "400: un administrador no puede eliminarse a sí mismo."
           }
         }
       ]
@@ -448,6 +616,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Bar Nuevo\",\n  \"direccion\": \"Calle 1 N° 100, Morón\",\n  \"zona\": \"Oeste\",\n  \"contacto\": \"Pedro Díaz - 11 0000 0000\",\n  \"horarioEntrega\": \"09:00 a 11:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/clientes",
               "host": [
@@ -458,16 +635,7 @@
                 "clientes"
               ]
             },
-            "description": "201 → { mensaje: \"Cliente creado\", cliente }. Guarda el _id en {{clienteNuevoId}}.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Bar Nuevo\",\n  \"direccion\": \"Calle 1 N° 100, Morón\",\n  \"zona\": \"Oeste\",\n  \"contacto\": \"Pedro Díaz - 11 0000 0000\",\n  \"horarioEntrega\": \"09:00 a 11:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "201 → { mensaje: \"Cliente creado\", cliente }. Guarda el _id en {{clienteNuevoId}}."
           }
         },
         {
@@ -491,6 +659,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zona\": \"Centro\",\n  \"horarioEntrega\": \"10:00 a 12:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/clientes/{{clienteNuevoId}}",
               "host": [
@@ -502,16 +679,7 @@
                 "{{clienteNuevoId}}"
               ]
             },
-            "description": "200 → { mensaje: \"Cliente actualizado\", cliente }. Edición parcial: solo se pisan los campos enviados.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"zona\": \"Centro\",\n  \"horarioEntrega\": \"10:00 a 12:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "200 → { mensaje: \"Cliente actualizado\", cliente }. Edición parcial: solo se pisan los campos enviados."
           }
         },
         {
@@ -625,6 +793,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/clientes",
               "host": [
@@ -635,16 +812,7 @@
                 "clientes"
               ]
             },
-            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [...] }",
-            "body": {
-              "mode": "raw",
-              "raw": "{}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [...] }"
           }
         },
         {
@@ -668,6 +836,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
               "host": [
@@ -679,16 +856,7 @@
                 "{{clienteId}}"
               ]
             },
-            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [\"hay que mandar al menos un campo para actualizar\"] }",
-            "body": {
-              "mode": "raw",
-              "raw": "{}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "400 → { mensaje: \"Datos de cliente inválidos\", errores: [\"hay que mandar al menos un campo para actualizar\"] }"
           }
         }
       ]
@@ -724,7 +892,186 @@
                 "choferes"
               ]
             },
-            "description": "200 → array de choferes (seed de solo lectura, sin POST/PUT/DELETE). Guarda el _id del primero en {{choferId}}."
+            "description": "200 → array de choferes. Guarda el _id del primero en {{choferId}}."
+          }
+        },
+        {
+          "name": "GET chofer por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/choferes/{{choferId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "choferes",
+                "{{choferId}}"
+              ]
+            },
+            "description": "200 → objeto chofer"
+          }
+        },
+        {
+          "name": "POST crear chofer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"choferNuevoId\", pm.response.json().chofer._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Prueba\",\n  \"vehiculo\": \"Utilitario\",\n  \"zona\": \"Norte\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/choferes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "choferes"
+              ]
+            },
+            "description": "201 → { mensaje: \"Chofer creado\", chofer }. Guarda el _id en {{choferNuevoId}}."
+          }
+        },
+        {
+          "name": "PUT actualizar chofer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehiculo\": \"Camión refrigerado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/choferes/{{choferNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "choferes",
+                "{{choferNuevoId}}"
+              ]
+            },
+            "description": "200 → { mensaje: \"Chofer actualizado\", chofer }. Edición parcial."
+          }
+        },
+        {
+          "name": "DELETE eliminar chofer con pedidos (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/choferes/{{choferId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "choferes",
+                "{{choferId}}"
+              ]
+            },
+            "description": "400 → No se puede eliminar el chofer porque tiene pedidos asignados."
+          }
+        },
+        {
+          "name": "DELETE eliminar chofer nuevo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"mensaje\", () => pm.expect(pm.response.json().mensaje).to.eql(\"Chofer eliminado\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/choferes/{{choferNuevoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "choferes",
+                "{{choferNuevoId}}"
+              ]
+            },
+            "description": "Solo admin. 200 → { mensaje: \"Chofer eliminado\" }."
           }
         }
       ]
@@ -815,6 +1162,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"{{clienteId}}\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [\n    {\n      \"descripcion\": \"Cajón de frutas\",\n      \"cantidad\": 8\n    }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/pedidos",
               "host": [
@@ -825,16 +1181,7 @@
                 "pedidos"
               ]
             },
-            "description": "201 → { mensaje: \"Pedido creado\", pedido }. El pedido nace en \"pendiente\". Guarda el _id en {{pedidoNuevoId}}.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clienteId\": \"{{clienteId}}\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [\n    {\n      \"descripcion\": \"Cajón de frutas\",\n      \"cantidad\": 8\n    }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "201 → { mensaje: \"Pedido creado\", pedido }. El pedido nace en \"pendiente\". Guarda el _id en {{pedidoNuevoId}}."
           }
         },
         {
@@ -858,6 +1205,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHoraProgramada\": \"2026-09-16T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}",
               "host": [
@@ -869,16 +1225,7 @@
                 "{{pedidoNuevoId}}"
               ]
             },
-            "description": "200 → { mensaje: \"Pedido actualizado\", pedido }. Edición parcial; el estado no se cambia por acá.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"fechaHoraProgramada\": \"2026-09-16T07:00:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "200 → { mensaje: \"Pedido actualizado\", pedido }. Edición parcial; el estado no se cambia por acá."
           }
         },
         {
@@ -889,7 +1236,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"el historial registra la transición y el usuario\", () => {",
+                  "    const historial = pm.response.json().pedido.historial;",
+                  "    const ultimo = historial[historial.length - 1];",
+                  "    pm.expect(ultimo.estado).to.eql(\"asignado\");",
+                  "    pm.expect(ultimo.usuarioId).to.be.a(\"string\");",
+                  "});"
                 ]
               }
             }
@@ -902,6 +1255,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"asignado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}/estado",
               "host": [
@@ -914,16 +1276,7 @@
                 "estado"
               ]
             },
-            "description": "200 → { mensaje: \"Estado actualizado\", pedido }. Solo se permite pasar al estado siguiente.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"estado\": \"asignado\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "200 → { mensaje: \"Estado actualizado\", pedido }. Solo se permite pasar al estado siguiente."
           }
         },
         {
@@ -947,6 +1300,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"entregado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}/estado",
               "host": [
@@ -959,16 +1321,7 @@
                 "estado"
               ]
             },
-            "description": "400 → { mensaje: 'Transición inválida: no se puede pasar de \"asignado\" a \"entregado\"' }",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"estado\": \"entregado\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "400 → { mensaje: 'Transición inválida: no se puede pasar de \"asignado\" a \"entregado\"' }"
           }
         },
         {
@@ -992,6 +1345,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/pedidos/{{pedidoNuevoId}}/estado",
               "host": [
@@ -1004,16 +1366,7 @@
                 "estado"
               ]
             },
-            "description": "400 → { mensaje: \"Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado\" }",
-            "body": {
-              "mode": "raw",
-              "raw": "{}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "400 → { mensaje: \"Estado inválido. Valores permitidos: pendiente, asignado, en tránsito, entregado\" }"
           }
         },
         {
@@ -1067,6 +1420,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"000000000000000000000000\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [\n    {\n      \"descripcion\": \"Cajón de frutas\",\n      \"cantidad\": 8\n    }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/pedidos",
               "host": [
@@ -1077,16 +1439,7 @@
                 "pedidos"
               ]
             },
-            "description": "400 → { mensaje: \"El cliente con id 000000000000000000000000 no existe\" } (PedidoService)",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clienteId\": \"000000000000000000000000\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [\n    {\n      \"descripcion\": \"Cajón de frutas\",\n      \"cantidad\": 8\n    }\n  ],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "400 → { mensaje: \"El cliente con id 000000000000000000000000 no existe\" } (PedidoService)"
           }
         },
         {
@@ -1110,6 +1463,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"{{clienteId}}\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/pedidos",
               "host": [
@@ -1120,16 +1482,7 @@
                 "pedidos"
               ]
             },
-            "description": "400 → { mensaje: \"Datos de pedido inválidos\", errores: [\"items es obligatorio y debe ser un arreglo con al menos un ítem\"] }",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clienteId\": \"{{clienteId}}\",\n  \"choferId\": \"{{choferId}}\",\n  \"items\": [],\n  \"fechaHoraProgramada\": \"2026-09-17T07:00:00\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "400 → { mensaje: \"Datos de pedido inválidos\", errores: [\"items es obligatorio y debe ser un arreglo con al menos un ítem\"] }"
           }
         },
         {

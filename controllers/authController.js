@@ -30,33 +30,9 @@ const perfil = async (req, res) => {
     res.json(usuario);
 };
 
-// GET /api/usuarios (admin)
-const listarUsuarios = async (req, res) => {
-    const usuarios = await Usuario.find();
-    res.json(usuarios);
-};
-
-// POST /api/usuarios (admin): alta de usuarios, no hay registro abierto
-const crearUsuario = async (req, res) => {
-    const { nombre, email, password, rol } = req.body;
-
-    if (await Usuario.exists({ email: email.toLowerCase() })) {
-        return res.status(400).json({
-            mensaje: `Ya existe un usuario con el email ${email}`
-        });
-    }
-
-    const usuario = await Usuario.create({ nombre, email, password, rol });
-
-    res.status(201).json({
-        mensaje: "Usuario creado",
-        usuario
-    });
-};
+// La gestión de usuarios (listado, alta, edición y baja) está en usuariosController.
 
 module.exports = {
     login,
-    perfil,
-    listarUsuarios,
-    crearUsuario
+    perfil
 };

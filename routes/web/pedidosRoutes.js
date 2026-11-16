@@ -78,7 +78,7 @@ router.get("/nuevo", async (req, res) => {
 
 // POST / - Guardar validando contra el mismo middleware de la API
 router.post("/", normalizarBodyWeb, validarPedido, async (req, res) => {
-    await pedidoService.crearPedido(req.body);
+    await pedidoService.crearPedido(req.body, req.usuario.id);
     res.redirect("/pedidos");
 });
 
@@ -124,7 +124,7 @@ router.post("/:id/estado", async (req, res) => {
     const indiceActual = ESTADOS.indexOf(pedido.estado);
     if (indiceActual < ESTADOS.length - 1) {
         const siguienteEstado = ESTADOS[indiceActual + 1];
-        await pedidoService.cambiarEstado(pedido.id, siguienteEstado);
+        await pedidoService.cambiarEstado(pedido.id, siguienteEstado, req.usuario.id);
     }
 
     res.redirect(`/pedidos/${pedido.id}`);
@@ -132,7 +132,10 @@ router.post("/:id/estado", async (req, res) => {
 
 // GET /:id - Detalle (al final de las rutas GET para no solaparse)
 router.get("/:id", async (req, res) => {
-    const pedido = await Pedido.findById(req.params.id).populate("clienteId").populate("choferId");
+    const pedido = await Pedido.findById(req.params.id)
+        .populate("clienteId")
+        .populate("choferId")
+        .populate("historial.usuarioId", "nombre");
 
     if (!pedido) {
         return res.redirect("/pedidos");

@@ -26,6 +26,26 @@ block content
 
     hr
 
+    h3 Historial de Estados
+    if pedido.historial && pedido.historial.length > 0
+        ul.historial-lista
+            each h in pedido.historial
+                li
+                    strong Estado: 
+                    span= h.estado
+                    |  — 
+                    strong Usuario: 
+                    //- si el usuario se borró, populate deja null
+                    span= h.usuarioId ? h.usuarioId.nombre : "(usuario eliminado)"
+                    |  —
+                    strong Fecha:
+                    //- hora de Argentina aunque el server (Render) corra en UTC
+                    span= new Date(h.fecha).toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })
+    else
+        p No hay registros en el historial.
+
+    hr
+
     if proximoEstado
         form(action=`/pedidos/${pedido.id}/estado` method="POST")
             button(type="submit") Avanzar estado a "#{proximoEstado}"
